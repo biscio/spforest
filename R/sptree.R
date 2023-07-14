@@ -63,12 +63,17 @@ summary.sptree <- function(object, fulltree = F, ...) {
 #' @export
 #'
 #' @examples
-plot.sptree <- function(x, ...) {
-
-  spatstat.geom::plot.im(x$im, main="Spatial Intensity Tree")
+plot.sptree <- function(x, ..., main) {
+  # Handling case if no main title is given for the plot
+  if (missing(main)) {
+    main <- "Spatial Intensity Tree"
+  }
+  
+  spatstat.geom::plot.im(x$im, main=main, ...)
 
   return(invisible(x$im))
 }
+
 
 
 

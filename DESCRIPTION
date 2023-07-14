@@ -15,7 +15,10 @@ Imports:
     graphics,
     parallel,
     spatstat.model,
-    spatstat.geom
+    spatstat.geom,
+    sp,
+    sf,
+    deldir
 Suggests: 
     spatstat.data,
     spatstat.random,

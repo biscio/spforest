@@ -11,7 +11,7 @@ OOBppmscr(forest, covariates, cores = 1)
 
 \item{covariates}{list of covariates considered}
 
-\item{cores}{to spped up}
+\item{cores}{to speed up}
 }
 \description{
 OOB ppm

@@ -4,7 +4,7 @@
 \alias{plot.spforest}
 \title{Plot spatial intensity forest}
 \usage{
-\method{plot}{spforest}(x, ...)
+\method{plot}{spforest}(x, ..., main)
 }
 \arguments{
 \item{x}{A spatial intensity tree return by RforestPP function}

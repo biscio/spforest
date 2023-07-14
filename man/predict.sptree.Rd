@@ -4,7 +4,7 @@
 \alias{predict.sptree}
 \title{Tree prediction}
 \usage{
-\method{predict}{sptree}(object, newdata, ...)
+predict.sptree(object, newdata, ...)
 }
 \arguments{
 \item{object}{A spatial intensity tree return by treerec function}

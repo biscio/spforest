@@ -4,7 +4,7 @@
 \alias{plot.sptree}
 \title{Plot spatial intensity tree}
 \usage{
-\method{plot}{sptree}(x, ...)
+\method{plot}{sptree}(x, ..., main)
 }
 \arguments{
 \item{x}{A spatial intensity tree return by treerec function}

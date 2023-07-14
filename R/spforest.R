@@ -53,14 +53,19 @@ imspforest <- function(x, ...) {
 #' @export
 #'
 #' @examples
-plot.spforest <- function(x, ...) {
+plot.spforest <- function(x, ..., main) {
+  # Handling case if no main title is given for the plot
+  if (missing(main)) {
+    main <- "Spatial Intensity Forest"
+  }
+  
   list_im <- lapply(x$trees, FUN = function(i) {
     i$im
   })
 
   output <- Reduce("+", list_im) / length(x$trees) / x$p
 
-  spatstat.geom::plot.im(output, main = "Spatial Intensity Forest")
+  spatstat.geom::plot.im(output, main = main, ...)
 
   return(invisible(output))
 }

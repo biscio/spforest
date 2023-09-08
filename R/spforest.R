@@ -38,7 +38,11 @@ imspforest <- function(x, ...) {
     i$im
   })
 
-  output <- Reduce("+", list_im) / length(x$trees) / x$p
+  if (x$p == 0) {
+    output <- Reduce("+", list_im) / length(x$trees)
+  } else {
+    output <- Reduce("+", list_im) / length(x$trees) / x$p
+  }
 
   return(output)
 }

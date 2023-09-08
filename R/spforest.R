@@ -34,13 +34,13 @@ print.spforest <- function(x, ...) {
 #'
 #' @examples
 imspforest <- function(x, ...) {
-    list_im <- lapply(x$trees, FUN = function(i) {
-        i$im
-    })
+  list_im <- lapply(x$trees, FUN = function(i) {
+    i$im
+  })
 
-    output <- Reduce("+", list_im) / length(x$trees) / x$p
+  output <- Reduce("+", list_im) / length(x$trees) / x$p
 
-    return(output)
+  return(output)
 }
 
 
@@ -58,12 +58,16 @@ plot.spforest <- function(x, ..., main) {
   if (missing(main)) {
     main <- "Spatial Intensity Forest"
   }
-  
+
   list_im <- lapply(x$trees, FUN = function(i) {
     i$im
   })
 
-  output <- Reduce("+", list_im) / length(x$trees) / x$p
+  if (x$p == 0) {
+    output <- Reduce("+", list_im) / length(x$trees)
+  } else {
+    output <- Reduce("+", list_im) / length(x$trees) / x$p
+  }
 
   spatstat.geom::plot.im(output, main = main, ...)
 
@@ -176,17 +180,17 @@ boxplot_spforest <- function(x, cores = 1, ...) {
 #'
 #' @examples
 vipplot.spforest <- function(x, cores = 1, ...) {
-    vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
-        importance.spforest(x, id_cov = i, cores = cores)
-    })
+  vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
+    importance.spforest(x, id_cov = i, cores = cores)
+  })
 
-    avvip <- unlist(lapply(vipval, mean))
+  avvip <- unlist(lapply(vipval, mean))
 
-    graphics::barplot(avvip,
-                      names.arg = names(x$listcov),
-                      xlab = "Variables",
-                      ylab = "Variable Importance"
-    )
+  graphics::barplot(avvip,
+    names.arg = names(x$listcov),
+    xlab = "Variables",
+    ylab = "Variable Importance"
+  )
 }
 # vipplot.spforest_old <- function(x, cores = 1, ...) {
 #   vipval <- sapply(X = seq_along(x$listcov), FUN = function(i) {
@@ -235,15 +239,15 @@ new_spforest <- function(trees = list(),
                          listcov = list(),
                          p = double(),
                          mtry = double()) {
-    output <- list(
-        trees = trees,
-        pt_intree = pt_intree,
-        X = X,
-        listcov = listcov,
-        p = p,
-        mtry = mtry
-    )
-    return(structure(output, class = "spforest"))
+  output <- list(
+    trees = trees,
+    pt_intree = pt_intree,
+    X = X,
+    listcov = listcov,
+    p = p,
+    mtry = mtry
+  )
+  return(structure(output, class = "spforest"))
 }
 
 
@@ -257,56 +261,56 @@ new_spforest <- function(trees = list(),
 #'
 #' @examples
 validate_spforest <- function(x) {
-    # TODO: add conformity checks on the entries of the forest
-    values <- unclass(x)
+  # TODO: add conformity checks on the entries of the forest
+  values <- unclass(x)
 
-    # Check for correct entries' name in the forest
-    if (sum(is.element(
-        c(
-            "trees", "pt_intree", "X",
-            "listcov", "p", "mtry"
-        ),
-        names(x)
-    )) != 6) {
-        stop(
-            "A spforest object should have entries
+  # Check for correct entries' name in the forest
+  if (sum(is.element(
+    c(
+      "trees", "pt_intree", "X",
+      "listcov", "p", "mtry"
+    ),
+    names(x)
+  )) != 6) {
+    stop(
+      "A spforest object should have entries
             trees, pt_intree, X, listcov, p, mtry",
-            call. = FALSE
-        )
-    }
-    # Check for correct type in the forest's entries
-    if (!is.list(values$trees) | !is.list(values$listcov)) {
-        stop("A spforest object must have entries trees and listcov as list.",
-             call. = FALSE
-        )
-    }
-    if (!is.ppp(values$X) | !is.list(values$listcov)) {
-        stop("A spforest object must have entry X as a ppp object.",
-             call. = FALSE
-        )
-    }
-    if (!is.numeric(values$p) | !is.numeric(values$mtry)) {
-        stop("A spforest object must have entries p and mtry as numeric.",
-             call. = FALSE
-        )
-    }
+      call. = FALSE
+    )
+  }
+  # Check for correct type in the forest's entries
+  if (!is.list(values$trees) | !is.list(values$listcov)) {
+    stop("A spforest object must have entries trees and listcov as list.",
+      call. = FALSE
+    )
+  }
+  if (!is.ppp(values$X) | !is.list(values$listcov)) {
+    stop("A spforest object must have entry X as a ppp object.",
+      call. = FALSE
+    )
+  }
+  if (!is.numeric(values$p) | !is.numeric(values$mtry)) {
+    stop("A spforest object must have entries p and mtry as numeric.",
+      call. = FALSE
+    )
+  }
 
-    # check if entries have possible values
-    if (values$p < 0 | values$p > 1 | values$mtry > 1 | values$mtry < 0) {
-        stop("p and mtry must be between 0 and 1.",
-             call. = FALSE
-        )
-    }
+  # check if entries have possible values
+  if (values$p < 0 | values$p > 1 | values$mtry > 1 | values$mtry < 0) {
+    stop("p and mtry must be between 0 and 1.",
+      call. = FALSE
+    )
+  }
 
-    alllength_ptintree <- sapply(values$pt_intree, length)
-    if (!all(alllength_ptintree == npoints(values$X))) {
-        stop("pt_intree should be a vector with
+  alllength_ptintree <- sapply(values$pt_intree, length)
+  if (!all(alllength_ptintree == npoints(values$X))) {
+    stop("pt_intree should be a vector with
              same length as the number of points in X",
-             call. = FALSE
-        )
-    }
+      call. = FALSE
+    )
+  }
 
-    x
+  x
 }
 
 
@@ -348,5 +352,3 @@ merge.spforest <- function(x, y, ...) {
 
   return(validate_spforest(output))
 }
-
-

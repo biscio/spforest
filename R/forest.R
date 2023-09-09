@@ -146,11 +146,22 @@ OOBscr.spforest <- function(forest, cores = 1) {
   }
 
   OOBscr <- parallel::mclapply(1:length(forest$trees), FUN = function(i) {
-    # vector of same length as number of pts in X
-    OOBpts <- (forest$pt_intree[[i]] != 1)
     OOBval <- rep(NA, X$n)
-    if (all(!OOBpts)) { # If no points in OOBpts, then nothing do do.
-      return(OOBval)
+
+    if (forest$p == 0) {
+      torm <- unique(forest$pt_intree[[i]])
+      if (length(torm) == X$n) { # If all points are drawn in the bootstrap,
+        # then nothing do do.
+        return(OOBval)
+      }
+      OOBpts <- 1:X$n
+      OOBpts <- OOBpts[!(OOBpts %in% torm)]
+    } else {
+      # vector of same length as number of pts in X
+      OOBpts <- (forest$pt_intree[[i]] != 1)
+      if (all(!OOBpts)) { # If no points in OOBpts, then nothing do do.
+        return(OOBval)
+      }
     }
 
     # OOB sample

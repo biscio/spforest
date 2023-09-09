@@ -60,3 +60,23 @@ forest <- RforestPP(
 )
 plot(forest)
 plot(forest$trees[[3]])
+outputoob <- OOBscr.spforest(forest=forest, cores=1)
+outputoob
+
+X<-bei
+
+X <- forest$X
+
+X[ptintree] %>% unique()
+
+
+
+
+
+a[(a %in% torm)]
+
+unique(ptintree)
+
+library(spatstat)
+duplicated.ppp(X[ptintree])
+

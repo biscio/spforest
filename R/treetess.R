@@ -35,7 +35,8 @@ tesstree <- function(X,
 
   del <- spatstat.geom::dirichlet(tess.points) # associated tesselation
   tmp <- spatstat.geom::intersect.tess(del, wind) # intersected with the windows
-
+  tmp0 <- tmp
+  
   if (test.connected) {
     tmp <- spatstat.geom::connected(tmp)
   } # split unconnected tiles
@@ -133,7 +134,7 @@ tesstree <- function(X,
   card0 <- table(ind.vec) # number of points of X in each tile
   card[names(card0)] <- card0
 
-  return(card[ind] / delarea[ind])
+  return(list(card[ind] / delarea[ind], tmp0))
 }
 
 
@@ -180,12 +181,13 @@ tessforest <- function(X,
   }
 
   fun <- function(i) {
-    tesstree(
+    output <- tesstree(
       X,
       lambda,
       target.points,
       test.connected
     )
+    return(output[[1]])
   }
   tmp <- unlist(mclapply(1:Ntrees, fun, mc.cores = mc.cores))
   res <- rowMeans(matrix(tmp, nrow = length(tmp) / Ntrees)) # TODO: use columns ?

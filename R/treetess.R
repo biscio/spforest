@@ -76,6 +76,7 @@ tesstree <- function(X,
       ind[indpb] <- newnames
     }
   }
+  
   ind <- as.character(ind)
   ind.vec <- spatstat.geom::nncross(X,
     tess.points,
@@ -165,7 +166,7 @@ tessforest <- function(X,
     y.image <- seq(wind$yrange[1], wind$yrange[2], length.out = N)
     allpoints <- spatstat.geom::as.ppp(
       expand.grid(x.image, y.image),
-      owin(wind$xrange, wind$yrange)
+      spatstat.geom::owin(wind$xrange, wind$yrange)
     )
     target.points <- spatstat.geom::subset.ppp(allpoints, wind)
   } else {
@@ -197,7 +198,7 @@ tessforest <- function(X,
     a <- spatstat.geom::inside.owin(allpoints, w = wind)
     marks(allpoints)[a] <- res
     return(as.im(t(matrix(marks(allpoints), N, N)),
-      W = owin(wind$xrange, wind$yrange)
+      W = spatstat.geom::owin(wind$xrange, wind$yrange)
     ))
   } else {
     return(res)

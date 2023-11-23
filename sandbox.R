@@ -184,7 +184,7 @@ target.points <- subset(allpoints, wind)
 
 res <- tessforest(subdata,
                   lambda = 409,
-                  mc.cores = 25,
+                  mc.cores = 2,
                   N = 100,
                   test.connected = TRUE,
                   at = target.points
@@ -214,3 +214,43 @@ plot(res.im,
 points(subdata[roi.islands], col = 1, pch = 20, cex = 2)
 text(-7.5, 58.5, "RF (zoom)", cex = 2.4)
 dev.print(pdf, "test.pdf", width = 10, height = 7)
+
+
+#############3
+#############
+#############
+#############
+
+
+test<- lapply(1:nn, FUN=function(i){
+  spatstat.geom::as.polygonal(tile.tmp[[i]])$bdry
+})
+
+concomp <- sapply(test, length)
+
+
+
+plot(tmp)
+for (i in which(concomp>1)) {
+  plot(as.polygonal(tile.tmp[[i]]), add=T, col=2)
+}
+
+test[[15]]
+
+dim(gDistance(spts,
+          firstSpatialPoly,
+          byid = TRUE
+))
+
+
+apply(apply(gDistance(spts,
+                      firstSpatialPoly,
+                      byid = TRUE
+), 2, min), 2, which.min)
+
+apply(sf::st_distance(
+  st_as_sf(spts),
+  st_as_sf(firstSpatialPoly),
+  by_element = F
+), 1, min)
+

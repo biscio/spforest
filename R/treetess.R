@@ -121,7 +121,7 @@ tesstree <- function(X,
           st_as_sf(spts),
           st_as_sf(firstSpatialPoly),
           by_element = F
-        ), 2, min))
+        ), 1, min))
       }
       index <- apply(dist.tile, 2, which.min)
       ind.vec[indpb] <- names(delarea)[index]

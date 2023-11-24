@@ -48,19 +48,21 @@ RforestPP(
 Title
 }
 \examples{
-forest <- RforestPP(X = spatstat.data::bei,
-         listcovariates = list(
-                                grad = spatstat.data::bei.extra$grad,
-                                elev = spatstat.data::bei.extra$elev
-                                ),
-         score = "lcv2",
-         p = 1,
-         Ntree = 3,
-         threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
-         cores_trees = 1,
-         mtry = 1 / 3,
-         tol = Inf,
-         minpts = 50,
-         minsplitq = 0.5,
-         maxsplitq = 0.5)
+forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = list(
+    grad = spatstat.data::bei.extra$grad,
+    elev = spatstat.data::bei.extra$elev
+  ),
+  score = "lcv2",
+  p = 1,
+  Ntree = 3,
+  threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
+  cores_trees = 1,
+  mtry = 1 / 3,
+  tol = Inf,
+  minpts = 50,
+  minsplitq = 0.5,
+  maxsplitq = 0.5
+)
 }

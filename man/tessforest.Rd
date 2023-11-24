@@ -9,7 +9,7 @@ tessforest(
   lambda = NULL,
   Ntrees = 100,
   at = NULL,
-  mc.cores = 6,
+  mc.cores = 1,
   test.connected = TRUE
 )
 }

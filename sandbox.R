@@ -7,7 +7,7 @@ library(spatstat)
 library(sf)
 library(parallel)
 library(Rsandbox)
-# spatstat.options(npixel = 512)
+spatstat.options(npixel = 256)
 
 # Dans draft de fred
 # {Trout_UK2}

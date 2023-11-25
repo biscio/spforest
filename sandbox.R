@@ -1,13 +1,14 @@
 rm(list = ls())
 library(rworldmap)
-# library(rworldxtra)
+library(rworldxtra)
 library(raster)
 library(spatstat)
-# library(maptools) # Soon deprecated
+library(maptools) # Soon deprecated
 library(sf)
+library(sp)
 library(parallel)
 library(Rsandbox)
-spatstat.options(npixel = 256)
+spatstat.options(npixel = 512)
 
 # Dans draft de fred
 # {Trout_UK2}
@@ -16,6 +17,64 @@ spatstat.options(npixel = 256)
 # {UK_Trout_RF}
 # {UK_Trout_ppl_clip}
 # {UK_Trout_RF_clip}
+
+
+
+library(terra)
+library(geodata)
+library(Rsandbox)
+
+uk <- gadm(country = "GBR", level = 0, resolution = 2,
+           path = "maps/")
+irl <- gadm(country = "IRL", level = 0, resolution = 1,
+            path = "maps/")
+spatstat.options(npixel = 1024)
+
+split(uk)
+
+uksp <- as(uk, "Spatial")
+p1 <- slot(uksp, "polygons")
+v1 <- lapply(p1, function(z) {
+  SpatialPolygons(list(z))
+})
+UK<-spatstat.geom::as.owin(v1[[1]])
+ 
+plot(UK)
+
+UK$bdry %>% length()
+A<-connected(UK, eps=0.005)
+tmp<-spatstat.geom::tiles(as.tess(A))
+
+allarea <- sapply(tmp, area.owin)
+thres <- quantile(allarea, probs=0.75)
+
+newtess <- tmp[allarea>thres]
+
+listW <- lapply(newtess, as.owin)
+
+B<-do.call(union.owin, listW)
+polyW <- as.polygonal(B)
+plot(B[roi.islands])
+plot(polyW[roi.islands])
+as.owin(newtess)
+Wuk <- polyW
+ 
+
+plot(A)
+
+
+subw <- lapply(UK$bdry, extr_owin)
+
+a<-sapply(subw, area.owin)
+
+thres <- quantile(a, probs=0.5)
+
+plot(UK)
+
+for (i in 1:sum(a>thres)) {
+  temp<- subw[a>thres]
+  plot(temp[[i]], col=2, add=T)
+}
 
 # Get the map of UK ----
 
@@ -28,7 +87,7 @@ if (!(res_world_map %in% c("low", "high"))) {
 
 world <- rworldmap::getMap(resolution = res_world_map)
 ## clip in long lag coordinate a region
-clipper_europe <- as(raster::extent(-10, 32, 30, 72), "SpatialPolygons")
+clipper_europe <- as(raster::extent(-10, 32, 30, 71.9), "SpatialPolygons")
 world_clip <- raster::intersect(world, clipper_europe)
 
 # Conversion to owin object ----
@@ -39,6 +98,7 @@ v <- lapply(p, function(z) {
   SpatialPolygons(list(z))
 })
 winlist <- lapply(v, spatstat.geom::as.owin)
+
 
 # Union of all the countries
 europe <- do.call(spatstat.geom::union.owin, winlist)
@@ -86,7 +146,7 @@ text(-8.8, 60, "Data", cex = 1.5)
 # dev.print(pdf, "Trout_UK2.pdf", width = 5, height = 5)
 
 # Setting the parameters for kernel intensity estim ----
-spatstat.options(npixel = 256)
+spatstat.options(npixel = 512)
 res.ppl <- density(subdata, sigma = bw.ppl) # bandwidth ppl
 
 co <- colourmap(getSpatstatVariable("DefaultImageColours")[1:256],
@@ -131,7 +191,7 @@ allpoints <- as.ppp(
 target.points <- subset(allpoints, wind)
 
 
-
+spatstat.options(npixel = 256)
 # Tree intensity estimate computation
 set.seed(1)
 res.tree <- tesstree(

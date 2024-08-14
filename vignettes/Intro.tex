@@ -70,7 +70,7 @@ to a point pattern.
 
 \begin{Schunk}
 \begin{Sinput}
-> arbre <- treerec(
+> inttree <- treerec(
 +   X = spatstat.data::bei,
 +   threshold = 30000,
 +   score = "lcv2",
@@ -79,11 +79,77 @@ to a point pattern.
 +   tol = Inf,
 +   minpts = 50,
 +   minsplitq = 0.5,
-+   maxsplitq = 0.5
++   maxsplitq = 0.5,
++   inforest=FALSE
 + )
 \end{Sinput}
 \end{Schunk}
 
+The output is an object of class \texttt{sptree} define in the package \pkg{Rsandbox} 
+together with methods to print, plot, summarise and predict the intensity in a given region.
+
+\begin{Schunk}
+\begin{Sinput}
+> head(summary(inttree), n = 10)
+\end{Sinput}
+\begin{Soutput}
+      left_daughter right_daughter split_var split_val  status intensity_pred
+ [1,] 2             3              2         0.06202988 1      0.007101128   
+ [2,] 4             5              11        3.318985   1      0.004941872   
+ [3,] 6             7              1         141.62     1      0.009260171   
+ [4,] 8             9              15        4.599173   1      0.00862606    
+ [5,] 10            11             10        312.0571   1      0.001260587   
+ [6,] 12            13             1         135.46     1      0.007189594   
+ [7,] 14            15             6         7.059457   1      0.01132953    
+ [8,] 16            17             6         6.538088   1      0.01234412    
+ [9,] 18            19             15        4.789915   1      0.004915321   
+[10,] NA            NA             NA        NA         0      0.0005678233  
+      scr_parent
+ [1,] NA        
+ [2,] -17831.8  
+ [3,] -17831.8  
+ [4,] -6659.754 
+ [5,] -6659.754 
+ [6,] -11003.78 
+ [7,] -11003.78 
+ [8,] -5200.747 
+ [9,] -5200.747 
+[10,] -1069.192 
+\end{Soutput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> print(inttree)
+\end{Sinput}
+\begin{Soutput}
+Intensity tree estimate of point patterns with 3604 points.
+
+15 covariables used, with names: elev grad Al B Ca Cu Fe K Mg Mn P Zn N N_min pH 
+Spatial intensity tree with 29 nodes and 15 terminal nodes.elev grad Al B Ca Cu Fe K Mg Mn P Zn N N_min pH 
+The used covariates were in the object beisoilres .
+\end{Soutput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> predict(object = inttree, newdata = c(100,100))
+\end{Sinput}
+\begin{Soutput}
+[1] 0.001199684
+\end{Soutput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.006340694 0.011762846 0.002689873 0.006340694 0.006340694 0.007632621
+ [7] 0.002689873 0.011762846 0.006340694 0.018764660
+\end{Soutput}
+\end{Schunk}
+\section{Fitting a spatial intensity forest}
 
 
 \begin{Schunk}

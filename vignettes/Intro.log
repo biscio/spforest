@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  14 AUG 2024 14:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  14 AUG 2024 16:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -176,27 +176,27 @@ Package pdftex.def Info: Intro-004.pdf  used on input line 40.
 (pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./Intro-004.pdf>] [2] (./I
-ntro.aux) ) 
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./Intro-004.pdf>] [2] [3] 
+(./Intro.aux) ) 
 Here is how much of TeX's memory you used:
  2377 strings out of 481239
- 34980 string characters out of 5920377
- 268701 words of memory out of 5000000
+ 35022 string characters out of 5920377
+ 271701 words of memory out of 5000000
  17617 multiletter control sequences out of 15000+600000
  540850 words of font info for 43 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  34i,6n,29p,202b,292s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/sha
-re/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1
-/public/cm-super/sfrm1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfr
-m1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/shar
-e/texmf/fonts/type1/public/cm-super/sfst1095.pfb></usr/share/texmf/fonts/type1/
-public/cm-super/sfti1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt
-1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on Intro.pdf (2 pages, 238421 bytes).
+{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr
+/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/t
+ype1/public/cm-super/sfrm1095.pfb></usr/share/texmf/fonts/type1/public/cm-super
+/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/
+share/texmf/fonts/type1/public/cm-super/sfst1095.pfb></usr/share/texmf/fonts/ty
+pe1/public/cm-super/sfti1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/
+sftt1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb>
+Output written on Intro.pdf (3 pages, 249953 bytes).
 PDF statistics:
- 64 PDF objects out of 1000 (max. 8388607)
- 33 compressed objects within 1 object stream
+ 67 PDF objects out of 1000 (max. 8388607)
+ 35 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  10 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -104,7 +104,7 @@ inttree <- treerec(
   minpts = 50,
   minsplitq = 0.5,
   maxsplitq = 0.5,
-  inforest=F
+  inforest=FALSE
 )
 @
 
@@ -114,19 +114,18 @@ together with methods to print, plot, summarise and predict the intensity in a g
 <<>>=
 head(summary(inttree), n = 10)
 @
-<<>>=
-
-@
 
 <<>>=
 print(inttree)
 @
 
 <<>>=
-predict(object = inttree, newdat = c(100,100))
+predict(object = inttree, newdata = c(100,100))
 @
 
-
+<<>>=
+predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
+@
 \section{Fitting a spatial intensity forest}
 
 

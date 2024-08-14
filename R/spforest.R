@@ -9,14 +9,16 @@
 #' @examples
 print.spforest <- function(x, ...) {
   ncov <- length(x$listcov)
-
+  a <- paste0(names(x$listcov), collapse="", sep=", ")
+  namecov <- paste0(substr(a,1,nchar(a)-2), ".")
+  
   cat(paste(
     "Intensity forest estimate of point patterns with",
     x$X$n, "points.\n\n"
   ))
 
   cat(paste(ncov, "covariables used, with names: "))
-  cat(names(x$listcov), "\n")
+  cat(namecov, "\n")
 
   cat(
     "Spatial intensity forest with", length(x$trees), "trees."

@@ -43,13 +43,12 @@ summary.sptree <- function(object, fulltree = F, ...) {
   if (fulltree) {
     output <- Reduce(rbind, object$tree)
     rownames(output) <- NULL
-    print(output)
   } else {
     # Just remove the imp and nodeID
     output <- Reduce(rbind, object$tree)[, c(2, 3, 4, 5, 6, 7, 8)]
     rownames(output) <- NULL
-    print(output)
   }
+  output
 }
 
 
@@ -253,7 +252,10 @@ predict.sptree_list <- function(object, newdata, ...) {
 #' predict(object = arbre, newdata = c(100, 100))
 predict.sptree <- function(object, newdata, ...) {
   # Test if the covariates are im object
-  whichcovim <- unlist(lapply(object$listcov, spatstat.geom::is.im))
+  whichcovim <- unlist(lapply(
+    object$listcov,
+    spatstat.geom::is.im
+  ))
   if (!all(whichcovim)) {
     stop("It appears that in predict.sptree, the covariables of the
              tree are not spatstat im objects")

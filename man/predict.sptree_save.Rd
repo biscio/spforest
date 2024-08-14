@@ -4,7 +4,7 @@
 \alias{predict.sptree_save}
 \title{Tree prediction (Save when attempting another version)}
 \usage{
-predict.sptree_save(object, newdata, ...)
+\method{predict}{sptree_save}(object, newdata, ...)
 }
 \arguments{
 \item{object}{A spatial intensity tree return by treerec function}
@@ -20,17 +20,21 @@ A number .....
 Tree prediction (Save when attempting another version)
 }
 \examples{
-arbre <- treerec(X = spatstat.data::bei,
-                threshold = 1000,
-                score = "lcv2",
-                listcovariates = list(
-                                grad = spatstat.data::bei.extra$grad,
-                                elev = spatstat.data::bei.extra$elev
-                                ),
-                mtry = 1,
-                tol = Inf,
-                minpts = 50)
-arbre$listcov <- list(grad = spatstat.data::bei.extra$grad,
-                      elev = spatstat.data::bei.extra$elev)
-predict(object=arbre, newdata=c(100,100))
+arbre <- treerec(
+  X = spatstat.data::bei,
+  threshold = 1000,
+  score = "lcv2",
+  listcovariates = list(
+    grad = spatstat.data::bei.extra$grad,
+    elev = spatstat.data::bei.extra$elev
+  ),
+  mtry = 1,
+  tol = Inf,
+  minpts = 50
+)
+arbre$listcov <- list(
+  grad = spatstat.data::bei.extra$grad,
+  elev = spatstat.data::bei.extra$elev
+)
+predict(object = arbre, newdata = c(100, 100))
 }

@@ -13,7 +13,8 @@ treerec(
   tol = 1,
   minpts = 0,
   minsplitq = 0.5,
-  maxsplitq = 0.5
+  maxsplitq = 0.5,
+  inforest = T
 )
 }
 \arguments{

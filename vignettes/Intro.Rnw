@@ -103,7 +103,8 @@ inttree <- treerec(
   tol = Inf,
   minpts = 50,
   minsplitq = 0.5,
-  maxsplitq = 0.5
+  maxsplitq = 0.5,
+  inforest=F
 )
 @
 
@@ -113,13 +114,16 @@ together with methods to print, plot, summarise and predict the intensity in a g
 <<>>=
 head(summary(inttree), n = 10)
 @
+<<>>=
+
+@
 
 <<>>=
 print(inttree)
 @
 
 <<>>=
-plot(inttree)
+predict(object = inttree, newdat = c(100,100))
 @
 
 

@@ -58,7 +58,8 @@ treerec <- function(X,
                     tol = 1,
                     minpts = 0,
                     minsplitq = 0.5,
-                    maxsplitq = 0.5) {
+                    maxsplitq = 0.5,
+                    inforest = T) {
   # Sanity checks
   if (threshold <= 0) {
     stop("Threshold must be strictly greater than 0.")
@@ -224,14 +225,25 @@ treerec <- function(X,
     # x$tree[[i]]$improvement <- NULL
   }
 
-  output <- list(
-    tree = intensity_tree,
-    X = X,
-    namecov = names(listcovariates),
-    namelist = as.character(match.call()[5]),
-    im = imoutput
-  )
-
+  if (inforest) {
+    output <- list(
+      tree = intensity_tree,
+      X = X,
+      namecov = names(listcovariates),
+      namelist = as.character(match.call()[5]),
+      im = imoutput
+    )
+  } else {
+    output <- list(
+      tree = intensity_tree,
+      X = X,
+      namecov = names(listcovariates),
+      namelist = as.character(match.call()[5]),
+      listcov = listcovariates,
+      im = imoutput
+    )
+  }
+  
   class(output) <- "sptree" # For when I will define class
 
   return(output)

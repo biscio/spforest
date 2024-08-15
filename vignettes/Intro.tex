@@ -2,7 +2,6 @@
 
 % \VignetteIndexEntry{Getting Started with Spatstat}
 
-
 \usepackage{graphicx}
 \usepackage{anysize}
 \marginsize{2cm}{2cm}{2cm}{2cm}
@@ -37,7 +36,9 @@ The covariates are loaded in the the package \pkg{sandbox}
 in the list \texttt{beisoil}.
 
 
-\includegraphics{Intro-004}
+\includegraphics{Intro-003}
+
+
 
 Each element of the list \texttt{beisoil} is a \texttt{im} object from the package 
 \pkg{spatstat-geom}. Roughly, this can be seen as a pixel images. 
@@ -72,15 +73,10 @@ to a point pattern.
 \begin{Sinput}
 > inttree <- treerec(
 +   X = spatstat.data::bei,
-+   threshold = 30000,
 +   score = "lcv2",
-+   listcovariates = beisoilres,
 +   mtry = 1,
-+   tol = Inf,
-+   minpts = 50,
-+   minsplitq = 0.5,
-+   maxsplitq = 0.5,
-+   inforest=FALSE
++   minpts = 500,
++   listcovariates = beisoilres
 + )
 \end{Sinput}
 \end{Schunk}
@@ -88,6 +84,8 @@ to a point pattern.
 The output is an object of class \texttt{sptree} define in the package \pkg{Rsandbox} 
 together with methods to print, plot, summarise and predict the intensity in a given region.
 
+The function \texttt{summarise} displayed the intensity tree 
+as a data.frame where each row represent a leave of the tree.
 \begin{Schunk}
 \begin{Sinput}
 > head(summary(inttree), n = 10)
@@ -98,12 +96,12 @@ together with methods to print, plot, summarise and predict the intensity in a g
  [2,] 4             5              11        3.318985   1      0.004941872   
  [3,] 6             7              1         141.62     1      0.009260171   
  [4,] 8             9              15        4.599173   1      0.00862606    
- [5,] 10            11             10        312.0571   1      0.001260587   
- [6,] 12            13             1         135.46     1      0.007189594   
- [7,] 14            15             6         7.059457   1      0.01132953    
- [8,] 16            17             6         6.538088   1      0.01234412    
- [9,] 18            19             15        4.789915   1      0.004915321   
-[10,] NA            NA             NA        NA         0      0.0005678233  
+ [5,] NA            NA             NA        NA         0      0.001260587   
+ [6,] 10            11             1         135.46     1      0.007189594   
+ [7,] 12            13             6         7.059457   1      0.01132953    
+ [8,] 14            15             6         6.538088   1      0.01234412    
+ [9,] NA            NA             NA        NA         0      0.004915321   
+[10,] NA            NA             NA        NA         0      0.003692308   
       scr_parent
  [1,] NA        
  [2,] -17831.8  
@@ -114,10 +112,11 @@ together with methods to print, plot, summarise and predict the intensity in a g
  [7,] -11003.78 
  [8,] -5200.747 
  [9,] -5200.747 
-[10,] -1069.192 
+[10,] -4501.831 
 \end{Soutput}
 \end{Schunk}
 
+The function \texttt{print} displays the number of points in the original point pattern, the number of covariates, their names and how many nodes and terminal nodes there is in the tree.
 \begin{Schunk}
 \begin{Sinput}
 > print(inttree)
@@ -126,17 +125,20 @@ together with methods to print, plot, summarise and predict the intensity in a g
 Intensity tree estimate of point patterns with 3604 points.
 
 15 covariables used, with names: elev grad Al B Ca Cu Fe K Mg Mn P Zn N N_min pH 
-Spatial intensity tree with 29 nodes and 15 terminal nodes.elev grad Al B Ca Cu Fe K Mg Mn P Zn N N_min pH 
+Spatial intensity tree with 25 nodes and 13 terminal nodes. 
 The used covariates were in the object beisoilres .
 \end{Soutput}
 \end{Schunk}
+
+The \texttt{predict} function can be used to return the intensity tree estimate of the intensity in
+in new locations. It accepts points in the xy-format or as a \texttt{ppp} object from \spst.
 
 \begin{Schunk}
 \begin{Sinput}
 > predict(object = inttree, newdata = c(100,100))
 \end{Sinput}
 \begin{Soutput}
-[1] 0.001199684
+[1] 0.003692308
 \end{Soutput}
 \end{Schunk}
 
@@ -145,12 +147,25 @@ The used covariates were in the object beisoilres .
 > predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
- [1] 0.006340694 0.011762846 0.002689873 0.006340694 0.006340694 0.007632621
- [7] 0.002689873 0.011762846 0.006340694 0.018764660
+ [1] 0.013542320 0.020378549 0.007790974 0.026230530 0.011311216 0.020378549
+ [7] 0.004915321 0.011370399 0.003692308 0.001260587
 \end{Soutput}
 \end{Schunk}
+
+Finally, a method for plotting the estimated intensity is implemented.
+\begin{Schunk}
+\begin{Sinput}
+> plot(inttree)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-011}
+
+
 \section{Fitting a spatial intensity forest}
 
+The function \texttt{RforestPP} compute a random intensity forest. 
+The function allows to parallelise the computation by allocating 
+each tree intensity tree computation to a core, via use of \texttt{mclapply}. 
 
 \begin{Schunk}
 \begin{Sinput}
@@ -158,19 +173,120 @@ The used covariates were in the object beisoilres .
 +   X = spatstat.data::bei,
 +   listcovariates = beisoilres,
 +   score = "lcv2",
-+   p = 1,
++   p = 0,
 +   Ntree = 3,
-+   threshold = 30000,
-+   cores_trees = 1,
 +   mtry = 1 / 3,
-+   tol = Inf,
-+   minpts = 50,
-+   minsplitq = 0.5,
-+   maxsplitq = 0.5
++   minpts = 500,
++   cores_trees = 1
 + )
 \end{Sinput}
 \end{Schunk}
 
+The output is an object of the class \texttt{spforest} define in the package \pkg{Rsandbox} together a set of methods defined below.
+
+\subsection{Standard methods on spforest object}
+
+The \texttt{print} function returns the main information on the forest intensity estimate.
+\begin{Schunk}
+\begin{Sinput}
+> print(forest)
+\end{Sinput}
+\begin{Soutput}
+Intensity forest estimate of point patterns with 3604 points.
+
+15 covariables used, with names: elev, grad, Al, B, Ca, Cu, Fe, K, Mg, Mn, P, Zn, N, N_min, pH. 
+Spatial intensity forest with 3 trees.
+\end{Soutput}
+\end{Schunk}
+
+The \texttt{plot} function of an \texttt{spforest} object 
+return an \texttt{im} obect from \spst and plot it. 
+\begin{Schunk}
+\begin{Sinput}
+> plot(forest)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-014}
+
+Prediction in new area can be obtained via \texttt{predict} which 
+accept as input a xy-vector for one point, or a \texttt{ppp} object.
+
+\begin{Schunk}
+\begin{Sinput}
+> predict(object = forest, newdata = runifpoint(n=10, win = bei$window))
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.007603358 0.003823217 0.004794303 0.008459363 0.002560961 0.002859913
+ [7] 0.012645331 0.003809530 0.003398178 0.002191520
+\end{Soutput}
+\end{Schunk}
+
+Up to some formatting on \texttt{newdata}, this equivalent to 
+\begin{Schunk}
+\begin{Sinput}
+> imspforest(forest)[runifpoint(n=10, win = bei$window)]
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.004794303 0.014151474 0.005683891 0.011402006 0.017171075 0.009880268
+ [7] 0.002560961 0.005527678 0.005287343 0.004421635
+\end{Soutput}
+\end{Schunk}
+
+
+
+\subsection{Working with Random intensity forest}
+
+One of the main interest of random forest is the ability to compute 
+a variable importance and an Out-Of-Bag (OOB) Score. 
+
+The OOB score is return by the function \texttt{OOBscr.spforest}.
+\begin{Schunk}
+\begin{Sinput}
+> OOBscr.spforest(forest = forest, cores = 1)
+\end{Sinput}
+\begin{Soutput}
+[1] -12668.53
+\end{Soutput}
+\end{Schunk}
+
+The importance score of each variables can be computed on each tree 
+of the forest with the function \texttt{importance.spforest}. 
+The second argument is the position of the covariates 
+we are analysing in the argument \texttt{listcovariates} of \texttt{RforestPP}.
+\begin{Schunk}
+\begin{Sinput}
+> importance.spforest(forest = forest, id_cov=3)
+\end{Sinput}
+\begin{Soutput}
+[1] 0 0 0
+\end{Soutput}
+\end{Schunk}
+
+To analyse how the VIP varies accross the trees, we can plot 
+use a boxplot. 
+\begin{Schunk}
+\begin{Sinput}
+> boxplot_spforest(forest)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-019}
+
+However, it is more traditional in random forest to take the mean of the 
+VIP of all the trees which is made in the function \texttt{vipplot.spforest}.
+\begin{Schunk}
+\begin{Sinput}
+> vipplot.spforest(forest)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-020}
+
+It is also possible to immediately sort the VIP in decreasing order. Note however than when the number of trees is too small, there can be some variation between the two run of the function \texttt{vipplot.spforest}.
+\begin{Schunk}
+\begin{Sinput}
+> vipplot.spforest(forest, sorted = T)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-021}
 
 
 \begin{thebibliography}{10}

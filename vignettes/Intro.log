@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  14 AUG 2024 16:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.20)  15 AUG 2024 20:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -89,20 +89,20 @@ File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 (./Intro.aux)
 \openout1 = `Intro.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -158,45 +158,75 @@ e
 ))
 (./Intro-concordance.tex)
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 28.
+(Font)              <12> on input line 27.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 28.
+(Font)              <8> on input line 27.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 28.
+(Font)              <6> on input line 27.
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
-8.
+7.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
-<Intro-004.pdf, id=2, 433.62pt x 144.54pt>
-File: Intro-004.pdf Graphic file (type pdf)
-<use Intro-004.pdf>
-Package pdftex.def Info: Intro-004.pdf  used on input line 40.
+<Intro-003.pdf, id=2, 433.62pt x 144.54pt>
+File: Intro-003.pdf Graphic file (type pdf)
+<use Intro-003.pdf>
+Package pdftex.def Info: Intro-003.pdf  used on input line 39.
 (pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./Intro-004.pdf>] [2] [3] 
-(./Intro.aux) ) 
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./Intro-003.pdf>] [2]
+<Intro-011.pdf, id=36, 578.16pt x 289.08pt>
+File: Intro-011.pdf Graphic file (type pdf)
+<use Intro-011.pdf>
+Package pdftex.def Info: Intro-011.pdf  used on input line 161.
+(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
+ [3 <./Intro-011.pdf>]
+<Intro-014.pdf, id=49, 578.16pt x 289.08pt>
+File: Intro-014.pdf Graphic file (type pdf)
+<use Intro-014.pdf>
+Package pdftex.def Info: Intro-014.pdf  used on input line 209.
+(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
+<Intro-019.pdf, id=50, 578.16pt x 289.08pt>
+File: Intro-019.pdf Graphic file (type pdf)
+<use Intro-019.pdf>
+Package pdftex.def Info: Intro-019.pdf  used on input line 272.
+(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
+
+[4 <./Intro-014.pdf>]
+<Intro-020.pdf, id=62, 578.16pt x 289.08pt>
+File: Intro-020.pdf Graphic file (type pdf)
+<use Intro-020.pdf>
+Package pdftex.def Info: Intro-020.pdf  used on input line 281.
+(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
+<Intro-021.pdf, id=63, 578.16pt x 289.08pt>
+File: Intro-021.pdf Graphic file (type pdf)
+<use Intro-021.pdf>
+Package pdftex.def Info: Intro-021.pdf  used on input line 289.
+(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
+ [5 <./Intro-019.pdf> <./Intro-020.pdf> <./Intro-021.pdf>] [6] (./Intro.aux) ) 
 Here is how much of TeX's memory you used:
- 2377 strings out of 481239
- 35022 string characters out of 5920377
- 271701 words of memory out of 5000000
- 17617 multiletter control sequences out of 15000+600000
- 540850 words of font info for 43 fonts, out of 8000000 for 9000
+ 2409 strings out of 481239
+ 35821 string characters out of 5920377
+ 270704 words of memory out of 5000000
+ 17648 multiletter control sequences out of 15000+600000
+ 541626 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,6n,29p,202b,292s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr
-/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/t
-ype1/public/cm-super/sfrm1095.pfb></usr/share/texmf/fonts/type1/public/cm-super
-/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/
-share/texmf/fonts/type1/public/cm-super/sfst1095.pfb></usr/share/texmf/fonts/ty
-pe1/public/cm-super/sfti1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/
-sftt1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on Intro.pdf (3 pages, 249953 bytes).
+ 34i,6n,29p,246b,292s stack positions out of 5000i,500n,10000p,200000b,80000s
+{
+/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texmf/fon
+ts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf/fonts/type1/public/cm-s
+uper/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1095.pfb></
+usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/font
+s/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-su
+per/sfst1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1095.pfb></u
+sr/share/texmf/fonts/type1/public/cm-super/sftt1095.pfb></usr/share/texmf/fonts
+/type1/public/cm-super/sftt1200.pfb>
+Output written on Intro.pdf (6 pages, 301157 bytes).
 PDF statistics:
- 67 PDF objects out of 1000 (max. 8388607)
- 35 compressed objects within 1 object stream
+ 116 PDF objects out of 1000 (max. 8388607)
+ 66 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 10 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 35 words of extra memory for PDF output out of 10000 (max. 10000000)
 

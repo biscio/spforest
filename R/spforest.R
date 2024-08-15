@@ -9,9 +9,9 @@
 #' @examples
 print.spforest <- function(x, ...) {
   ncov <- length(x$listcov)
-  a <- paste0(names(x$listcov), collapse="", sep=", ")
-  namecov <- paste0(substr(a,1,nchar(a)-2), ".")
-  
+  a <- paste0(names(x$listcov), collapse = "", sep = ", ")
+  namecov <- paste0(substr(a, 1, nchar(a) - 2), ".")
+
   cat(paste(
     "Intensity forest estimate of point patterns with",
     x$X$n, "points.\n\n"
@@ -94,9 +94,9 @@ plot.spforest <- function(x, ..., main) {
 #' @examples
 predict.spforest <- function(object, newdata, ...) {
   # Test if the covariates are im object
-  
+
   predim <- imspforest(forest)
-  
+
   # Handles the newdata to be in the correct form
   if (missing(newdata) || is.null(newdata)) {
     X <- object$X
@@ -112,7 +112,7 @@ predict.spforest <- function(object, newdata, ...) {
     }
     X <- newdata
   }
-  
+
   return(predim[newdata])
 }
 
@@ -225,18 +225,31 @@ boxplot_spforest <- function(x, cores = 1, ...) {
 #' @export
 #'
 #' @examples
-vipplot.spforest <- function(x, cores = 1, ...) {
+vipplot.spforest <- function(x, sorted = F, cores = 1, ...) {
   vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
     importance.spforest(x, id_cov = i, cores = cores)
   })
 
   avvip <- unlist(lapply(vipval, mean))
 
-  graphics::barplot(avvip,
-    names.arg = names(x$listcov),
-    xlab = "Variables",
-    ylab = "Variable Importance"
+  avvipsort <- sort(avvip,
+    decreasing = T,
+    index.return = T
   )
+
+  if (sorted) {
+    graphics::barplot(avvipsort$x,
+      names.arg = names(x$listcov)[avvipsort$ix],
+      xlab = "Variables",
+      ylab = "Variable Importance"
+    )
+  } else {
+    graphics::barplot(avvip,
+      names.arg = names(x$listcov),
+      xlab = "Variables",
+      ylab = "Variable Importance"
+    )
+  }
 }
 # vipplot.spforest_old <- function(x, cores = 1, ...) {
 #   vipval <- sapply(X = seq_along(x$listcov), FUN = function(i) {

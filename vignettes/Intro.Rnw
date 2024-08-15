@@ -2,10 +2,6 @@
 
 % \VignetteIndexEntry{Getting Started with Spatstat}
 
-<<echo=FALSE,results=hide,fig=FALSE>>=
-options(SweaveHooks = list(fig = function() par(mar = c(1, 1, 1, 1))))
-@ 
-
 \usepackage{graphicx}
 \usepackage{anysize}
 \marginsize{2cm}{2cm}{2cm}{2cm}
@@ -66,6 +62,11 @@ for (i in 1:15) {
 }
 @
 
+<<echo=FALSE, results=hide>>=
+par(mfrow = c(1, 1), mar = c(2.5, 2.5, 0.5, 0.5))
+@
+
+
 Each element of the list \texttt{beisoil} is a \texttt{im} object from the package 
 \pkg{spatstat-geom}. Roughly, this can be seen as a pixel images. 
 In order to be able to work with this data, we need to transform them 
@@ -106,13 +107,19 @@ inttree <- treerec(
 The output is an object of class \texttt{sptree} define in the package \pkg{Rsandbox} 
 together with methods to print, plot, summarise and predict the intensity in a given region.
 
+The function \texttt{summarise} displayed the intensity tree 
+as a data.frame where each row represent a leave of the tree.
 <<>>=
 head(summary(inttree), n = 10)
 @
 
+The function \texttt{print} displays the number of points in the original point pattern, the number of covariates, their names and how many nodes and terminal nodes there is in the tree.
 <<>>=
 print(inttree)
 @
+
+The \texttt{predict} function can be used to return the intensity tree estimate of the intensity in
+in new locations. It accepts points in the xy-format or as a \texttt{ppp} object from \spst.
 
 <<>>=
 predict(object = inttree, newdata = c(100,100))
@@ -122,10 +129,17 @@ predict(object = inttree, newdata = c(100,100))
 predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
 @
 
+Finally, a method for plotting the estimated intensity is implemented.
+<<fig=TRUE,echo=TRUE, width=8,height=4>>=
+plot(inttree)
+@
 
 
 \section{Fitting a spatial intensity forest}
 
+The function \texttt{RforestPP} compute a random intensity forest. 
+The function allows to parallelise the computation by allocating 
+each tree intensity tree computation to a core, via use of \texttt{mclapply}. 
 
 <<>>=
 forest <- RforestPP(
@@ -140,49 +154,69 @@ forest <- RforestPP(
 )
 @
 
+The output is an object of the class \texttt{spforest} define in the package \pkg{Rsandbox} together a set of methods defined below.
+
 \subsection{Standard methods on spforest object}
 
-MAKE a warning when $p=1$ ??
-
+The \texttt{print} function returns the main information on the forest intensity estimate.
 <<>>=
 print(forest)
 @
 
-<<>>=
+The \texttt{plot} function of an \texttt{spforest} object 
+return an \texttt{im} obect from \spst and plot it. 
+<<fig=TRUE,echo=TRUE, width=8,height=4>>=
 plot(forest)
 @
+
+Prediction in new area can be obtained via \texttt{predict} which 
+accept as input a xy-vector for one point, or a \texttt{ppp} object.
 
 <<>>=
 predict(object = forest, newdata = runifpoint(n=10, win = bei$window))
 @
 
-Up to some formating on \texttt{newdata}, this equivalent to 
+Up to some formatting on \texttt{newdata}, this equivalent to 
 <<>>=
 imspforest(forest)[runifpoint(n=10, win = bei$window)]
 @
 
-<<>>=
-boxplot_spforest(forest)
-@
 
-<<>>=
-vipplot.spforest(forest)
-@
 
 \subsection{Working with Random intensity forest}
 
-<<>>=
-importance.spforest(forest = forest, id_cov=3)
-@
+One of the main interest of random forest is the ability to compute 
+a variable importance and an Out-Of-Bag (OOB) Score. 
 
+The OOB score is returned by the function \texttt{OOBscr.spforest}.
 <<>>=
 OOBscr.spforest(forest = forest, cores = 1)
 @
 
+The importance score of each variables can be computed on each tree 
+of the forest with the function \texttt{importance.spforest}. 
+The second argument is the position of the covariates 
+we are analysing in the argument \texttt{listcovariates} of \texttt{RforestPP}.
+<<>>=
+importance.spforest(forest = forest, id_cov=3)
+@
 
+To analyse how the VIP varies accross the trees, we can plot 
+use a boxplot. 
+<<fig=TRUE,echo=TRUE, width=8,height=4>>=
+boxplot_spforest(forest)
+@
 
+However, it is more traditional in random forest to take the mean of the 
+VIP of all the trees which is made in the function \texttt{vipplot.spforest}.
+<<fig=TRUE,echo=TRUE, width=8,height=4>>=
+vipplot.spforest(forest)
+@
 
-
+It is also possible to immediately sort the VIP in decreasing order. Note however than when the number of trees is too small, there can be some variation between the two run of the function \texttt{vipplot.spforest}.
+<<fig=TRUE,echo=TRUE, width=8,height=4>>=
+vipplot.spforest(forest, sorted = T)
+@
 
 
 \begin{thebibliography}{10}

@@ -507,13 +507,18 @@ g <- function(forest, cores = 1) {
   return(output)
 }
 
+lowerim <- lapply(beisoilres, 
+                  FUN=function(j) {
+                    as.im(j, dimyx=c(51,101))
+                    })
+
 forest <- RforestPP(
   X = spatstat.data::bei,
   listcovariates = beisoilres,
   score = "lcv2",
   p = 1 / 2,
-  Ntree = 10,
-  threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
+  Ntree = 50,
+  threshold = spatstat.geom::area(spatstat.data::bei) / 2^8,
   cores_trees = 1,
   mtry = 1 / 3,
   tol = Inf,
@@ -521,6 +526,24 @@ forest <- RforestPP(
   minsplitq = 0.5,
   maxsplitq = 0.5
 )
+format(object.size(forest), units = "MB")
+
+forest2 <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = lowerim,
+  score = "lcv2",
+  p = 1 / 2,
+  Ntree = 50,
+  threshold = spatstat.geom::area(spatstat.data::bei) / 2^8,
+  cores_trees = 1,
+  mtry = 1 / 3,
+  tol = Inf,
+  minpts = 50,
+  minsplitq = 0.5,
+  maxsplitq = 0.5
+)
+format(object.size(forest2), units = "MB")
+
 
 microbenchmark(OOBscr.spforest(forest=forest, cores=1), times = 100)
 microbenchmark(g(forest=forest, cores=1), times = 100)

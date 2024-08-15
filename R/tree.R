@@ -52,19 +52,19 @@ rand_covar <- function(listcovariates, mtry = 1) {
 #' )
 treerec <- function(X,
                     score = "lcv",
-                    threshold = spatstat.geom::area(X) / 2^4,
+                    threshold = spatstat.geom::area(X) / 1e4,
                     listcovariates = NULL,
                     mtry = 1,
-                    tol = 1,
-                    minpts = 0,
+                    tol = Inf,
+                    minpts = spatstat.geom::npoints(X)/10,
                     minsplitq = 0.5,
                     maxsplitq = 0.5,
-                    inforest = T) {
+                    inforest = F) {
   # Sanity checks
-  if (threshold <= 0) {
-    stop("Threshold must be strictly greater than 0.")
+  if (threshold <= 0 & minpts <= 0) {
+    stop("Either threshold or minpts must be strictly greater than 0.")
   }
-
+  
   # The code works quicker when the windows is on a mask
   spatstat.geom::Window(X) <- spatstat.geom::as.mask(spatstat.geom::Window(X),
                                                      xy = listcovariates[[1]])
@@ -98,7 +98,7 @@ treerec <- function(X,
           tree = list(root),
           X = X,
           namecov = names(listcovariates),
-          namelist = as.character(match.call()[5]),
+          namelist = as.character(match.call()[4]),
           im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
                      W=X$window)
       )
@@ -230,7 +230,7 @@ treerec <- function(X,
       tree = intensity_tree,
       X = X,
       namecov = names(listcovariates),
-      namelist = as.character(match.call()[5]),
+      namelist = as.character(match.call()[4]),
       im = imoutput
     )
   } else {
@@ -238,7 +238,7 @@ treerec <- function(X,
       tree = intensity_tree,
       X = X,
       namecov = names(listcovariates),
-      namelist = as.character(match.call()[5]),
+      namelist = as.character(match.call()[4]),
       listcov = listcovariates,
       im = imoutput
     )

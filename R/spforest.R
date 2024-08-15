@@ -82,6 +82,46 @@ plot.spforest <- function(x, ..., main) {
 
 
 
+#' Forest prediction
+#'
+#' @param object A spatial intensity forest return by RforestPP function
+#' @param newdata a xy vector or a ppp object
+#' @param ... Additional argument
+#'
+#' @return A number .....
+#' @export
+#'
+#' @examples
+predict.spforest <- function(object, newdata, ...) {
+  # Test if the covariates are im object
+  
+  predim <- imspforest(forest)
+  
+  # Handles the newdata to be in the correct form
+  if (missing(newdata) || is.null(newdata)) {
+    X <- object$X
+  } else if (!spatstat.geom::is.ppp(newdata)) {
+    X <- spatstat.geom::ppp(
+      x = newdata[1],
+      y = newdata[2],
+      window = object$X$window
+    )
+  } else if (spatstat.geom::is.ppp(newdata)) {
+    if (newdata$n == 0) {
+      return(NULL)
+    }
+    X <- newdata
+  }
+  
+  return(predim[newdata])
+}
+
+
+
+
+
+
+
 
 #' Importance of one covariable
 #'

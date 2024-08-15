@@ -96,15 +96,10 @@ to a point pattern.
 <<>>=
 inttree <- treerec(
   X = spatstat.data::bei,
-  threshold = 30000,
   score = "lcv2",
-  listcovariates = beisoilres,
   mtry = 1,
-  tol = Inf,
-  minpts = 50,
-  minsplitq = 0.5,
-  maxsplitq = 0.5,
-  inforest=FALSE
+  minpts = 500,
+  listcovariates = beisoilres
 )
 @
 
@@ -126,6 +121,9 @@ predict(object = inttree, newdata = c(100,100))
 <<>>=
 predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
 @
+
+
+
 \section{Fitting a spatial intensity forest}
 
 
@@ -134,17 +132,56 @@ forest <- RforestPP(
   X = spatstat.data::bei,
   listcovariates = beisoilres,
   score = "lcv2",
-  p = 1,
+  p = 0,
   Ntree = 3,
-  threshold = 30000,
-  cores_trees = 1,
   mtry = 1 / 3,
-  tol = Inf,
-  minpts = 50,
-  minsplitq = 0.5,
-  maxsplitq = 0.5
+  minpts = 500,
+  cores_trees = 1
 )
 @
+
+\subsection{Standard methods on spforest object}
+
+MAKE a warning when $p=1$ ??
+
+<<>>=
+print(forest)
+@
+
+<<>>=
+plot(forest)
+@
+
+<<>>=
+predict(object = forest, newdata = runifpoint(n=10, win = bei$window))
+@
+
+Up to some formating on \texttt{newdata}, this equivalent to 
+<<>>=
+imspforest(forest)[runifpoint(n=10, win = bei$window)]
+@
+
+<<>>=
+boxplot_spforest(forest)
+@
+
+<<>>=
+vipplot.spforest(forest)
+@
+
+\subsection{Working with Random intensity forest}
+
+<<>>=
+importance.spforest(forest = forest, id_cov=3)
+@
+
+<<>>=
+OOBscr.spforest(forest = forest, cores = 1)
+@
+
+
+
+
 
 
 

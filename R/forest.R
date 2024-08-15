@@ -39,11 +39,11 @@ RforestPP <- function(X,
                       score = "lcv",
                       p = 0.8,
                       Ntree = 10,
-                      threshold = spatstat.geom::area(X) / 2^4,
+                      threshold = spatstat.geom::area(X) / 1e4,
                       cores_trees = 1,
                       mtry = 1 / 3,
                       tol = Inf,
-                      minpts = 0,
+                      minpts = spatstat.geom::npoints(X) / 10,
                       minsplitq = 0.5,
                       maxsplitq = 0.5) {
   nbcov <- length(listcovariates)
@@ -86,7 +86,8 @@ RforestPP <- function(X,
       tol = tol,
       minpts = minpts,
       minsplitq = minsplitq,
-      maxsplitq = maxsplitq
+      maxsplitq = maxsplitq,
+      inforest = T
     )
 
     # TODO: change printing methods to take tree from a forest into account

@@ -7,14 +7,14 @@
 treerec(
   X,
   score = "lcv",
-  threshold = spatstat.geom::area(X)/2^4,
+  threshold = spatstat.geom::area(X)/10000,
   listcovariates = NULL,
   mtry = 1,
-  tol = 1,
-  minpts = 0,
+  tol = Inf,
+  minpts = spatstat.geom::npoints(X)/10,
   minsplitq = 0.5,
   maxsplitq = 0.5,
-  inforest = T
+  inforest = F
 )
 }
 \arguments{

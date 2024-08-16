@@ -26,6 +26,153 @@
 \date{For \pkg{Rsandbox} version \texttt{0.0.0.9000}}
 \maketitle
 
+
+
+\section{Integration with \Spst}
+
+The packate \pkg{Rsandbox} relies on \spst to work.  
+For the user, it means that a point pattern must be input as a \texttt{ppp} object 
+and the covariates as \texttt{im} object rather than raster.
+
+Specifically, \pkg{Rsandbox}  depends on  \pkg{spatstat.model},
+\pkg{spatstat.geom} and \pkg{spatstat.random}.
+In this document, we will additionally use the package \pkg{spatstat.data}.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(Rsandbox)
+> library(spatstat.data)
+\end{Sinput}
+\end{Schunk}
+
+\section{Getting started}
+
+We need a point pattern as a \texttt{ppp} object, 
+together with a list of covariates as list of \texttt{im} objects
+
+As an example we take the data \texttt{bei} and \texttt{bei.extra} from 
+\spst. 
+\begin{Schunk}
+\begin{Sinput}
+> par(mfrow = c(1, 3), mar = c(0, 1, 0, 0))
+> plot(bei, pch=16, cex = 0.5, main = "")
+> plot(bei.extra[[1]], ribbon = F, main = "")
+> plot(bei.extra[[2]], ribbon = F, main = "")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-003}
+
+The function \texttt{RforestPP} generate 
+a random forest intensity estimate. 
+
+\begin{Schunk}
+\begin{Sinput}
+> forest <- RforestPP(
++   X = bei,
++   listcovariates = bei.extra,
++   score = "lcv2",
++   p = 0,
++   Ntree = 3,
++   mtry = 1 / 3,
++   minpts = 500,
++   cores_trees = 1
++ )
+\end{Sinput}
+\end{Schunk}
+
+The arguments: 
+\begin{itemize}
+  \item \texttt{score}: it controls the score used to compare different splits.
+  \item \texttt{p}: it controls the thinning process of points for each tree. 
+  If $p>0$, a $p$-thinning is applied on the pattern, 
+  and if $p=0$, the points are bootstrapped.
+  \item \texttt{Ntree}: It set the number of intensity trees in the forest.
+  \item \texttt{mtry} is the probability at which each covariable will be at each split.
+  \item \texttt{minpts} is the stopping criterion. 
+  \item \texttt{cores{\textunderscore}trees} is use of parallelisation in the sense that 
+  each intensity trees computation will be allocated to a core. 
+\end{itemize}
+
+
+
+\section{Usual workflow with random intensity forest}
+
+Typically, we get a point pattern as a \texttt{ppp} object, 
+e.g. 
+\begin{Schunk}
+\begin{Sinput}
+> bei
+\end{Sinput}
+\begin{Soutput}
+Planar point pattern: 3604 points
+window: rectangle = [0, 1000] x [0, 500] metres
+\end{Soutput}
+\end{Schunk}
+together with a list of covariates as list of \texttt{im} objects, e.g. 
+\begin{Schunk}
+\begin{Sinput}
+> bei.extra
+\end{Sinput}
+\begin{Soutput}
+List of pixel images
+
+elev:
+real-valued pixel image
+101 x 201 pixel array (ny, nx)
+enclosing rectangle: [-2.5, 1002.5] x [-2.5, 502.5] metres
+
+grad:
+real-valued pixel image
+101 x 201 pixel array (ny, nx)
+enclosing rectangle: [-2.5, 1002.5] x [-2.5, 502.5] metres
+\end{Soutput}
+\end{Schunk}
+
+A plot of the objects above is displayed below.
+
+\begin{Schunk}
+\begin{Sinput}
+> par(mfrow = c(1, 3), mar = c(0, 1, 0, 0))
+> plot(bei, pch=16, cex = 0.5, main = "")
+> plot(bei.extra[[1]], ribbon = F, main = "")
+> plot(bei.extra[[2]], ribbon = F, main = "")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-007}
+
+Then, we train a random forest for various combination of 
+parameters. 
+
+\begin{Schunk}
+\begin{Sinput}
+> forest <- RforestPP(
++   X = bei,
++   listcovariates = bei.extra,
++   score = "lcv2",
++   p = 0,
++   Ntree = 3,
++   mtry = 1 / 3,
++   minpts = 500,
++   cores_trees = 1
++ )
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> OOBscr(forest, cores = 3)
+\end{Sinput}
+\begin{Soutput}
+[1] -12932.74
+\end{Soutput}
+\end{Schunk}
+
+
+\subsection{Training random intensity forests} 
+
+\subsection{Assessing importance of variables}
+
+
 \section{The data used for the examples}
 
 This vignettes illustrate how to use spatial random forests to estimate the 
@@ -36,7 +183,7 @@ The covariates are loaded in the the package \pkg{sandbox}
 in the list \texttt{beisoil}.
 
 
-\includegraphics{Intro-003}
+\includegraphics{Intro-011}
 
 
 
@@ -147,8 +294,8 @@ in new locations. It accepts points in the xy-format or as a \texttt{ppp} object
 > predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
- [1] 0.001260587 0.026230530 0.011240188 0.004915321 0.013542320 0.007790974
- [7] 0.003692308 0.020378549 0.004915321 0.001260587
+ [1] 0.001260587 0.006340694 0.011311216 0.026230530 0.001260587 0.013542320
+ [7] 0.001260587 0.005800797 0.004915321 0.011370399
 \end{Soutput}
 \end{Schunk}
 
@@ -158,7 +305,7 @@ Finally, a method for plotting the estimated intensity is implemented.
 > plot(inttree)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-011}
+\includegraphics{Intro-019}
 
 
 \section{Fitting a spatial intensity forest}
@@ -206,7 +353,7 @@ return an \texttt{im} obect from \spst and plot it.
 > plot(forest)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-014}
+\includegraphics{Intro-022}
 
 Prediction in new area can be obtained via \texttt{predict} which 
 accept as input a xy-vector for one point, or a \texttt{ppp} object.
@@ -216,8 +363,8 @@ accept as input a xy-vector for one point, or a \texttt{ppp} object.
 > predict(object = forest, newdata = runifpoint(n=10, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
- [1] 0.009981151 0.004495761 0.002578515 0.003100079 0.006435219 0.006313001
- [7] 0.008125826 0.004658049 0.002572622 0.006671869
+ [1] 0.010433798 0.008208174 0.013208092 0.005307476 0.013208092 0.007959014
+ [7] 0.008481153 0.007093347 0.015485056 0.008898917
 \end{Soutput}
 \end{Schunk}
 
@@ -227,8 +374,8 @@ Up to some formatting on \texttt{newdata}, this equivalent to
 > imspforest(forest)[runifpoint(n=10, win = bei$window)]
 \end{Sinput}
 \begin{Soutput}
- [1] 0.006238506 0.008125826 0.008833178 0.009117600 0.002874006 0.002578515
- [7] 0.007401996 0.005179613 0.008083233 0.002874006
+ [1] 0.010068222 0.002447967 0.006256690 0.003831733 0.009850490 0.006256690
+ [7] 0.008587621 0.004622521 0.008898917 0.007093347
 \end{Soutput}
 \end{Schunk}
 
@@ -242,10 +389,10 @@ a variable importance and an Out-Of-Bag (OOB) Score.
 The OOB score is returned by the function \texttt{OOBscr.spforest}.
 \begin{Schunk}
 \begin{Sinput}
-> OOBscr(forest = forest, cores = 1)
+> OOBscr(forest = forest, cores = 3)
 \end{Sinput}
 \begin{Soutput}
-[1] -12668.69
+[1] -12606.1
 \end{Soutput}
 \end{Schunk}
 
@@ -258,7 +405,7 @@ we are analysing in the argument \texttt{listcovariates} of \texttt{RforestPP}.
 > importance(forest = forest, id_cov=3)
 \end{Sinput}
 \begin{Soutput}
-[1] 0.0000000000 0.0000000000 0.0009103095
+[1] 0.000000000 0.000000000 0.003724947
 \end{Soutput}
 \end{Schunk}
 
@@ -266,27 +413,27 @@ To analyse how the VIP varies accross the trees, we can plot
 use a boxplot. 
 \begin{Schunk}
 \begin{Sinput}
-> boxplot(forest)
+> boxplot(forest, cores=3)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-019}
+\includegraphics{Intro-027}
 
 However, it is more traditional in random forest to take the mean of the 
 VIP of all the trees which is made in the function \texttt{vipplot.spforest}.
 \begin{Schunk}
 \begin{Sinput}
-> vipplot(forest)
+> vipplot(forest, cores = 3)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-020}
+\includegraphics{Intro-028}
 
 It is also possible to immediately sort the VIP in decreasing order. Note however than when the number of trees is too small, there can be some variation between the two run of the function \texttt{vipplot.spforest}.
 \begin{Schunk}
 \begin{Sinput}
-> vipplot(forest, sorted = T)
+> vipplot(forest, sorted = T, cores = 3)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-021}
+\includegraphics{Intro-029}
 
 
 \begin{thebibliography}{10}

@@ -51,7 +51,6 @@ and \pkg{spatstat.random}.
 
 We need a point pattern as a \texttt{ppp} object, 
 together with a list of covariates as list of \texttt{im} objects
-
 As an example we take the data \texttt{bei} and \texttt{bei.extra} from 
 \spst. 
 \begin{Schunk}
@@ -100,27 +99,27 @@ The arguments:
   each intensity trees computation will be allocated to a core. 
 \end{itemize}
 
-Standard \R methods have been implemented: 
+Standard \R {} methods have been implemented: 
 \begin{itemize}
-  \item to plot the estimated random forest intensity
+  \item to plot the estimated random forest intensity,
 \begin{Schunk}
 \begin{Sinput}
 > plot(forest)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{Intro-005}
-  \item To return the predicted intensity in new locations. There the function 
-  accept the new location to be a \texttt{ppp} object 
+  \item to return the predicted intensity in new locations. There, the function 
+  accepts the new locations to be a \texttt{ppp} object,
 \begin{Schunk}
 \begin{Sinput}
 > predict(object = forest, newdata = runifpoint(n=5, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
-[1] 0.005543827 0.007071986 0.005724216 0.009794941 0.010364657
+[1] 0.005631383 0.009855791 0.006118471 0.008738731 0.010887077
 \end{Soutput}
 \end{Schunk}
-or a matrix with the $x$-coordinate on the first column and the $y$-coordinate 
-on the second column
+or a matrix with the $x$-coordinates on the first column and the $y$-coordinates 
+on the second column.
 \begin{Schunk}
 \begin{Sinput}
 > predict(object = forest, 
@@ -129,7 +128,7 @@ on the second column
 +           runif(5, min = 0, max=500)))
 \end{Sinput}
 \begin{Soutput}
-[1] 0.010715476 0.010536858 0.003894108 0.008535516 0.004037444
+[1] 0.003598051 0.006118471 0.010013649 0.012717727 0.005631383
 \end{Soutput}
 \end{Schunk}
 \end{itemize}
@@ -140,7 +139,7 @@ on the second column
 
 When working with random intensity forest the workflow is a follow: 
 \begin{itemize}
-  \item In function of the available computational power, 
+  \item In function of the available computational power,
   choose a reasonable combination of hyperparameters: 
   \texttt{minpts},  \texttt{mtry}.
   \item Compute the Out-Of-Bag (OOB) score for a random intensity forest with 
@@ -169,20 +168,7 @@ and $\texttt{mtry}= 0.1,0.2,\ldots,1$, together with $\texttt{Ntree}=300$.
 > argmtry <- c(0.25, 0.5, 0.75)
 > argminpts <- c(seq(75, 125, by = 25))
 > allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
-> allargs
 \end{Sinput}
-\begin{Soutput}
-  mtry minpts
-1 0.25     75
-2 0.50     75
-3 0.75     75
-4 0.25    100
-5 0.50    100
-6 0.75    100
-7 0.25    125
-8 0.50    125
-9 0.75    125
-\end{Soutput}
 \end{Schunk}
 
 We will use the \texttt{mapply} function. 
@@ -214,7 +200,7 @@ and choose the one with the highest score.
 \end{Sinput}
 \begin{Soutput}
   mtry minpts
-2  0.5     75
+3 0.75     75
 \end{Soutput}
 \end{Schunk}
 
@@ -226,7 +212,7 @@ combination of parameter but with \texttt{Ntree} larger.
 > chosenforest <- RforestPP( 
 +   p = 0,
 +   mtry = 0.5,
-+   minpts = 50,
++   minpts = 75,
 +   Ntree = 100,
 +   cores_tree = 2,
 +   X = bei,
@@ -251,6 +237,93 @@ Finally we
 \includegraphics{Intro-013}
 \end{itemize}
  
+\section{A more interesing example}
 
+On of the advantage of random intensity forest is the ability to process a large number of covariates. 
+We will re-study the point pattern in the data \texttt{bei} but with a larger list of covariates, 
+made available in \pkg{Rsandbox} in the list \texttt{beisoilres}.
+
+\includegraphics{Intro-014}
+
+From left to right and top to bottom, these covariates are: 
+the elevations, gradient of the terrain, and the concentration of the soils 
+in different nutrients, 
+Al, B, Ca, Cu, Fe, K, Mg, Mn, P, Zn, N, N{\textunderscore}min, pH. 
+
+
+We follow the work present in the last section. Once again, we only choose
+a small number of combinations of hyperparameters 
+for this example but many more should be considered in practice. 
+
+\begin{Schunk}
+\begin{Sinput}
+> argmtry <- c(0.25, 0.5, 0.75)
+> argminpts <- c(seq(75, 125, by = 25))
+> allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
+\end{Sinput}
+\end{Schunk}
+
+We will use the \texttt{mapply} function. 
+
+\begin{Schunk}
+\begin{Sinput}
+> extrarg <- list(
++   p = 0,
++   Ntree = 6,
++   cores_tree = 2,
++   X = bei,
++   listcovariates = beisoilres
++ )
+> allforest <- mapply(RforestPP,
++   mtry = allargs$mtry,
++   minpts = allargs$minpts,
++   MoreArgs = extrarg,
++   SIMPLIFY = F
++ )
+\end{Sinput}
+\end{Schunk}
+
+We can now compute the OOB score of all the random intensity forest above 
+and choose the one with the highest score. 
+\begin{Schunk}
+\begin{Sinput}
+> allscore <- lapply(allforest, FUN=function(i) {OOBscr(i, cores = 2)})
+> allargs[which.max(allscore),]
+\end{Sinput}
+\begin{Soutput}
+  mtry minpts
+2  0.5     75
+\end{Soutput}
+\end{Schunk}
+
+Then, we may, if we have the computational power, run again the code for this 
+combination of parameter but with \texttt{Ntree} larger. 
+
+\begin{Schunk}
+\begin{Sinput}
+> chosenforest <- RforestPP( 
++   p = 0,
++   mtry = 0.75,
++   minpts = 75,
++   Ntree = 100,
++   cores_tree = 2,
++   X = bei,
++   listcovariates = beisoilres)
+\end{Sinput}
+\end{Schunk}
+
+
+\begin{Schunk}
+\begin{Sinput}
+> plot(chosenforest)
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> vipplot(chosenforest, sorted = T, cores = 2)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Intro-020}
 
 \end{document}

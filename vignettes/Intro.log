@@ -1,12 +1,12 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  16 AUG 2024 10:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  16 AUG 2024 14:10
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**/home/chris/Desktop/Ange/Rsandbox/vignettes/Intro
-(/home/chris/Desktop/Ange/Rsandbox/vignettes/Intro.tex
+**Intro.tex
+(./Intro.tex
 LaTeX2e <2020-02-02> patch level 2
-L3 programming layer <2020-02-14> (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+L3 programming layer <2020-02-14>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
 File: size11.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
@@ -22,25 +22,32 @@ File: size11.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
 \abovecaptionskip=\skip47
 \belowcaptionskip=\skip48
 \bibindent=\dimen134
-) (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
- (/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
-) (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
- (/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
-) (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 105.
- (/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen135
 \Gin@req@width=\dimen136
-) (/usr/share/texlive/texmf-dist/tex/latex/anysize/anysize.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/anysize/anysize.sty
 Package: anysize 1994/08/13 setting margin sizes
 
 document style option `anysize' loaded
@@ -50,13 +57,16 @@ Version 1.0, Aug 13, 1994
 \@Rightmargin=\dimen138
 \@Topmargin=\dimen139
 \@Bottommargin=\dimen140
-) (/usr/share/texmf/tex/latex/R/tex/latex/Sweave.sty
+) (/usr/share/R/share/texmf/tex/latex/Sweave.sty
 Package: Sweave 
- (/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
-) (/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
+)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2019/11/07 v1.0c TeX engine tests
-) (/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2020/01/13 v3.5 verbatim text (tvz,hv)
 \FV@CodeLineNo=\count175
 \FV@InFile=\read2
@@ -64,15 +74,19 @@ Package: fancyvrb 2020/01/13 v3.5 verbatim text (tvz,hv)
 \c@FancyVerbLine=\count176
 \FV@StepNumber=\count177
 \FV@OutFile=\write3
-) (/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
-) (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
-)) (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
+))
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count178
 \l__pdf_internal_box=\box46
-) (./Intro.aux)
+)
+(./Intro.aux)
 \openout1 = `Intro.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
@@ -89,7 +103,8 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
 LaTeX Font Info:    ... okay on input line 16.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
 LaTeX Font Info:    ... okay on input line 16.
- (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count179
 \scratchdimen=\dimen141
@@ -104,39 +119,54 @@ LaTeX Font Info:    ... okay on input line 16.
 \everyMPtoPDFconversion=\toks16
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
- (/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
-) (/usr/share/texlive/texmf-dist/tex/latex/grfext/grfext.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/grfext/grfext.sty
 Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
- (/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-)) (/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+))
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
- (/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
 Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
-) (/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
+)
+(/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
-)) (/usr/share/texlive/texmf-dist/tex/latex/pdftexcmds/pdftexcmds.sty
-Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
+)
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
 )
-Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
 Package grfext Info: Graphics extension search list:
-(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPEG,.JBIG2,.JB2,.eps]
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 504.
- (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
-)) (./Intro-concordance.tex)
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+(./Intro-concordance.tex)
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 27.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 27.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 27.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 27.
- (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
+7.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <14.4> not available
@@ -144,66 +174,62 @@ LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <14.4> not available
 <Intro-003.pdf, id=2, 433.62pt x 144.54pt>
 File: Intro-003.pdf Graphic file (type pdf)
 <use Intro-003.pdf>
-Package pdftex.def Info: Intro-003.pdf  used on input line 63.
+Package pdftex.def Info: Intro-003.pdf  used on input line 65.
 (pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./Intro-003.pdf>]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 87.
-<Intro-007.pdf, id=23, 433.62pt x 144.54pt>
-File: Intro-007.pdf Graphic file (type pdf)
-<use Intro-007.pdf>
-Package pdftex.def Info: Intro-007.pdf  used on input line 141.
-(pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
- [2 <./Intro-007.pdf>]
-<Intro-011.pdf, id=37, 433.62pt x 144.54pt>
-File: Intro-011.pdf Graphic file (type pdf)
-<use Intro-011.pdf>
-Package pdftex.def Info: Intro-011.pdf  used on input line 186.
-(pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
- [3 <./Intro-011.pdf>] [4]
-<Intro-019.pdf, id=63, 578.16pt x 289.08pt>
-File: Intro-019.pdf Graphic file (type pdf)
-<use Intro-019.pdf>
-Package pdftex.def Info: Intro-019.pdf  used on input line 308.
+(Font)              <10.95> on input line 90.
+LaTeX Font Info:    Trying to load font information for T1+cmss on input line 1
+03.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmss.fd
+File: t1cmss.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+<Intro-005.pdf, id=23, 433.62pt x 216.81pt>
+File: Intro-005.pdf Graphic file (type pdf)
+<use Intro-005.pdf>
+Package pdftex.def Info: Intro-005.pdf  used on input line 111.
+(pdftex.def)             Requested size: 290.22107pt x 145.11638pt.
+ [2 <./Intro-005.pdf>]
+Overfull \hbox (5.0513pt too wide) in paragraph at lines 161--166
+[]\T1/cmr/m/n/10.95 For il-lus-tra-tion, we will com-pute ran-dom in-ten-sity f
+or-est for all com-bi-na-tions of $[] \OT1/cmr/m/n/10.95 = 75\OML/cmm/m/it/10.9
+5 ; \OT1/cmr/m/n/10.95 100\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 125$
+ []
+
+[3]
+<Intro-013.pdf, id=43, 578.16pt x 289.08pt>
+File: Intro-013.pdf Graphic file (type pdf)
+<use Intro-013.pdf>
+Package pdftex.def Info: Intro-013.pdf  used on input line 251.
 (pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
- [5 <./Intro-019.pdf>]
-<Intro-022.pdf, id=75, 578.16pt x 289.08pt>
-File: Intro-022.pdf Graphic file (type pdf)
-<use Intro-022.pdf>
-Package pdftex.def Info: Intro-022.pdf  used on input line 356.
-(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
- [6 <./Intro-022.pdf>]
-<Intro-027.pdf, id=87, 578.16pt x 289.08pt>
-File: Intro-027.pdf Graphic file (type pdf)
-<use Intro-027.pdf>
-Package pdftex.def Info: Intro-027.pdf  used on input line 419.
-(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
-<Intro-028.pdf, id=88, 578.16pt x 289.08pt>
-File: Intro-028.pdf Graphic file (type pdf)
-<use Intro-028.pdf>
-Package pdftex.def Info: Intro-028.pdf  used on input line 428.
-(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
-<Intro-029.pdf, id=89, 578.16pt x 289.08pt>
-File: Intro-029.pdf Graphic file (type pdf)
-<use Intro-029.pdf>
-Package pdftex.def Info: Intro-029.pdf  used on input line 436.
-(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
- [7 <./Intro-027.pdf> <./Intro-028.pdf> <./Intro-029.pdf>] [8] (./Intro.aux) ) 
+ [4 <./Intro-013.pdf>] (./Intro.aux) ) 
 Here is how much of TeX's memory you used:
- 2431 strings out of 481239
- 36481 string characters out of 5920377
- 270701 words of memory out of 5000000
- 17667 multiletter control sequences out of 15000+600000
- 542896 words of font info for 48 fonts, out of 8000000 for 9000
+ 2417 strings out of 481239
+ 36112 string characters out of 5920377
+ 270695 words of memory out of 5000000
+ 17651 multiletter control sequences out of 15000+600000
+ 542987 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,6n,29p,286b,290s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfst1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1440.pfb>
-Output written on Intro.pdf (8 pages, 793107 bytes).
+ 34i,6n,29p,202b,286s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf/fonts/enc/dvips/cm-supe
+r/cm-super-t1.enc}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}<
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/te
+xmf/fonts/type1/public/cm-super/sfbx1095.pfb></usr/share/texmf/fonts/type1/publ
+ic/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1095
+.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/tex
+mf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/publi
+c/cm-super/sfss1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfst1095.
+pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1095.pfb></usr/share/texm
+f/fonts/type1/public/cm-super/sftt1200.pfb></usr/share/texmf/fonts/type1/public
+/cm-super/sftt1440.pfb>
+Output written on Intro.pdf (4 pages, 448972 bytes).
 PDF statistics:
- 155 PDF objects out of 1000 (max. 8388607)
- 92 compressed objects within 1 object stream
+ 93 PDF objects out of 1000 (max. 8388607)
+ 63 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 45 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 20 words of extra memory for PDF output out of 10000 (max. 10000000)
 

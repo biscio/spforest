@@ -48,19 +48,20 @@ For the user, it means that a point pattern must be input as a \texttt{ppp} obje
 and the covariates as \texttt{im} object rather than raster.
 
 Specifically, \pkg{Rsandbox}  depends on  \pkg{spatstat.model},
-\pkg{spatstat.geom} and \pkg{spatstat.random}.
-In this document, we will additionally use the package \pkg{spatstat.data}.
+\pkg{spatstat.geom}.
+In this document, we will additionally use the package \pkg{spatstat.data}
+and \pkg{spatstat.random}.
 
 <<>>=
 library(Rsandbox)
 library(spatstat.data)
+library(spatstat.random)
 @ 
 
 \section{Getting started}
 
 We need a point pattern as a \texttt{ppp} object, 
 together with a list of covariates as list of \texttt{im} objects
-
 As an example we take the data \texttt{bei} and \texttt{bei.extra} from 
 \spst. 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=2>>=
@@ -88,259 +89,208 @@ forest <- RforestPP(
 
 The arguments: 
 \begin{itemize}
-  \item \texttt{score}: it controls the score used to compare different splits.
-  \item \texttt{p}: it controls the thinning process of points for each tree. 
-  If $p>0$, a $p$-thinning is applied on the pattern, 
+  \item \texttt{score} selects the score used to compare different splits. 
+  From our simulations it had however a negligible impact on the results.
+  \item \texttt{p} controls the thinning applied on the original point pattern 
+  \texttt{X} before training an intensity tree. If $p>0$, a $p$-thinning is applied, 
   and if $p=0$, the points are bootstrapped.
-  \item \texttt{Ntree}: It set the number of intensity trees in the forest.
-  \item \texttt{mtry} is the probability at which each covariable will be at each split.
-  \item \texttt{minpts} is the stopping criterion. 
-  \item \texttt{cores{\textunderscore}trees} is use of parallelisation in the sense that 
+  \item \texttt{Ntree} sets the number of intensity trees in the forest.
+  \item \texttt{mtry}: At each split, we use a random subset of the covariates 
+  where each of them is independently chosen with probability \texttt{mtry}.
+  \item \texttt{minpts} is used as stopping criterion. Once the number of points 
+  in a split is below \texttt{minpts}, we only allow at most one last split. 
+  This ensure that we allows region where there is no points and 
+  that the algorithm is not running indefinitely.
+  \item \texttt{cores{\textunderscore}trees} is used of parallelisation in the sense that 
   each intensity trees computation will be allocated to a core. 
 \end{itemize}
 
-
-
-\section{Usual workflow with random intensity forest}
-
-Typically, we get a point pattern as a \texttt{ppp} object, 
-e.g. 
+Standard \R {} methods have been implemented: 
+\begin{itemize}
+  \item to plot the estimated random forest intensity,
+<<fig=TRUE,echo=TRUE, results=hide, width=6,height=3>>=
+plot(forest)
+@
+  \item to return the predicted intensity in new locations. There, the function 
+  accepts the new locations to be a \texttt{ppp} object,
 <<>>=
-bei
-@ 
-together with a list of covariates as list of \texttt{im} objects, e.g. 
+predict(object = forest, newdata = runifpoint(n=5, win = bei$window))
+@
+or a matrix with the $x$-coordinates on the first column and the $y$-coordinates 
+on the second column.
 <<>>=
-bei.extra
-@ 
+predict(object = forest, 
+        newdata = cbind(
+          runif(5, min = 0, max=1000),
+          runif(5, min = 0, max=500)))
+@
+\end{itemize}
 
-A plot of the objects above is displayed below.
 
-<<fig=TRUE,echo=TRUE, results=hide, width=6,height=2>>=
-par(mfrow = c(1, 3), mar = c(0, 1, 0, 0))
-plot(bei, pch=16, cex = 0.5, main = "")
-plot(bei.extra[[1]], ribbon = F, main = "")
-plot(bei.extra[[2]], ribbon = F, main = "")
+\section{Usual workflow}
+
+
+When working with random intensity forest the workflow is a follow: 
+\begin{itemize}
+  \item In function of the available computational power,
+  choose a reasonable combination of hyperparameters: 
+  \texttt{minpts},  \texttt{mtry}.
+  \item Compute the Out-Of-Bag (OOB) score for a random intensity forest with 
+  each combination of the hyperparameters. Select the combination with the highest OOB score.
+  \item Eventually, re-run the random intensity forest with this combination of hyperparameters and 
+  \texttt{Ntree} as large as possible. 
+  \item Compute the variable importance (VIP) for each covariates and display the results in a plot.
+\end{itemize}
+
+\textbf{Remark:} There is in fact two more hyperparameters, \texttt{Ntree} and \texttt{p}, 
+that one can choose. However, we have observed that \texttt{p} usually has a low impact on 
+the mean square error. Hence we recommend to set $p=0$, meaning to boostrap the point patterns. 
+Finally, \texttt{Ntree} should be chosen as large as possible, depending on the 
+available computational power.
+
+To illustrate the workflow on an example, we re-use the \texttt{bei} and \texttt{bei.extra} data.
+
+For illustration, we will compute random intensity 
+forest for all combinations of $\texttt{minpts} = 75, 100, 125$ 
+and $\texttt{mtry}= 0.25, 0.5, 0.75$ with $\texttt{Ntree}=6$. 
+For a more serious analyses, we should let $\texttt{minpts} = 1,2,\ldots,200$ 
+and $\texttt{mtry}= 0.1,0.2,\ldots,1$, together with $\texttt{Ntree}=300$. 
+
+<<>>=
+argmtry <- c(0.25, 0.5, 0.75)
+argminpts <- c(seq(75, 125, by = 25))
+allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
 @
 
-Then, we train a random forest for various combination of 
-parameters. 
+We will use the \texttt{mapply} function. 
 
 <<>>=
-forest <- RforestPP(
-  X = bei,
-  listcovariates = bei.extra,
-  score = "lcv2",
+extrarg <- list(
   p = 0,
-  Ntree = 3,
-  mtry = 1 / 3,
-  minpts = 500,
-  cores_trees = 1
+  Ntree = 6,
+  cores_tree = 2,
+  X = bei,
+  listcovariates = bei.extra
+)
+allforest <- mapply(RforestPP,
+  mtry = allargs$mtry,
+  minpts = allargs$minpts,
+  MoreArgs = extrarg,
+  SIMPLIFY = F
 )
 @
 
+We can now compute the OOB score of all the random intensity forest above 
+and choose the one with the highest score. 
 <<>>=
-OOBscr(forest, cores = 3)
+allscore <- lapply(allforest, FUN=function(i) {OOBscr(i, cores = 2)})
+allargs[which.max(allscore),]
 @
 
+Then, we may, if we have the computational power, run again the code for this 
+combination of parameter but with \texttt{Ntree} larger. 
 
-\subsection{Training random intensity forests} 
+<<>>=
+chosenforest <- RforestPP( 
+  p = 0,
+  mtry = 0.5,
+  minpts = 75,
+  Ntree = 100,
+  cores_tree = 2,
+  X = bei,
+  listcovariates = bei.extra)
+@
 
-\subsection{Assessing importance of variables}
+Finally we 
+\begin{itemize}
+\item Visualise the estimated intensity
+<<>>=
+plot(chosenforest)
+@
+\item Assessing the variable importance of each variables
+<<fig=TRUE,echo=TRUE, width=8,height=4>>=
+vipplot(chosenforest, sorted = T, cores = 2)
+@
+\end{itemize}
+ 
+\section{A more interesing example}
 
-
-\section{The data used for the examples}
-
-This vignettes illustrate how to use spatial random forests to estimate the 
-intensity of a point process. 
-To that end, we will work with the data set \texttt{bei} from \spst, 
-together with the covariates from the tropical forest data set. 
-The covariates are loaded in the the package \pkg{sandbox} 
-in the list \texttt{beisoil}.
-
-<<echo=FALSE,results=hide>>=
-X <- bei
-@ 
+On of the advantage of random intensity forest is the ability to process a large number of covariates. 
+We will re-study the point pattern in the data \texttt{bei} but with a larger list of covariates, 
+made available in \pkg{Rsandbox} in the list \texttt{beisoilres}.
 
 <<fig=TRUE,echo=FALSE,results=hide, width=6,height=2>>=
 par(mfrow = c(3, 5), mar = c(0, 1, 0, 0))
 for (i in 1:15) {
-  plot(beisoil[[i]],
+  plot(beisoilres[[i]],
     main = "",
     ribbon = F
   )
 }
 @
 
-<<echo=FALSE, results=hide>>=
-par(mfrow = c(1, 1), mar = c(2.5, 2.5, 0.5, 0.5))
-@
+From left to right and top to bottom, these covariates are: 
+the elevations, gradient of the terrain, and the concentration of the soils 
+in different nutrients, 
+Al, B, Ca, Cu, Fe, K, Mg, Mn, P, Zn, N, N{\textunderscore}min, pH. 
 
 
-Each element of the list \texttt{beisoil} is a \texttt{im} object from the package 
-\pkg{spatstat-geom}. Roughly, this can be seen as a pixel images. 
-In order to be able to work with this data, we need to transform them 
-to have the same resolution. 
-This have been done with the following code whose output is available in \texttt{beisoilres},
-
-<<eval=FALSE>>=
-zsoil <- NULL
-zsoil[[1]] <- beisoil[[1]]
-zsoil[[2]] <- beisoil[[2]]
-for (i in 3:15) {
-  W <- commonGrid(beisoil[[1]], beisoil[[i]])
-  zsoil[[i]] <- beisoil[[i]][W, drop = F]
-  rm(W)
-}
-names(zsoil) <- c(
-  "elev", "grad", "Al", "B", "Ca",
-  "Cu", "Fe", "K", "Mg", "Mn",
-  "P", "Zn", "N", "N_min", "pH"
-)
-@ 
-
-\section{Fitting a spatial intensity tree}
-
-The function \texttt{treerec} allows to fit a spatial intensity tree 
-to a point pattern. 
+We follow the work present in the last section. Once again, we only choose
+a small number of combinations of hyperparameters 
+for this example but many more should be considered in practice. 
 
 <<>>=
-inttree <- treerec(
-  X = spatstat.data::bei,
-  score = "lcv2",
-  mtry = 1,
-  minpts = 500,
+argmtry <- c(0.25, 0.5, 0.75)
+argminpts <- c(seq(75, 125, by = 25))
+allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
+@
+
+We will use the \texttt{mapply} function. 
+
+<<>>=
+extrarg <- list(
+  p = 0,
+  Ntree = 6,
+  cores_tree = 2,
+  X = bei,
   listcovariates = beisoilres
 )
-@
-
-The output is an object of class \texttt{sptree} define in the package \pkg{Rsandbox} 
-together with methods to print, plot, summarise and predict the intensity in a given region.
-
-The function \texttt{summarise} displayed the intensity tree 
-as a data.frame where each row represent a leave of the tree.
-<<>>=
-head(summary(inttree), n = 10)
-@
-
-The function \texttt{print} displays the number of points in the original point pattern, the number of covariates, their names and how many nodes and terminal nodes there is in the tree.
-<<>>=
-print(inttree)
-@
-
-The \texttt{predict} function can be used to return the intensity tree estimate of the intensity in
-in new locations. It accepts points in the xy-format or as a \texttt{ppp} object from \spst.
-
-<<>>=
-predict(object = inttree, newdata = c(100,100))
-@
-
-<<>>=
-predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
-@
-
-Finally, a method for plotting the estimated intensity is implemented.
-<<fig=TRUE,echo=TRUE, width=8,height=4>>=
-plot(inttree)
-@
-
-
-\section{Fitting a spatial intensity forest}
-
-The function \texttt{RforestPP} compute a random intensity forest. 
-The function allows to parallelise the computation by allocating 
-each tree intensity tree computation to a core, via use of \texttt{mclapply}. 
-
-<<>>=
-forest <- RforestPP(
-  X = spatstat.data::bei,
-  listcovariates = beisoilres,
-  score = "lcv2",
-  p = 0,
-  Ntree = 3,
-  mtry = 1 / 3,
-  minpts = 500,
-  cores_trees = 1
+allforest <- mapply(RforestPP,
+  mtry = allargs$mtry,
+  minpts = allargs$minpts,
+  MoreArgs = extrarg,
+  SIMPLIFY = F
 )
 @
 
-The output is an object of the class \texttt{spforest} define in the package \pkg{Rsandbox} together a set of methods defined below.
-
-\subsection{Standard methods on spforest object}
-
-The \texttt{print} function returns the main information on the forest intensity estimate.
+We can now compute the OOB score of all the random intensity forest above 
+and choose the one with the highest score. 
 <<>>=
-print(forest)
+allscore <- lapply(allforest, FUN=function(i) {OOBscr(i, cores = 2)})
+allargs[which.max(allscore),]
 @
 
-The \texttt{plot} function of an \texttt{spforest} object 
-return an \texttt{im} obect from \spst and plot it. 
+Then, we may, if we have the computational power, run again the code for this 
+combination of parameter but with \texttt{Ntree} larger. 
+
+<<>>=
+chosenforest <- RforestPP( 
+  p = 0,
+  mtry = 0.75,
+  minpts = 75,
+  Ntree = 100,
+  cores_tree = 2,
+  X = bei,
+  listcovariates = beisoilres)
+@
+
+
+<<>>=
+plot(chosenforest)
+@
+
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
-plot(forest)
+vipplot(chosenforest, sorted = T, cores = 2)
 @
-
-Prediction in new area can be obtained via \texttt{predict} which 
-accept as input a xy-vector for one point, or a \texttt{ppp} object.
-
-<<>>=
-predict(object = forest, newdata = runifpoint(n=10, win = bei$window))
-@
-
-Up to some formatting on \texttt{newdata}, this equivalent to 
-<<>>=
-imspforest(forest)[runifpoint(n=10, win = bei$window)]
-@
-
-
-
-\subsection{Working with Random intensity forest}
-
-One of the main interest of random forest is the ability to compute 
-a variable importance and an Out-Of-Bag (OOB) Score. 
-
-The OOB score is returned by the function \texttt{OOBscr.spforest}.
-<<>>=
-OOBscr(forest = forest, cores = 3)
-@
-
-The importance score of each variables can be computed on each tree 
-of the forest with the function \texttt{importance.spforest}. 
-The second argument is the position of the covariates 
-we are analysing in the argument \texttt{listcovariates} of \texttt{RforestPP}.
-<<>>=
-importance(forest = forest, id_cov=3)
-@
-
-To analyse how the VIP varies accross the trees, we can plot 
-use a boxplot. 
-<<fig=TRUE,echo=TRUE, width=8,height=4>>=
-boxplot(forest, cores=3)
-@
-
-However, it is more traditional in random forest to take the mean of the 
-VIP of all the trees which is made in the function \texttt{vipplot.spforest}.
-<<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot(forest, cores = 3)
-@
-
-It is also possible to immediately sort the VIP in decreasing order. Note however than when the number of trees is too small, there can be some variation between the two run of the function \texttt{vipplot.spforest}.
-<<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot(forest, sorted = T, cores = 3)
-@
-
-
-\begin{thebibliography}{10}
-\bibitem{baddrubaturn15}
-A. Baddeley, E. Rubak, and R. Turner.
-\newblock {\em Spatial Point Patterns: Methodology and Applications with {{R}}}.
-\newblock Chapman \& Hall/CRC Press, 2015.
-
-\bibitem{fortdale05}
-M.J. Fortin and M.R.T. Dale.
-\newblock {\em Spatial analysis: a guide for ecologists}.
-\newblock Cambridge University Press, Cambridge, UK, 2005.
-
-\end{thebibliography}
-
-
 
 \end{document}

@@ -44,11 +44,19 @@ predict.spforest <- function(object, newdata, ...) {
   if (missing(newdata) || is.null(newdata)) {
     X <- object$X
   } else if (!spatstat.geom::is.ppp(newdata)) {
-    X <- spatstat.geom::ppp(
-      x = newdata[1],
-      y = newdata[2],
-      window = object$X$window
-    )
+    if (is.vector(newdata)) {
+      X <- spatstat.geom::ppp(
+        x = newdata[1],
+        y = newdata[2],
+        window = object$X$window
+      )
+    } else if (is.matrix(newdata)) {
+      X <- spatstat.geom::ppp(
+        x = newdata[,1],
+        y = newdata[,2],
+        window = object$X$window
+      )
+    }
   } else if (spatstat.geom::is.ppp(newdata)) {
     if (newdata$n == 0) {
       return(NULL)
@@ -56,7 +64,7 @@ predict.spforest <- function(object, newdata, ...) {
     X <- newdata
   }
 
-  return(predim[newdata])
+  return(predim[X])
 }
 
 

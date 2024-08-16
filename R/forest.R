@@ -128,6 +128,127 @@ RforestPP <- function(X,
 
 
 
+#' Compute image of a spatial intensity forest
+#'
+#' @param x A spatial intensity tree return by RforestPP function
+#' @param ... additional arguments
+#'
+#' @return
+#' @export
+#'
+#' @examples
+imspforest <- function(x, ...) {
+  list_im <- lapply(x$trees, FUN = function(i) {
+    i$im
+  })
+  
+  if (x$p == 0) {
+    output <- Reduce("+", list_im) / length(x$trees)
+  } else {
+    output <- Reduce("+", list_im) / length(x$trees) / x$p
+  }
+  
+  return(output)
+}
+
+
+#' Plot spatial intensity forest
+#'
+#' @param x A spatial intensity tree return by RforestPP function
+#' @param ... additional arguments
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot.spforest <- function(x, ..., main) {
+  # Handling case if no main title is given for the plot
+  if (missing(main)) {
+    main <- "Spatial Intensity Forest"
+  }
+  
+  list_im <- lapply(x$trees, FUN = function(i) {
+    i$im
+  })
+  
+  if (x$p == 0) {
+    output <- Reduce("+", list_im) / length(x$trees)
+  } else {
+    output <- Reduce("+", list_im) / length(x$trees) / x$p
+  }
+  
+  spatstat.geom::plot.im(output, main = main, ...)
+  
+  return(invisible(output))
+}
+
+
+
+
+
+#' Importance of one covariable
+#'
+#' @param forest A spforest object
+#' @param id_cov The id in forest$listcov of the covariable looked at.
+#' @param cores how many cores to use to speed up computation
+#'
+#' @return
+#' @export
+#'
+#' @examples
+importance <- function(forest, id_cov, cores = 1) {
+  # listZ <- forest$listcovsp
+  X <- forest$X # this is alway the root
+  Z <- forest$listcov[[id_cov]] # list of cov
+  
+  vip_tree <- NULL
+  
+  Zfun <- lapply(forest$listcov, spatstat.geom::as.function.im) # to remove?
+  
+  vip_tree <- parallel::mclapply(1:length(forest$trees), FUN = function(i) {
+    # Shuffle the chosen covariate value
+    dimmat <- Z$dim
+    Z$v <- matrix(Z$v[sample.int(length(Z$v))],
+                  ncol = dimmat[2]
+    )
+    
+    # OOB sample
+    Xout <- X[forest$pt_intree[[i]] != 1]
+    
+    listZ_shuf <- forest$listcov
+    listZ_shuf[[id_cov]] <- Z
+    
+    # Shuffle the tree
+    treepert <- forest$trees[[i]]
+    treepert$listcov <- listZ_shuf
+    
+    ### OOB prediction for shuffled covariable
+    pts_pred_OOB_pert <- predict.sptree(
+      object = treepert,
+      newdata = Xout
+    )
+    
+    ### OOB prediction
+    # tree when in a forest do not have listcov. I add it
+    forest$trees[[i]]$listcov <- forest$listcov
+    pts_pred_OOB <- predict.sptree(
+      object = forest$trees[[i]],
+      newdata = Xout
+    )
+    
+    # OOB mean square error of the tree
+    return(sqrt(mean((pts_pred_OOB_pert - pts_pred_OOB)^2,
+                     na.rm = TRUE
+    )))
+  }, mc.cores = cores)
+  
+  
+  # Return the error of all the trees
+  return(unlist(vip_tree))
+}
+
+
+
 
 #' OOB forest
 #'
@@ -138,7 +259,7 @@ RforestPP <- function(X,
 #' @export
 #'
 #' @examples
-OOBscr.spforest <- function(forest, cores = 1) {
+OOBscr <- function(forest, cores = 1) {
   X <- forest$X # this is always the root
 
   # Put listcov back in the sptree object, required in predict.sptree

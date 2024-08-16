@@ -190,7 +190,7 @@ a variable importance and an Out-Of-Bag (OOB) Score.
 
 The OOB score is returned by the function \texttt{OOBscr.spforest}.
 <<>>=
-OOBscr.spforest(forest = forest, cores = 1)
+OOBscr(forest = forest, cores = 1)
 @
 
 The importance score of each variables can be computed on each tree 
@@ -198,24 +198,24 @@ of the forest with the function \texttt{importance.spforest}.
 The second argument is the position of the covariates 
 we are analysing in the argument \texttt{listcovariates} of \texttt{RforestPP}.
 <<>>=
-importance.spforest(forest = forest, id_cov=3)
+importance(forest = forest, id_cov=3)
 @
 
 To analyse how the VIP varies accross the trees, we can plot 
 use a boxplot. 
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
-boxplot_spforest(forest)
+boxplot(forest)
 @
 
 However, it is more traditional in random forest to take the mean of the 
 VIP of all the trees which is made in the function \texttt{vipplot.spforest}.
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot.spforest(forest)
+vipplot(forest)
 @
 
 It is also possible to immediately sort the VIP in decreasing order. Note however than when the number of trees is too small, there can be some variation between the two run of the function \texttt{vipplot.spforest}.
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot.spforest(forest, sorted = T)
+vipplot(forest, sorted = T)
 @
 
 

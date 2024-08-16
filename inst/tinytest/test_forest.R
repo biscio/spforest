@@ -75,7 +75,7 @@ expect_true(spatstat.geom::is.im(imforest))
 
 
 expect_silent(
-    outputoob <- OOBscr.spforest(forest=forest, cores=3)
+    outputoob <- OOBscr(forest=forest, cores=3)
 )
 
 expect_inherits(current=outputoob, class="numeric")

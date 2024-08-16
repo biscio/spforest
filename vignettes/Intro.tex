@@ -147,8 +147,8 @@ in new locations. It accepts points in the xy-format or as a \texttt{ppp} object
 > predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
- [1] 0.013542320 0.020378549 0.007790974 0.026230530 0.011311216 0.020378549
- [7] 0.004915321 0.011370399 0.003692308 0.001260587
+ [1] 0.001260587 0.026230530 0.011240188 0.004915321 0.013542320 0.007790974
+ [7] 0.003692308 0.020378549 0.004915321 0.001260587
 \end{Soutput}
 \end{Schunk}
 
@@ -216,8 +216,8 @@ accept as input a xy-vector for one point, or a \texttt{ppp} object.
 > predict(object = forest, newdata = runifpoint(n=10, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
- [1] 0.007603358 0.003823217 0.004794303 0.008459363 0.002560961 0.002859913
- [7] 0.012645331 0.003809530 0.003398178 0.002191520
+ [1] 0.009981151 0.004495761 0.002578515 0.003100079 0.006435219 0.006313001
+ [7] 0.008125826 0.004658049 0.002572622 0.006671869
 \end{Soutput}
 \end{Schunk}
 
@@ -227,8 +227,8 @@ Up to some formatting on \texttt{newdata}, this equivalent to
 > imspforest(forest)[runifpoint(n=10, win = bei$window)]
 \end{Sinput}
 \begin{Soutput}
- [1] 0.004794303 0.014151474 0.005683891 0.011402006 0.017171075 0.009880268
- [7] 0.002560961 0.005527678 0.005287343 0.004421635
+ [1] 0.006238506 0.008125826 0.008833178 0.009117600 0.002874006 0.002578515
+ [7] 0.007401996 0.005179613 0.008083233 0.002874006
 \end{Soutput}
 \end{Schunk}
 
@@ -239,13 +239,13 @@ Up to some formatting on \texttt{newdata}, this equivalent to
 One of the main interest of random forest is the ability to compute 
 a variable importance and an Out-Of-Bag (OOB) Score. 
 
-The OOB score is return by the function \texttt{OOBscr.spforest}.
+The OOB score is returned by the function \texttt{OOBscr.spforest}.
 \begin{Schunk}
 \begin{Sinput}
-> OOBscr.spforest(forest = forest, cores = 1)
+> OOBscr(forest = forest, cores = 1)
 \end{Sinput}
 \begin{Soutput}
-[1] -12668.53
+[1] -12668.69
 \end{Soutput}
 \end{Schunk}
 
@@ -255,10 +255,10 @@ The second argument is the position of the covariates
 we are analysing in the argument \texttt{listcovariates} of \texttt{RforestPP}.
 \begin{Schunk}
 \begin{Sinput}
-> importance.spforest(forest = forest, id_cov=3)
+> importance(forest = forest, id_cov=3)
 \end{Sinput}
 \begin{Soutput}
-[1] 0 0 0
+[1] 0.0000000000 0.0000000000 0.0009103095
 \end{Soutput}
 \end{Schunk}
 
@@ -266,7 +266,7 @@ To analyse how the VIP varies accross the trees, we can plot
 use a boxplot. 
 \begin{Schunk}
 \begin{Sinput}
-> boxplot_spforest(forest)
+> boxplot(forest)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{Intro-019}
@@ -275,7 +275,7 @@ However, it is more traditional in random forest to take the mean of the
 VIP of all the trees which is made in the function \texttt{vipplot.spforest}.
 \begin{Schunk}
 \begin{Sinput}
-> vipplot.spforest(forest)
+> vipplot(forest)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{Intro-020}
@@ -283,7 +283,7 @@ VIP of all the trees which is made in the function \texttt{vipplot.spforest}.
 It is also possible to immediately sort the VIP in decreasing order. Note however than when the number of trees is too small, there can be some variation between the two run of the function \texttt{vipplot.spforest}.
 \begin{Schunk}
 \begin{Sinput}
-> vipplot.spforest(forest, sorted = T)
+> vipplot(forest, sorted = T)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{Intro-021}

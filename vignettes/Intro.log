@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.20)  15 AUG 2024 20:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  16 AUG 2024 08:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -209,7 +209,7 @@ Package pdftex.def Info: Intro-021.pdf  used on input line 289.
 Here is how much of TeX's memory you used:
  2409 strings out of 481239
  35821 string characters out of 5920377
- 270704 words of memory out of 5000000
+ 270701 words of memory out of 5000000
  17648 multiletter control sequences out of 15000+600000
  541626 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -223,7 +223,7 @@ s/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-su
 per/sfst1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1095.pfb></u
 sr/share/texmf/fonts/type1/public/cm-super/sftt1095.pfb></usr/share/texmf/fonts
 /type1/public/cm-super/sftt1200.pfb>
-Output written on Intro.pdf (6 pages, 301157 bytes).
+Output written on Intro.pdf (6 pages, 301013 bytes).
 PDF statistics:
  116 PDF objects out of 1000 (max. 8388607)
  66 compressed objects within 1 object stream

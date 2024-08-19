@@ -207,36 +207,35 @@ predict.sptree_save <- function(object, newdata, ...) {
     }
     X <- newdata
   }
-  
-  
+
+
   Zfun <- lapply(object$listcov, spatstat.geom::as.function.im)
   ptxy <- cbind(X$x, X$y)
   valsplits <- lapply(Zfun, FUN = function(j) {
     j(X)
   })
-  
+
   output <- sapply(1:nrow(ptxy),
-                   FUN = function(i, ...) {
-                     node <- object$tree[[1]]
-                     
-                     while (node$status == 1) {
-                       # child <- ifelse(Zfun[[node$split_var]](ptxy[i, 1], ptxy[i, 2]) < node$split_val,
-                       #                 node$left_daughter,
-                       #                 node$right_daughter
-                       # )
-                       
-                       child <- ifelse(valsplits[[node$split_var]][i] < node$split_val,
-                                       node$left_daughter,
-                                       node$right_daughter
-                       )
-                       
-                       node <- object$tree[[child]]
-                     }
-                     
-                     return(node$intensity_pred)
-                   }
+    FUN = function(i, ...) {
+      node <- object$tree[[1]]
+
+      while (node$status == 1) {
+        # child <- ifelse(Zfun[[node$split_var]](ptxy[i, 1], ptxy[i, 2]) < node$split_val,
+        #                 node$left_daughter,
+        #                 node$right_daughter
+        # )
+
+        child <- ifelse(valsplits[[node$split_var]][i] < node$split_val,
+          node$left_daughter,
+          node$right_daughter
+        )
+
+        node <- object$tree[[child]]
+      }
+
+      return(node$intensity_pred)
+    }
   )
-  
+
   return(output)
 }
-

@@ -14,6 +14,10 @@
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
+<<preliminaries, echo=FALSE, results=hide>>=
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+@
+
 \bibliographystyle{plain}
 \thispagestyle{empty}
 \SweaveOpts{eps=TRUE}
@@ -43,9 +47,9 @@ options(useFancyQuotes = FALSE)
 
 \section{Integration with \Spst}
 
-The packate \pkg{Rsandbox} relies on \spst to work.  
+The package \pkg{Rsandbox} relies on \spst to work.  
 For the user, it means that a point pattern must be input as a \texttt{ppp} object 
-and the covariates as \texttt{im} object rather than raster.
+and the covariates as \texttt{im} objects rather than rasters.
 
 Specifically, \pkg{Rsandbox}  depends on  \pkg{spatstat.model},
 \pkg{spatstat.geom}.
@@ -66,7 +70,7 @@ As an example we take the data \texttt{bei} and \texttt{bei.extra} from
 \spst. 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=2>>=
 par(mfrow = c(1, 3), mar = c(0, 1, 0, 0))
-plot(bei, pch=16, cex = 0.5, main = "")
+plot(bei, pch = 16, cex = 0.5, main = "")
 plot(bei.extra[[1]], ribbon = F, main = "")
 plot(bei.extra[[2]], ribbon = F, main = "")
 @
@@ -83,14 +87,14 @@ forest <- RforestPP(
   Ntree = 3,
   mtry = 1 / 3,
   minpts = 500,
-  cores_trees = 1
+  cores_trees = 3
 )
 @
 
 The arguments: 
 \begin{itemize}
   \item \texttt{score} selects the score used to compare different splits. 
-  From our simulations it had however a negligible impact on the results.
+  From our experience it had a negligible impact on the results.
   \item \texttt{p} controls the thinning applied on the original point pattern 
   \texttt{X} before training an intensity tree. If $p>0$, a $p$-thinning is applied, 
   and if $p=0$, the points are bootstrapped.
@@ -99,10 +103,10 @@ The arguments:
   where each of them is independently chosen with probability \texttt{mtry}.
   \item \texttt{minpts} is used as stopping criterion. Once the number of points 
   in a split is below \texttt{minpts}, we only allow at most one last split. 
-  This ensure that we allows region where there is no points and 
-  that the algorithm is not running indefinitely.
+  This ensure that we allows regions where there is no points and 
+  to not run the algorithm indefinitely.
   \item \texttt{cores{\textunderscore}trees} is used of parallelisation in the sense that 
-  each intensity trees computation will be allocated to a core. 
+  each intensity tree computation is allocated to a core. 
 \end{itemize}
 
 Standard \R {} methods have been implemented: 
@@ -114,15 +118,18 @@ plot(forest)
   \item to return the predicted intensity in new locations. There, the function 
   accepts the new locations to be a \texttt{ppp} object,
 <<>>=
-predict(object = forest, newdata = runifpoint(n=5, win = bei$window))
+predict(object = forest, newdata = runifpoint(n = 5, win = bei$window))
 @
 or a matrix with the $x$-coordinates on the first column and the $y$-coordinates 
 on the second column.
 <<>>=
-predict(object = forest, 
-        newdata = cbind(
-          runif(5, min = 0, max=1000),
-          runif(5, min = 0, max=500)))
+predict(
+  object = forest,
+  newdata = cbind(
+    runif(5, min = 0, max = 1000),
+    runif(5, min = 0, max = 500)
+  )
+)
 @
 \end{itemize}
 
@@ -164,11 +171,11 @@ allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
 
 We will use the \texttt{mapply} function. 
 
-<<>>=
+<<Computing all forests toy example>>=
 extrarg <- list(
   p = 0,
   Ntree = 6,
-  cores_tree = 2,
+  cores_tree = 3,
   X = bei,
   listcovariates = bei.extra
 )
@@ -183,22 +190,25 @@ allforest <- mapply(RforestPP,
 We can now compute the OOB score of all the random intensity forest above 
 and choose the one with the highest score. 
 <<>>=
-allscore <- lapply(allforest, FUN=function(i) {OOBscr(i, cores = 2)})
-allargs[which.max(allscore),]
+allscore <- lapply(allforest, FUN = function(i) {
+  OOBscr(i, cores = 3)
+})
+allargs[which.max(allscore), ]
 @
 
 Then, we may, if we have the computational power, run again the code for this 
 combination of parameter but with \texttt{Ntree} larger. 
 
-<<>>=
-chosenforest <- RforestPP( 
+<<Computing chosen forest toy example>>=
+chosenforest <- RforestPP(
   p = 0,
   mtry = 0.5,
   minpts = 75,
   Ntree = 100,
-  cores_tree = 2,
+  cores_tree = 5,
   X = bei,
-  listcovariates = bei.extra)
+  listcovariates = bei.extra
+)
 @
 
 Finally we 
@@ -209,7 +219,7 @@ plot(chosenforest)
 @
 \item Assessing the variable importance of each variables
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot(chosenforest, sorted = T, cores = 2)
+vipplot(chosenforest, sorted = T, cores = 5)
 @
 \end{itemize}
  
@@ -234,7 +244,6 @@ the elevations, gradient of the terrain, and the concentration of the soils
 in different nutrients, 
 Al, B, Ca, Cu, Fe, K, Mg, Mn, P, Zn, N, N{\textunderscore}min, pH. 
 
-
 We follow the work present in the last section. Once again, we only choose
 a small number of combinations of hyperparameters 
 for this example but many more should be considered in practice. 
@@ -247,11 +256,11 @@ allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
 
 We will use the \texttt{mapply} function. 
 
-<<>>=
+<<Computing all forest bei example>>=
 extrarg <- list(
   p = 0,
   Ntree = 6,
-  cores_tree = 2,
+  cores_tree = 3,
   X = bei,
   listcovariates = beisoilres
 )
@@ -266,31 +275,37 @@ allforest <- mapply(RforestPP,
 We can now compute the OOB score of all the random intensity forest above 
 and choose the one with the highest score. 
 <<>>=
-allscore <- lapply(allforest, FUN=function(i) {OOBscr(i, cores = 2)})
-allargs[which.max(allscore),]
+allscore <- lapply(allforest, FUN = function(i) {
+  OOBscr(i, cores = 5)
+})
+allargs[which.max(allscore), ]
 @
 
 Then, we may, if we have the computational power, run again the code for this 
 combination of parameter but with \texttt{Ntree} larger. 
 
-<<>>=
-chosenforest <- RforestPP( 
+<<Computing chosen forest bei example>>=
+chosenforest <- RforestPP(
   p = 0,
   mtry = 0.75,
   minpts = 75,
   Ntree = 100,
-  cores_tree = 2,
+  cores_tree = 5,
   X = bei,
-  listcovariates = beisoilres)
+  listcovariates = beisoilres
+)
 @
 
 
-<<>>=
+<<fig=TRUE,echo=TRUE, results=hide, width=6,height=3>>=
 plot(chosenforest)
 @
 
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot(chosenforest, sorted = T, cores = 2)
+vipplot(chosenforest, sorted = T, cores = 5)
 @
+
+
+\section{More advanced uses}
 
 \end{document}

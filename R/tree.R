@@ -39,7 +39,7 @@ rand_covar <- function(listcovariates, mtry = 1) {
 #' arbre <- treerec(
 #'   X = spatstat.data::bei,
 #'   threshold = 1000,
-#'   score = "lcv2",
+#'   score = "lcv",
 #'   listcovariates = list(
 #'     grad = spatstat.data::bei.extra$grad,
 #'     elev = spatstat.data::bei.extra$elev
@@ -56,7 +56,7 @@ treerec <- function(X,
                     listcovariates = NULL,
                     mtry = 1,
                     tol = Inf,
-                    minpts = spatstat.geom::npoints(X)/10,
+                    minpts = spatstat.geom::npoints(X) / 10,
                     minsplitq = 0.5,
                     maxsplitq = 0.5,
                     inforest = F) {
@@ -64,10 +64,11 @@ treerec <- function(X,
   if (threshold <= 0 & minpts <= 0) {
     stop("Either threshold or minpts must be strictly greater than 0.")
   }
-  
+
   # The code works quicker when the windows is on a mask
   spatstat.geom::Window(X) <- spatstat.geom::as.mask(spatstat.geom::Window(X),
-                                                     xy = listcovariates[[1]])
+    xy = listcovariates[[1]]
+  )
 
   # Initiating the root
   root <- list(
@@ -92,18 +93,19 @@ treerec <- function(X,
   #   return(list(root))
   # }
   if (spatstat.geom::area.owin(X$window) <= threshold |
-      spatstat.geom::npoints(X) <= minpts) {
-      root$status <- 0
-      output <- list(
-          tree = list(root),
-          X = X,
-          namecov = names(listcovariates),
-          namelist = as.character(match.call()[4]),
-          im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-                     W=X$window)
+    spatstat.geom::npoints(X) <= minpts) {
+    root$status <- 0
+    output <- list(
+      tree = list(root),
+      X = X,
+      namecov = names(listcovariates),
+      namelist = as.character(match.call()[4]),
+      im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
+        W = X$window
       )
-      class(output) <- "sptree"  # For when I will define class
-      return(output)
+    )
+    class(output) <- "sptree" # For when I will define class
+    return(output)
   }
 
 
@@ -148,7 +150,7 @@ treerec <- function(X,
         maxsplitq = maxsplitq
       )
 
-      if ( is.character(res.split)) {
+      if (is.character(res.split)) {
         intensity_tree[[i]]$status <- 0
         intensity_tree[[i]]$already_split <- TRUE
         intensity_tree[[i]]$whystop <- res.split
@@ -243,7 +245,7 @@ treerec <- function(X,
       im = imoutput
     )
   }
-  
+
   class(output) <- "sptree" # For when I will define class
 
   return(output)

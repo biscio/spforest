@@ -2,7 +2,7 @@ expect_silent(
   arbre <- treerec(
     X = spatstat.data::bei,
     threshold = 1000,
-    score = "lcv2",
+    score = "lcv",
     listcovariates = list(
       grad = spatstat.data::bei.extra$grad,
       elev = spatstat.data::bei.extra$elev

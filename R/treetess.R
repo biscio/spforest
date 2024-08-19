@@ -18,11 +18,13 @@ tesstree <- function(X,
   enclose.rect <- spatstat.geom::owin(wind$xrange, wind$yrange)
 
   tol <- 2 / sqrt(lambda) # in order to add points outside the window
-  # Alternative to avoid a polygonal windows. 
+  # Alternative to avoid a polygonal windows.
   tess.points <- spatstat.geom::runifrect(
     lambda,
-    owin(xrange = enclose.rect$xrange + c(-tol, tol), 
-         yrange = enclose.rect$yrange + c(-tol, tol))
+    owin(
+      xrange = enclose.rect$xrange + c(-tol, tol),
+      yrange = enclose.rect$yrange + c(-tol, tol)
+    )
   )
   # tess.points <- spatstat.geom::runifrect(
   #   lambda,
@@ -30,13 +32,13 @@ tesstree <- function(X,
   #     enclose.rect,
   #     tol
   #   )
-  # ) 
+  # )
   # simulate the dummy points
 
   del <- spatstat.geom::dirichlet(tess.points) # associated tesselation
   tmp <- spatstat.geom::intersect.tess(del, wind) # intersected with the windows
   tmp0 <- tmp
-  
+
   if (test.connected) {
     tmp <- spatstat.geom::connected(tmp)
   } # split unconnected tiles
@@ -71,12 +73,12 @@ tesstree <- function(X,
       # fun <- function(w, X) spatstat.geom::inside.owin(X, w = w)
       # a <- lapply(tile.tmp, fun, target.points[indpb])
       # aa <- as.data.frame(a)
-      
+
       newnames <- apply(aa, 1, fun2, a)
       ind[indpb] <- newnames
     }
   }
-  
+
   ind <- as.character(ind)
   ind.vec <- spatstat.geom::nncross(X,
     tess.points,
@@ -141,29 +143,31 @@ tesstree <- function(X,
 
 #' Intensity tesselation tree high definition
 #'
-#' @param X 
-#' @param lambda 
-#' @param target.points 
-#' @param test.connected 
+#' @param X
+#' @param lambda
+#' @param target.points
+#' @param test.connected
 #'
 #' @return
 #' @export
 #'
 #' @examples
 tesstree_precision <- function(X,
-                     lambda,
-                     target.points,
-                     test.connected = TRUE) {
+                               lambda,
+                               target.points,
+                               test.connected = TRUE) {
   # lambda is the nb of points (not the intensity)
   wind <- Window(X)
   enclose.rect <- spatstat.geom::owin(wind$xrange, wind$yrange)
-  
+
   tol <- 2 / sqrt(lambda) # in order to add points outside the window
-  # Alternative to avoid a polygonal windows. 
+  # Alternative to avoid a polygonal windows.
   tess.points <- spatstat.geom::runifrect(
     lambda,
-    owin(xrange = enclose.rect$xrange + c(-tol, tol), 
-         yrange = enclose.rect$yrange + c(-tol, tol))
+    owin(
+      xrange = enclose.rect$xrange + c(-tol, tol),
+      yrange = enclose.rect$yrange + c(-tol, tol)
+    )
   )
   # tess.points <- spatstat.geom::runifrect(
   #   lambda,
@@ -171,27 +175,27 @@ tesstree_precision <- function(X,
   #     enclose.rect,
   #     tol
   #   )
-  # ) 
+  # )
   # simulate the dummy points
-  
+
   del <- spatstat.geom::dirichlet(tess.points) # associated tesselation
   tmp <- spatstat.geom::intersect.tess(del, wind) # intersected with the windows
   tmp0 <- tmp
-  
+
   if (test.connected) {
-    tmp <- spatstat.geom::connected(tmp, dimyx=c(1024,1024))
+    tmp <- spatstat.geom::connected(tmp, dimyx = c(1024, 1024))
   } # split unconnected tiles
   # tmp<-connected(tmp,dimyx=c(512,512)) #supply dimyx to improve precision (better way to deal with connected?)
   delarea <- spatstat.geom::tile.areas(tmp) # collect the areas
-  
-  
+
+
   # nn of target.points in the dummy points
   # corresponds to the index of tile in tmp if no split has been done by connected()
   ind <- spatstat.geom::nncross(target.points,
-                                tess.points,
-                                what = "which"
+    tess.points,
+    what = "which"
   )
-  
+
   # check if some cells were splitted by connected()
   if (test.connected) {
     indpb <- NULL
@@ -200,7 +204,7 @@ tesstree_precision <- function(X,
         indpb <- c(indpb, i)
       }
     }
-    
+
     # repair ind for the splitted tiles due to connected()
     if (!is.null(indpb)) {
       fun2 <- function(v, a) names(a)[as.logical(v)]
@@ -212,18 +216,18 @@ tesstree_precision <- function(X,
       # fun <- function(w, X) spatstat.geom::inside.owin(X, w = w)
       # a <- lapply(tile.tmp, fun, target.points[indpb])
       # aa <- as.data.frame(a)
-      
+
       newnames <- apply(aa, 1, fun2, a)
       ind[indpb] <- newnames
     }
   }
-  
+
   ind <- as.character(ind)
   ind.vec <- spatstat.geom::nncross(X,
-                                    tess.points,
-                                    what = "which"
+    tess.points,
+    what = "which"
   )
-  
+
   if (test.connected) {
     indpb <- NULL
     for (i in 1:X$n) {
@@ -243,11 +247,11 @@ tesstree_precision <- function(X,
         for (k in 1:length(b$bdry)) {
           if (k == 1) {
             bb[[k]] <- sp::Polygon(matrix(unlist(b$bdry[[k]]), ncol = 2),
-                                   hole = FALSE
+              hole = FALSE
             )
           } else {
             bb[[k]] <- sp::Polygon(matrix(unlist(b$bdry[[k]]), ncol = 2),
-                                   hole = TRUE
+              hole = TRUE
             )
           }
         }
@@ -269,13 +273,13 @@ tesstree_precision <- function(X,
     }
   }
   ind.vec <- as.factor(ind.vec)
-  
+
   noms <- names(delarea)
   card <- as.table(rep(0, length(noms)))
   names(card) <- noms
   card0 <- table(ind.vec) # number of points of X in each tile
   card[names(card0)] <- card0
-  
+
   return(list(card[ind] / delarea[ind], tmp0))
 }
 

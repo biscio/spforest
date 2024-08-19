@@ -50,16 +50,15 @@ splitcell <- function(X,
                       imp = NULL,
                       minsplitq = 0.2,
                       maxsplitq = 0.8) {
-
-  whynot=NULL
+  whynot <- NULL
   # Check for incorrect input
   stopifnot(spatstat.geom::is.ppp(X))
   stopifnot(spatstat.geom::is.im(listcovariates[[1]]))
 
   # Cas pathologique si pas de covariable - no split
   if (sum(usecovariates) == 0 | spatstat.geom::npoints(X) <= minpts) { # normally I always have one
-      whynot=c("no covariate or less than minpts")
-      # return(NULL)
+    whynot <- c("no covariate or less than minpts")
+    # return(NULL)
   }
 
   split.left <- NULL
@@ -138,7 +137,7 @@ splitcell <- function(X,
 
   ## Go out if all the score are -Inf
   if (all(is.infinite(scr_cov))) {
-      whynot=c("All split scores are -Inf, cell too small")
+    whynot <- c("All split scores are -Inf, cell too small")
     # return(NULL)
   }
 
@@ -166,25 +165,25 @@ splitcell <- function(X,
   # }
   # more readable
   if (L_imp >= tol & all(!utils::tail(newimp, n = tol))) {
-      whynot=c("no improvement since tol splits")
+    whynot <- c("no improvement since tol splits")
     # return(NULL)
   }
 
   # For split_var, I determine the index of the split var among all covariables
 
   if (!is.null(whynot)) {
-      return(whynot)
+    return(whynot)
   } else {
-  nodeChilds <- list(
-    PPleft = split.left[[id_best_scr]],
-    PPright = X[!leftlvl[[id_best_scr]]],
-    # PPright = split.right[[id_best_scr]],
-    split_var = which(usecovariates == 1)[id_best_scr],
-    split_val = split_scrs[id_best_scr],
-    improvement = newimp,
-    scr_parent = scr_parent,
-    whystop = NULL
-  )
-}
+    nodeChilds <- list(
+      PPleft = split.left[[id_best_scr]],
+      PPright = X[!leftlvl[[id_best_scr]]],
+      # PPright = split.right[[id_best_scr]],
+      split_var = which(usecovariates == 1)[id_best_scr],
+      split_val = split_scrs[id_best_scr],
+      improvement = newimp,
+      scr_parent = scr_parent,
+      whystop = NULL
+    )
+  }
   return(nodeChilds)
 }

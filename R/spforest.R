@@ -31,7 +31,7 @@ print.spforest <- function(x, ...) {
 #' @param newdata a xy vector or a ppp object
 #' @param ... Additional argument
 #'
-#' @return A number .....
+#' @return A vector of predicted intensity
 #' @export
 #'
 #' @examples
@@ -52,8 +52,8 @@ predict.spforest <- function(object, newdata, ...) {
       )
     } else if (is.matrix(newdata)) {
       X <- spatstat.geom::ppp(
-        x = newdata[,1],
-        y = newdata[,2],
+        x = newdata[, 1],
+        y = newdata[, 2],
         window = object$X$window
       )
     }
@@ -250,7 +250,7 @@ new_spforest <- function(trees = list(),
 validate_spforest <- function(x) {
   # TODO: add conformity checks on the entries of the forest
   values <- unclass(x)
-  
+
   # Check for correct entries' name in the forest
   if (sum(is.element(
     c(
@@ -268,36 +268,34 @@ validate_spforest <- function(x) {
   # Check for correct type in the forest's entries
   if (!is.list(values$trees) | !is.list(values$listcov)) {
     stop("A spforest object must have entries trees and listcov as list.",
-         call. = FALSE
+      call. = FALSE
     )
   }
   if (!is.ppp(values$X) | !is.list(values$listcov)) {
     stop("A spforest object must have entry X as a ppp object.",
-         call. = FALSE
+      call. = FALSE
     )
   }
   if (!is.numeric(values$p) | !is.numeric(values$mtry)) {
     stop("A spforest object must have entries p and mtry as numeric.",
-         call. = FALSE
+      call. = FALSE
     )
   }
-  
+
   # check if entries have possible values
   if (values$p < 0 | values$p > 1 | values$mtry > 1 | values$mtry < 0) {
     stop("p and mtry must be between 0 and 1.",
-         call. = FALSE
+      call. = FALSE
     )
   }
-  
+
   alllength_ptintree <- sapply(values$pt_intree, length)
   if (!all(alllength_ptintree == npoints(values$X))) {
     stop("pt_intree should be a vector with
              same length as the number of points in X",
-         call. = FALSE
+      call. = FALSE
     )
   }
-  
+
   x
 }
-
-

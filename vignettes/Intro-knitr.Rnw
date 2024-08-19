@@ -17,7 +17,7 @@
 <<include=FALSE>>=
 library(knitr)
 opts_chunk$set(
-concordance=TRUE
+  concordance = TRUE
 )
 @
 
@@ -27,7 +27,7 @@ concordance=TRUE
 <<include=FALSE>>=
 library(knitr)
 opts_chunk$set(
-dev='postscript'
+  dev = "postscript"
 )
 @
 
@@ -136,11 +136,11 @@ The \texttt{predict} function can be used to return the intensity tree estimate 
 in new locations. It accepts points in the xy-format or as a \texttt{ppp} object from \spst.
 
 <<>>=
-predict(object = inttree, newdata = c(100,100))
+predict(object = inttree, newdata = c(100, 100))
 @
 
 <<>>=
-predict(object = inttree, newdata = runifpoint(n=10, win = bei$window))
+predict(object = inttree, newdata = runifpoint(n = 10, win = bei$window))
 @
 
 Finally, a method for plotting the estimated intensity is implemented.
@@ -187,12 +187,12 @@ Prediction in new area can be obtained via \texttt{predict} which
 accept as input a xy-vector for one point, or a \texttt{ppp} object.
 
 <<>>=
-predict(object = forest, newdata = runifpoint(n=10, win = bei$window))
+predict(object = forest, newdata = runifpoint(n = 10, win = bei$window))
 @
 
 Up to some formatting on \texttt{newdata}, this equivalent to 
 <<>>=
-imspforest(forest)[runifpoint(n=10, win = bei$window)]
+imspforest(forest)[runifpoint(n = 10, win = bei$window)]
 @
 
 
@@ -212,7 +212,7 @@ of the forest with the function \texttt{importance.spforest}.
 The second argument is the position of the covariates 
 we are analysing in the argument \texttt{listcovariates} of \texttt{RforestPP}.
 <<>>=
-importance(forest = forest, id_cov=3)
+importance(forest = forest, id_cov = 3)
 @
 
 To analyse how the VIP varies accross the trees, we can plot 

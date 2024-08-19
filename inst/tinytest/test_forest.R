@@ -8,7 +8,7 @@ expect_silent(
       grad = spatstat.data::bei.extra$grad,
       elev = spatstat.data::bei.extra$elev
     ),
-    score = "lcv2",
+    score = "lcv",
     p = 1 / 2,
     Ntree = 3,
     threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
@@ -30,7 +30,7 @@ expect_silent(
             grad = spatstat.data::bei.extra$grad,
             elev = spatstat.data::bei.extra$elev
         ),
-        score = "lcv2",
+        score = "lcv",
         p = 1 / 2,
         Ntree = 2,
         threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,

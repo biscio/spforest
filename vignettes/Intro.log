@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  16 AUG 2024 15:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  19 AUG 2024 09:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -158,69 +158,69 @@ e
 ))
 (./Intro-concordance.tex)
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 27.
+(Font)              <12> on input line 28.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 27.
+(Font)              <8> on input line 28.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 27.
+(Font)              <6> on input line 28.
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
-7.
+8.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 31.
-<Intro-003.pdf, id=2, 433.62pt x 144.54pt>
-File: Intro-003.pdf Graphic file (type pdf)
-<use Intro-003.pdf>
-Package pdftex.def Info: Intro-003.pdf  used on input line 64.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 32.
+<Intro-004.pdf, id=2, 433.62pt x 144.54pt>
+File: Intro-004.pdf Graphic file (type pdf)
+<use Intro-004.pdf>
+Package pdftex.def Info: Intro-004.pdf  used on input line 65.
 (pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./Intro-003.pdf>]
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./Intro-004.pdf>]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 89.
+(Font)              <10.95> on input line 90.
 LaTeX Font Info:    Trying to load font information for T1+cmss on input line 1
-02.
+03.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmss.fd
 File: t1cmss.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
-<Intro-005.pdf, id=23, 433.62pt x 216.81pt>
-File: Intro-005.pdf Graphic file (type pdf)
-<use Intro-005.pdf>
-Package pdftex.def Info: Intro-005.pdf  used on input line 110.
+<Intro-006.pdf, id=23, 433.62pt x 216.81pt>
+File: Intro-006.pdf Graphic file (type pdf)
+<use Intro-006.pdf>
+Package pdftex.def Info: Intro-006.pdf  used on input line 111.
 (pdftex.def)             Requested size: 290.22107pt x 145.11638pt.
- [2 <./Intro-005.pdf>]
-Overfull \hbox (5.0513pt too wide) in paragraph at lines 160--165
+ [2 <./Intro-006.pdf>]
+Overfull \hbox (5.0513pt too wide) in paragraph at lines 161--166
 []\T1/cmr/m/n/10.95 For il-lus-tra-tion, we will com-pute ran-dom in-ten-sity f
 or-est for all com-bi-na-tions of $[] \OT1/cmr/m/n/10.95 = 75\OML/cmm/m/it/10.9
 5 ; \OT1/cmr/m/n/10.95 100\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 125$
  []
 
 [3]
-<Intro-013.pdf, id=43, 578.16pt x 289.08pt>
-File: Intro-013.pdf Graphic file (type pdf)
-<use Intro-013.pdf>
-Package pdftex.def Info: Intro-013.pdf  used on input line 237.
-(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
-<Intro-014.pdf, id=44, 433.62pt x 144.54pt>
+<Intro-014.pdf, id=43, 578.16pt x 289.08pt>
 File: Intro-014.pdf Graphic file (type pdf)
 <use Intro-014.pdf>
-Package pdftex.def Info: Intro-014.pdf  used on input line 246.
-(pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
- [4 <./Intro-013.pdf> <./Intro-014.pdf>]
-<Intro-020.pdf, id=71, 578.16pt x 289.08pt>
-File: Intro-020.pdf Graphic file (type pdf)
-<use Intro-020.pdf>
-Package pdftex.def Info: Intro-020.pdf  used on input line 327.
+Package pdftex.def Info: Intro-014.pdf  used on input line 238.
 (pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
- [5] [6 <./Intro-020.pdf>]
+<Intro-015.pdf, id=44, 433.62pt x 144.54pt>
+File: Intro-015.pdf Graphic file (type pdf)
+<use Intro-015.pdf>
+Package pdftex.def Info: Intro-015.pdf  used on input line 247.
+(pdftex.def)             Requested size: 290.22107pt x 96.74423pt.
+ [4 <./Intro-014.pdf> <./Intro-015.pdf>]
+<Intro-021.pdf, id=71, 578.16pt x 289.08pt>
+File: Intro-021.pdf Graphic file (type pdf)
+<use Intro-021.pdf>
+Package pdftex.def Info: Intro-021.pdf  used on input line 327.
+(pdftex.def)             Requested size: 290.22107pt x 145.10866pt.
+ [5] [6 <./Intro-021.pdf>]
 (./Intro.aux) ) 
 Here is how much of TeX's memory you used:
  2429 strings out of 481239
- 36479 string characters out of 5920377
+ 36486 string characters out of 5920377
  270695 words of memory out of 5000000
  17663 multiletter control sequences out of 15000+600000
  542987 words of font info for 48 fonts, out of 8000000 for 9000
@@ -238,7 +238,7 @@ m-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss1095.pfb
 onts/type1/public/cm-super/sftt1095.pfb></usr/share/texmf/fonts/type1/public/cm
 -super/sftt1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1440.pfb>
 
-Output written on Intro.pdf (6 pages, 541435 bytes).
+Output written on Intro.pdf (6 pages, 543531 bytes).
 PDF statistics:
  124 PDF objects out of 1000 (max. 8388607)
  73 compressed objects within 1 object stream

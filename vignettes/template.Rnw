@@ -3,7 +3,7 @@
 % \VignetteIndexEntry{Getting Started with Spatstat}
 
 <<echo=FALSE,results=hide,fig=FALSE>>=
-options(SweaveHooks=list(fig=function() par(mar=c(1,1,1,1))))
+options(SweaveHooks = list(fig = function() par(mar = c(1, 1, 1, 1))))
 @ 
 
 \usepackage{graphicx}
@@ -24,12 +24,18 @@ options(SweaveHooks=list(fig=function() par(mar=c(1,1,1,1))))
 
 <<echo=FALSE,results=hide>>=
 library(spatstat)
-spatstat.options(image.colfun=function(n) { grey(seq(0,1,length=n)) })
-sdate <- read.dcf(file = system.file("DESCRIPTION", package = "Rsandbox"),
-         fields = "Date")
-sversion <- read.dcf(file = system.file("DESCRIPTION", package = "Rsandbox"),
-         fields = "Version")
-options(useFancyQuotes=FALSE)
+spatstat.options(image.colfun = function(n) {
+  grey(seq(0, 1, length = n))
+})
+sdate <- read.dcf(
+  file = system.file("DESCRIPTION", package = "Rsandbox"),
+  fields = "Date"
+)
+sversion <- read.dcf(
+  file = system.file("DESCRIPTION", package = "Rsandbox"),
+  fields = "Version"
+)
+options(useFancyQuotes = FALSE)
 @ 
 
 \title{Getting started with Spatial Random Forests}
@@ -41,12 +47,12 @@ options(useFancyQuotes=FALSE)
 
 <<fig=TRUE,echo=FALSE,results=hide>>=
 data(redwood)
-plot(redwood, pch=16, main="")
+plot(redwood, pch = 16, main = "")
 @ 
  
 <<fig=TRUE,echo=FALSE,results=hide>>=
 data(longleaf)
-plot(longleaf, main="")
+plot(longleaf, main = "")
 @ 
  
 \section*{What can \spst\ do?}
@@ -56,7 +62,7 @@ head(mydata)
 @ 
   
 <<eval=FALSE>>=
-  mypattern <- ppp(mydata[,3], mydata[,7], c(100,200), c(10,90))
+mypattern <- ppp(mydata[, 3], mydata[, 7], c(100, 200), c(10, 90))
 @ 
    The general form is 
 <<eval=FALSE>>=
@@ -77,7 +83,7 @@ summary(mypattern)
   \item 
   Ripley's $K$-function:
 <<echo=FALSE,results=hide,fig=FALSE>>=
-options(SweaveHooks=list(fig=function() par(mar=rep(4,4)+0.1)))
+options(SweaveHooks = list(fig = function() par(mar = rep(4, 4) + 0.1)))
 @ 
 <<fig=TRUE,results=hide>>=
 plot(Kest(mypattern))
@@ -87,16 +93,16 @@ For more information, type \texttt{help(Kest)}
   \item 
   Envelopes of $K$-function:
 <<eval=FALSE>>=
-plot(envelope(mypattern,Kest))
+plot(envelope(mypattern, Kest))
 @ 
 <<echo=FALSE,results=hide>>=
-env <- envelope(mypattern,Kest, nsim=39)
+env <- envelope(mypattern, Kest, nsim = 39)
 @ 
 <<fig=TRUE,echo=FALSE,results=hide>>=
-plot(env, main="envelope(mypattern, Kest)")
+plot(env, main = "envelope(mypattern, Kest)")
 @ 
 <<echo=FALSE,results=hide,fig=FALSE>>=
-options(SweaveHooks=list(fig=function() par(mar=c(1,1,1,1))))
+options(SweaveHooks = list(fig = function() par(mar = c(1, 1, 1, 1))))
 @ 
 
   For more information, type \texttt{help(envelope)}
@@ -114,10 +120,10 @@ For more information, type \texttt{help(density.ppp)}
   you can add these data as \emph{marks}. Suppose that columns 
   5 and 9 of the spreadsheet contained such values. Then do something like
 <<eval=FALSE>>=
-marks(mypattern) <- mydata[, c(5,9)]
+marks(mypattern) <- mydata[, c(5, 9)]
 @ 
 <<echo=FALSE,results=hide>>=
-mypattern <-finpines
+mypattern <- finpines
 @ 
 Now you can try things like the kernel smoother of mark values:
 <<eval=FALSE>>=
@@ -125,7 +131,7 @@ plot(Smooth(mypattern))
 @ 
 \setkeys{Gin}{width=0.8\textwidth}
 <<fig=TRUE,echo=FALSE,results=hide>>=
-plot(Smooth(mypattern, sigma=1.2), main="Smooth(mypattern)")
+plot(Smooth(mypattern, sigma = 1.2), main = "Smooth(mypattern)")
 @ 
 \setkeys{Gin}{width=0.4\textwidth}
 \item

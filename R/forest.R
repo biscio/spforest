@@ -49,6 +49,14 @@ RforestPP <- function(X,
   nbcov <- length(listcovariates)
   namescov <- names(listcovariates)
 
+  if (!do.call(spatstat.geom::compatible.im, unname(listcovariates))) {
+    listcovariates <- do.call(
+      spatstat.geom::harmonise.im,
+      listcovariates)
+    warning("The im objects in listcovariates have been 
+    harmonised with the function harmonise.im.")
+  }
+
   # Compute the forest's trees
   treeinforest <- parallel::mclapply(1:Ntree, FUN = function(i) {
     # Determine points in and out

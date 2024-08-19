@@ -124,12 +124,20 @@ vipplot <- function(x, sorted = F, cores = 1, ...) {
       xlab = "Variables",
       ylab = "Variable Importance"
     )
+    return(invisible(data.frame(
+      Variable = names(x$listcov)[avvipsort$ix],
+      Importance = avvipsort$x
+    )))
   } else {
     graphics::barplot(avvip,
       names.arg = names(x$listcov),
       xlab = "Variables",
       ylab = "Variable Importance"
     )
+    return(invisible(data.frame(
+      Variable = names(x$listcov),
+      Importance = avvip
+    )))
   }
 }
 # vipplot.spforest_old <- function(x, cores = 1, ...) {

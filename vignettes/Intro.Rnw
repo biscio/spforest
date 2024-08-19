@@ -9,8 +9,8 @@
 \newcommand{\pkg}[1]{\texttt{#1}}
 \newcommand{\bold}[1]{{\textbf {#1}}}
 \newcommand{\R}{{\sf R}}
-\newcommand{\spst}{\pkg{spatstat}}
-\newcommand{\Spst}{\pkg{Spatstat}}
+\newcommand{\spst}{\pkg{spatstat}{}}
+\newcommand{\Spst}{\pkg{Spatstat}{}}
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
@@ -25,6 +25,7 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 <<echo=FALSE,results=hide>>=
 library(spatstat)
+library(here)
 library(Rsandbox)
 # spatstat.options(image.colfun=function(n) { grey(seq(0,1,length=n)) })
 sdate <- read.dcf(
@@ -44,17 +45,14 @@ options(useFancyQuotes = FALSE)
 \maketitle
 
 
-
 \section{Integration with \Spst}
 
 The package \pkg{Rsandbox} relies on \spst to work.  
 For the user, it means that a point pattern must be input as a \texttt{ppp} object 
 and the covariates as \texttt{im} objects rather than rasters.
-
 Specifically, \pkg{Rsandbox}  depends on  \pkg{spatstat.model},
-\pkg{spatstat.geom}.
-In this document, we will additionally use the package \pkg{spatstat.data}
-and \pkg{spatstat.random}.
+\pkg{spatstat.geom}. In this document, 
+we will additionally use the packages \pkg{spatstat.data} and \pkg{spatstat.random}.
 
 <<>>=
 library(Rsandbox)
@@ -65,7 +63,7 @@ library(spatstat.random)
 \section{Getting started}
 
 We need a point pattern as a \texttt{ppp} object, 
-together with a list of covariates as list of \texttt{im} objects
+together with a list of covariates as list of \texttt{im} objects.
 As an example we take the data \texttt{bei} and \texttt{bei.extra} from 
 \spst. 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=2>>=
@@ -75,15 +73,13 @@ plot(bei.extra[[1]], ribbon = F, main = "")
 plot(bei.extra[[2]], ribbon = F, main = "")
 @
 
-The function \texttt{RforestPP} generate 
-a random forest intensity estimate. 
+The function \texttt{RforestPP} is the core function of \pkg{Rsandbox} and 
+generate random forest intensity estimates. 
 
 <<>>=
 forest <- RforestPP(
   X = bei,
   listcovariates = bei.extra,
-  score = "lcv2",
-  p = 0,
   Ntree = 3,
   mtry = 1 / 3,
   minpts = 500,
@@ -93,20 +89,15 @@ forest <- RforestPP(
 
 The arguments: 
 \begin{itemize}
-  \item \texttt{score} selects the score used to compare different splits. 
-  From our experience it had a negligible impact on the results.
-  \item \texttt{p} controls the thinning applied on the original point pattern 
-  \texttt{X} before training an intensity tree. If $p>0$, a $p$-thinning is applied, 
-  and if $p=0$, the points are bootstrapped.
-  \item \texttt{Ntree} sets the number of intensity trees in the forest.
-  \item \texttt{mtry}: At each split, we use a random subset of the covariates 
-  where each of them is independently chosen with probability \texttt{mtry}.
+  \item \texttt{Ntree} sets the number of intensity trees in the forest,
+  \item \texttt{mtry} select the probability that a covariate is used to decide 
+  a split,
   \item \texttt{minpts} is used as stopping criterion. Once the number of points 
-  in a split is below \texttt{minpts}, we only allow at most one last split. 
-  This ensure that we allows regions where there is no points and 
-  to not run the algorithm indefinitely.
-  \item \texttt{cores{\textunderscore}trees} is used of parallelisation in the sense that 
-  each intensity tree computation is allocated to a core. 
+  in a split is below \texttt{minpts}, we allow at most one last split. 
+  This ensure that we allow regions with no points and 
+  to not run the algorithm indefinitely,
+  \item \texttt{cores{\textunderscore}trees} is used for parallelisation 
+  where we allocate different intensity tree computation to different cores. 
 \end{itemize}
 
 Standard \R {} methods have been implemented: 
@@ -134,34 +125,51 @@ predict(
 \end{itemize}
 
 
-\section{Usual workflow}
-
+\section{A standard workflow}
+\label{s:workflow}
 
 When working with random intensity forest the workflow is a follow: 
-\begin{itemize}
-  \item In function of the available computational power,
-  choose a reasonable combination of hyperparameters: 
-  \texttt{minpts},  \texttt{mtry}.
-  \item Compute the Out-Of-Bag (OOB) score for a random intensity forest with 
-  each combination of the hyperparameters. Select the combination with the highest OOB score.
-  \item Eventually, re-run the random intensity forest with this combination of hyperparameters and 
-  \texttt{Ntree} as large as possible. 
-  \item Compute the variable importance (VIP) for each covariates and display the results in a plot.
-\end{itemize}
+\begin{enumerate}
+  \item Choose a reasonable number of combinations of hyperparameters: 
+  \texttt{minpts},  \texttt{mtry},
+  \item Compute a random forest intensity for each combination 
+  of the hyperparameters,
+  \item Choose the combination of hyperparameters that maximises 
+  the Out-Of-Bag (OOB) score,
+  \item Re-run the random intensity forest with
+  \texttt{Ntree} as large as possible,
+  \item Use the variable importance (VIP) of the covariates 
+  to assess their importance to the intensity of the process.
+\end{enumerate}
 
-\textbf{Remark:} There is in fact two more hyperparameters, \texttt{Ntree} and \texttt{p}, 
-that one can choose. However, we have observed that \texttt{p} usually has a low impact on 
-the mean square error. Hence we recommend to set $p=0$, meaning to boostrap the point patterns. 
-Finally, \texttt{Ntree} should be chosen as large as possible, depending on the 
-available computational power.
+Ideally, \texttt{Ntree} should be as large as possible 
+but random intensity forest are computationally intensive. 
+Thankfully, we have observed that 
+the order of the VIP of each variables and the combination 
+of hyperparameters that maximises the OOB score are usually the same 
+as soon as $\texttt{Ntree} \geq 100$.   
+Hence, if computational power is an issue, we suggest to choose 
+$\texttt{Ntree} = 100$ in Step 2, and letting $\texttt{Ntree}$ 
+to be as large as possible in Step 4. 
 
-To illustrate the workflow on an example, we re-use the \texttt{bei} and \texttt{bei.extra} data.
+% HERE WORKING
+% 
+% \textbf{Remark:} There is in fact two more hyperparameters, \texttt{Ntree} and \texttt{p}, 
+% that one can choose. However, we have observed that \texttt{p} usually has a low impact on 
+% the mean square error. Hence we recommend to set $p=0$, meaning to boostrap the point patterns. 
+% 
+% Finally, \texttt{Ntree} should be chosen as large as possible, depending on the 
+% available computational power.
 
-For illustration, we will compute random intensity 
-forest for all combinations of $\texttt{minpts} = 75, 100, 125$ 
-and $\texttt{mtry}= 0.25, 0.5, 0.75$ with $\texttt{Ntree}=6$. 
-For a more serious analyses, we should let $\texttt{minpts} = 1,2,\ldots,200$ 
-and $\texttt{mtry}= 0.1,0.2,\ldots,1$, together with $\texttt{Ntree}=300$. 
+To illustrate this workflow on an example, 
+we re-use the \texttt{bei} and \texttt{bei.extra} data. 
+Further, to keep the computational burden low in this document, 
+we choose a small number of combinations of hyperparameters: 
+$\texttt{minpts} = 75, 100, 125$ 
+and $\texttt{mtry}= 0.25, 0.5, 0.75$, with $\texttt{Ntree} = 6$. 
+In practice, we should let $\texttt{minpts} = 1,2,\ldots,200$ 
+and $\texttt{mtry}= 0.1,0.2,\ldots,1$, together with $\texttt{Ntree}\geq 100$ 
+in Step 2 and $\texttt{Ntree}\geq 300$ in Step 4.
 
 <<>>=
 argmtry <- c(0.25, 0.5, 0.75)
@@ -171,15 +179,38 @@ allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
 
 We will use the \texttt{mapply} function. 
 
-<<Computing all forests toy example>>=
+<<caching allforestoy, echo=FALSE,results=hide>>=
+if (!exists("allforesttoy")) {
+  filetocache <- paste0(here::here(), "/vignettes/cache_allforesttoy.rds")
+  if (file.exists(filetocache)) {
+    allforesttoy <- readRDS(filetocache)
+  } else {
+    extrarg <- list(
+      Ntree = 4,
+      cores_tree = 2,
+      X = bei,
+      listcovariates = bei.extra
+    )
+    allforesttoy <- mapply(RforestPP,
+      mtry = allargs$mtry,
+      minpts = allargs$minpts,
+      MoreArgs = extrarg,
+      SIMPLIFY = F
+    )
+    saveRDS(allforesttoy, file = filetocache)
+  }
+}
+@
+
+
+<<Computing all forests toy example, eval=FALSE>>=
 extrarg <- list(
-  p = 0,
-  Ntree = 6,
-  cores_tree = 3,
+  Ntree = 4,
+  cores_tree = 2,
   X = bei,
   listcovariates = bei.extra
 )
-allforest <- mapply(RforestPP,
+allforesttoy <- mapply(RforestPP,
   mtry = allargs$mtry,
   minpts = allargs$minpts,
   MoreArgs = extrarg,
@@ -187,21 +218,40 @@ allforest <- mapply(RforestPP,
 )
 @
 
-We can now compute the OOB score of all the random intensity forest above 
+We can now compute the OOB score of all the random intensity forests above 
 and choose the one with the highest score. 
 <<>>=
-allscore <- lapply(allforest, FUN = function(i) {
+allscore <- lapply(allforesttoy, FUN = function(i) {
   OOBscr(i, cores = 3)
 })
 allargs[which.max(allscore), ]
 @
 
-Then, we may, if we have the computational power, run again the code for this 
+Then, we run again \texttt{RforestPP} for this 
 combination of parameter but with \texttt{Ntree} larger. 
 
-<<Computing chosen forest toy example>>=
-chosenforest <- RforestPP(
-  p = 0,
+
+<<caching chosenforesttoy, echo=FALSE,results=hide>>=
+if (!exists("chosenforesttoy")) {
+  filetocache <- paste0(here::here(), "/vignettes/cache_chosenforesttoy.rds")
+  if (file.exists(filetocache)) {
+    chosenforesttoy <- readRDS(filetocache)
+  } else {
+    chosenforesttoy <- RforestPP(
+      mtry = 0.5,
+      minpts = 75,
+      Ntree = 300,
+      cores_tree = 5,
+      X = bei,
+      listcovariates = bei.extra
+    )
+    saveRDS(chosenforesttoy, file = filetocache)
+  }
+}
+@
+
+<<Computing chosen forest toy example, eval=FALSE>>=
+chosenforesttoy <- RforestPP(
   mtry = 0.5,
   minpts = 75,
   Ntree = 100,
@@ -214,19 +264,45 @@ chosenforest <- RforestPP(
 Finally we 
 \begin{itemize}
 \item Visualise the estimated intensity
-<<>>=
-plot(chosenforest)
-@
-\item Assessing the variable importance of each variables
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot(chosenforest, sorted = T, cores = 5)
+plot(chosenforesttoy)
+@
+\item Assess the VIP of each variable
+<<eval=FALSE, width=8,height=4>>=
+vipplot(chosenforesttoy, sorted = T)
+@
+<<caching-viptoy, echo=FALSE, fig=TRUE, width=8,height=4>>=
+if (!exists("viptoy")) {
+  filetocache <- paste0(here::here(), "/vignettes/cache_viptoy.rds")
+  if (file.exists(filetocache)) {
+    viptoy <- readRDS(filetocache)
+    graphics::barplot(viptoy$Importance,
+      names.arg = viptoy$Variable,
+      xlab = "Variables",
+      ylab = "Variable Importance"
+    )
+  } else {
+    viptoy <- vipplot(chosenforesttoy, sorted = T, cores = 5)
+    saveRDS(viptoy, file = filetocache)
+    graphics::barplot(viptoy$Importance,
+      names.arg = viptoy$Variable,
+      xlab = "Variables",
+      ylab = "Variable Importance"
+    )
+  }
+}
 @
 \end{itemize}
- 
+Here there is no indication that the gradient or elevation are more important
+than the other to explain the intensity of the point process. This was however 
+a toy example, and the use of VIP shines when there is more covariates. 
+
+
 \section{A more interesing example}
 
-On of the advantage of random intensity forest is the ability to process a large number of covariates. 
-We will re-study the point pattern in the data \texttt{bei} but with a larger list of covariates, 
+One of the advantage of random intensity forest is the ability 
+to process a large number of covariates. 
+We will re-study the point pattern \texttt{bei} but with a larger list of covariates, 
 made available in \pkg{Rsandbox} in the list \texttt{beisoilres}.
 
 <<fig=TRUE,echo=FALSE,results=hide, width=6,height=2>>=
@@ -240,72 +316,176 @@ for (i in 1:15) {
 @
 
 From left to right and top to bottom, these covariates are: 
-the elevations, gradient of the terrain, and the concentration of the soils 
+the elevation and gradient of the terrain, and the concentration of the soils 
 in different nutrients, 
-Al, B, Ca, Cu, Fe, K, Mg, Mn, P, Zn, N, N{\textunderscore}min, pH. 
+Al, B, Ca, Cu, Fe, K, Mg, Mn, P, Zn, N, Nmin, pH. 
 
-We follow the work present in the last section. Once again, we only choose
-a small number of combinations of hyperparameters 
-for this example but many more should be considered in practice. 
+We follow the workflow presented in Section~\ref{s:workflow}.
+Once again, we only choose
+a small number of combinations of hyperparameters to keep 
+the computational burden light, 
+but many more should be considered in practice. 
 
-<<>>=
+<<caching allforestbei, echo=FALSE,results=hide>>=
+if (!exists("allforestbei")) {
+  filetocache <- paste0(here::here(), "/vignettes/cache_allforestbei.rds")
+  if (file.exists(filetocache)) {
+    allforestbei <- readRDS(filetocache)
+  } else {
+    argmtry <- c(0.25, 0.5, 0.75)
+argminpts <- c(seq(75, 125, by = 25))
+allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
+
+    extrarg <- list(
+      Ntree = 6,
+      cores_tree = 3,
+      X = bei,
+      listcovariates = beisoilres
+    )
+    allforestbei <- mapply(RforestPP,
+      mtry = allargs$mtry,
+      minpts = allargs$minpts,
+      MoreArgs = extrarg,
+      SIMPLIFY = F
+    )
+    saveRDS(allforestbei, file = filetocache)
+  }
+}
+@
+<<Computing all forest bei example, eval=F>>=
 argmtry <- c(0.25, 0.5, 0.75)
 argminpts <- c(seq(75, 125, by = 25))
 allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
-@
 
-We will use the \texttt{mapply} function. 
-
-<<Computing all forest bei example>>=
 extrarg <- list(
-  p = 0,
   Ntree = 6,
   cores_tree = 3,
   X = bei,
   listcovariates = beisoilres
 )
-allforest <- mapply(RforestPP,
+allforestbei <- mapply(RforestPP,
   mtry = allargs$mtry,
   minpts = allargs$minpts,
   MoreArgs = extrarg,
   SIMPLIFY = F
 )
 @
-
-We can now compute the OOB score of all the random intensity forest above 
-and choose the one with the highest score. 
+Then, we find the combination of hyperparameters that maximises the OOB score.
 <<>>=
-allscore <- lapply(allforest, FUN = function(i) {
-  OOBscr(i, cores = 5)
+allscore <- lapply(allforestbei, FUN = function(i) {
+  OOBscr(i, cores = 3)
 })
 allargs[which.max(allscore), ]
 @
 
-Then, we may, if we have the computational power, run again the code for this 
-combination of parameter but with \texttt{Ntree} larger. 
+Finally, we run again \texttt{RforestPP} with \texttt{Ntree} larger. 
 
-<<Computing chosen forest bei example>>=
-chosenforest <- RforestPP(
-  p = 0,
+
+<<caching chosenforestbei, echo=FALSE,results=hide>>=
+if (!exists("chosenforestbei")) {
+  filetocache <- paste0(here::here(), "/vignettes/cache_chosenforestbei.rds")
+  if (file.exists(filetocache)) {
+    chosenforestbei <- readRDS(filetocache)
+  } else {
+    chosenforestbei <- RforestPP(
+      mtry = 0.75,
+      minpts = 75,
+      Ntree = 100,
+      cores_tree = 5,
+      X = bei,
+      listcovariates = beisoilres
+    )
+    saveRDS(chosenforestbei, file = filetocache)
+  }
+}
+@
+<<Computing chosen forest bei example, eval=FALSE>>=
+chosenforestbei <- RforestPP(
   mtry = 0.75,
   minpts = 75,
   Ntree = 100,
-  cores_tree = 5,
+  cores_tree = 2,
   X = bei,
   listcovariates = beisoilres
 )
 @
 
+We can now visualise the estimated intensity and assess the VIP of each variable.
+<<fig=TRUE,echo=TRUE, results=hide, width=6,height=3>>=
+plot(chosenforestbei, main = "Estimated intensity")
+@
+
+There, the \texttt{bei} points are very irregular which results in 
+the intensity being very high in two locations. Here a plot of the $\log$ of
+the intensity is more revealing. 
 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=3>>=
-plot(chosenforest)
+plot(log(imspforest(chosenforestbei)), main = "Logarithm of the estimated intensity")
 @
 
-<<fig=TRUE,echo=TRUE, width=8,height=4>>=
-vipplot(chosenforest, sorted = T, cores = 5)
+Interestingly, we can assess the most covariates that had the 
+most impact on the intensity of the point process. 
+
+
+<<eval=FALSE>>=
+vipplot(chosenforestbei, sorted = T)
 @
+
+<<caching-vipbei, echo=FALSE, fig=TRUE, width=9,height=4>>=
+if (!exists("vipbei")) {
+  filetocache <- paste0(here::here(), "/vignettes/cache_vipbei.rds")
+  if (file.exists(filetocache)) {
+    vipbei <- readRDS(filetocache)
+    graphics::barplot(vipbei$Importance,
+      names.arg = vipbei$Variable,
+      xlab = "Variables",
+      ylab = "Variable Importance"
+    )
+  } else {
+    vipbei <- vipplot(chosenforestbei, sorted = T, cores = 5)
+    saveRDS(vipbei, file = filetocache)
+    graphics::barplot(vipbei$Importance,
+      names.arg = vipbei$Variable,
+      xlab = "Variables",
+      ylab = "Variable Importance"
+    )
+  }
+}
+@
+
+The VIP plot indicates that the five most important covariates 
+are that grad, P, Zn, Cu, elev. 
+Up to the covariates Cu, these results are ín agreement with 
+those of \cite{coeurjolly:18} that studied the same data. 
+
+Moreover, we have run the same analysis 
+with all the combination of hyperparameters between $\texttt{mtry} = 0.1,0.2,\ldots 1$ and
+$\texttt{minpts} = 10,20,\ldots,1000$ and 
+$\texttt{Ntree} = 500$. 
+The combination maximising the OOB score was 
+$\texttt{mtry} = 1$ and $\texttt{minpts} = 10$ and the corresponding VIP plots 
+showed the same five most important covariates. 
+ 
+
 
 
 \section{More advanced uses}
+
+\begin{itemize}
+  \item \texttt{score} selects the score used to compare different splits. 
+  From our experience it had a negligible impact on the results.
+  \item \texttt{p} controls the thinning applied on the original point pattern 
+  \texttt{X} before training an intensity tree. If $p>0$, a $p$-thinning is applied, 
+  and if $p=0$, the points are bootstrapped.
+\end{itemize}
+
+\begin{thebibliography}{10}
+\bibitem{coeurjolly:18}
+Achmad Choiruddin. Jean-François Coeurjolly. Frédérique Letué. 
+\newblock {\em Convex and non-convex regularization methods for spatial point processes intensity estimation}.
+\newblock Electron. J. Statist. 12 (1) 1210 - 1255, 2018. https://doi.org/10.1214/18-EJS1408 
+
+\end{thebibliography}
+
 
 \end{document}

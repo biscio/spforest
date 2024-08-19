@@ -37,7 +37,7 @@
 RforestPP <- function(X,
                       listcovariates = NULL,
                       score = "lcv",
-                      p = 0.8,
+                      p = 0,
                       Ntree = 10,
                       threshold = spatstat.geom::area(X) / 1e4,
                       cores_trees = 1,

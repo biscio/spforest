@@ -14,7 +14,7 @@
 \item{...}{Additional argument}
 }
 \value{
-A number .....
+A vector of predicted intensity
 }
 \description{
 Forest prediction

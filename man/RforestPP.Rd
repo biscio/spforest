@@ -8,7 +8,7 @@ RforestPP(
   X,
   listcovariates = NULL,
   score = "lcv",
-  p = 0.8,
+  p = 0,
   Ntree = 10,
   threshold = spatstat.geom::area(X)/10000,
   cores_trees = 1,
@@ -54,7 +54,7 @@ forest <- RforestPP(
     grad = spatstat.data::bei.extra$grad,
     elev = spatstat.data::bei.extra$elev
   ),
-  score = "lcv2",
+  score = "lcv",
   p = 1,
   Ntree = 3,
   threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,

@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 
-% \VignetteIndexEntry{Getting Started with Spatstat}
-
+%\VignetteIndexEntry{Getting Started with Rsandbox}
+%\SweaveUTF8
 \usepackage{graphicx}
 \usepackage{anysize}
 \marginsize{2cm}{2cm}{2cm}{2cm}
@@ -21,7 +21,7 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 \bibliographystyle{plain}
 \thispagestyle{empty}
 \SweaveOpts{eps=TRUE}
-\setkeys{Gin}{width=0.6\textwidth}
+\setkeys{Gin}{width=0.8\textwidth}
 
 <<echo=FALSE,results=hide>>=
 library(spatstat)
@@ -152,15 +152,6 @@ Hence, if computational power is an issue, we suggest to choose
 $\texttt{Ntree} = 100$ in Step 2, and letting $\texttt{Ntree}$ 
 to be as large as possible in Step 4. 
 
-% HERE WORKING
-% 
-% \textbf{Remark:} There is in fact two more hyperparameters, \texttt{Ntree} and \texttt{p}, 
-% that one can choose. However, we have observed that \texttt{p} usually has a low impact on 
-% the mean square error. Hence we recommend to set $p=0$, meaning to boostrap the point patterns. 
-% 
-% Finally, \texttt{Ntree} should be chosen as large as possible, depending on the 
-% available computational power.
-
 To illustrate this workflow on an example, 
 we re-use the \texttt{bei} and \texttt{bei.extra} data. 
 Further, to keep the computational burden low in this document, 
@@ -261,7 +252,7 @@ chosenforesttoy <- RforestPP(
 )
 @
 
-Finally we 
+Finally, we:
 \begin{itemize}
 \item Visualise the estimated intensity
 <<fig=TRUE,echo=TRUE, width=8,height=4>>=
@@ -333,8 +324,8 @@ if (!exists("allforestbei")) {
     allforestbei <- readRDS(filetocache)
   } else {
     argmtry <- c(0.25, 0.5, 0.75)
-argminpts <- c(seq(75, 125, by = 25))
-allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
+    argminpts <- c(seq(75, 125, by = 25))
+    allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
 
     extrarg <- list(
       Ntree = 6,
@@ -415,8 +406,9 @@ We can now visualise the estimated intensity and assess the VIP of each variable
 plot(chosenforestbei, main = "Estimated intensity")
 @
 
-There, the \texttt{bei} points are very irregular which results in 
-the intensity being very high in two locations. Here a plot of the $\log$ of
+There, the points in \texttt{bei} are very irregularly distributed
+which results in the intensity being very high in two locations. 
+Here a plot of the $\log$ of
 the intensity is more revealing. 
 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=3>>=
@@ -471,19 +463,31 @@ showed the same five most important covariates.
 
 \section{More advanced uses}
 
+The function \texttt{RforestPP} has more arguments that can be modified to train 
+a random intensity forest. 
+However, from our observations, they had a low or no impact on the mean integrated squared error and VIP. Consequently, we chose to not include them in the standard workflow.
+These arguments are:
 \begin{itemize}
-  \item \texttt{score} selects the score used to compare different splits. 
-  From our experience it had a negligible impact on the results.
-  \item \texttt{p} controls the thinning applied on the original point pattern 
+  \item \texttt{score} which controls the score used to compare different splits. 
+  \item \texttt{p} which controls the thinning applied on the original point pattern 
   \texttt{X} before training an intensity tree. If $p>0$, a $p$-thinning is applied, 
-  and if $p=0$, the points are bootstrapped.
+  and if $p=0$, the default, the points are bootstrapped. 
+  \item  \texttt{minsplitq}, and \texttt{minsplitq}. By default we split a region
+  according to the median level sets of the covariates, meaning that 
+  $\texttt{minsplitq}=\texttt{minsplitq} = 0.5$ . A natural extension would 
+  be to allow to random split a region according between the $100\texttt{minsplitq}\%$, 
+  and $100\texttt{minsplitq}\%$ quantiles of the covariates' level sets.
+  \item \texttt{threshold} which set the minimal area of a cells we allowed before attempting   one last split. By default, we set \texttt{threshold} to be 
+  equal to the minimal pixel area of the images in \texttt{listcovariates} 
+  as it makes no sense to go below the resolution of the covariates.
 \end{itemize}
+
 
 \begin{thebibliography}{10}
 \bibitem{coeurjolly:18}
 Achmad Choiruddin. Jean-François Coeurjolly. Frédérique Letué. 
 \newblock {\em Convex and non-convex regularization methods for spatial point processes intensity estimation}.
-\newblock Electron. J. Statist. 12 (1) 1210 - 1255, 2018. https://doi.org/10.1214/18-EJS1408 
+\newblock Electron. J. Statist. 12 (1) 1210 - 1255, 2018.  
 
 \end{thebibliography}
 

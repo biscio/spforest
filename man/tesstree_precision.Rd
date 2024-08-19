@@ -7,12 +7,6 @@
 tesstree_precision(X, lambda, target.points, test.connected = TRUE)
 }
 \arguments{
-\item{X}{}
-
-\item{lambda}{}
-
-\item{target.points}{}
-
 \item{test.connected}{}
 }
 \description{

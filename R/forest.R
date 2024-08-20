@@ -1,17 +1,17 @@
 #' Title
 #'
-#' @param X XXX
-#' @param listcovariates XXX
-#' @param score XXX
-#' @param p XXX
-#' @param Ntree XXX
-#' @param threshold XXX
-#' @param cores_trees XXX
-#' @param mtry XXX
-#' @param tol XXX
-#' @param minpts XXX
-#' @param minsplitq XXX
-#' @param maxsplitq XXX
+#' @param X A spatial point process as "ppp" object from spatstat.
+#' @param listcovariates A list of covariates as "im" objects from spatstat.
+#' @param score String specifying the score used to choose among splits, see details. 
+#' @param p Numeric. Control the thinning of the data applied to fit each tree.
+#' @param Ntree Numeric. The number of trees in the random intensity forest.
+#' @param threshold Numeric. The minimum area of a region for which we allow at most one split.
+#' @param cores_trees Numeric. The number of cores used to computes the intensity trees.
+#' @param mtry Numeric. Probability that a covariate is used at each a split. 
+#' @param tol unused
+#' @param minpts Numeric. The minimum number of points in a region to allow a split.
+#' @param minsplitq unused
+#' @param maxsplitq unused
 #'
 #' @return
 #' @export

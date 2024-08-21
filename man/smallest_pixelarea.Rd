@@ -7,7 +7,7 @@
 smallest_pixelarea(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{an im object}
 }
 \value{
 A number

@@ -1,11 +1,11 @@
 #' Intensity tesselation tree
 #'
-#' @param X
-#' @param lambda
-#' @param target.points
-#' @param test.connected
+#' @param X ppp
+#' @param lambda intensity 
+#' @param target.points point a which we estimated the intensity
+#' @param test.connected do we test if the voronoi cells are connected
 #'
-#' @return
+#' @return estimated intensity
 #' @export
 #'
 #' @examples
@@ -143,12 +143,12 @@ tesstree <- function(X,
 
 #' Intensity tesselation tree high definition
 #'
-#' @param X
-#' @param lambda
-#' @param target.points
-#' @param test.connected
+#' @param X a ppp
+#' @param lambda intensity
+#' @param target.points points at which we estimated the intensity
+#' @param test.connected do we test if the voronoi cells are connected
 #'
-#' @return
+#' @return image of the intensity ? To check
 #' @export
 #'
 #' @examples
@@ -288,12 +288,12 @@ tesstree_precision <- function(X,
 
 #' Intensity tesselation forest
 #'
-#' @param X
-#' @param lambda
-#' @param Ntrees
-#' @param at
-#' @param mc.cores
-#' @param test.connected
+#' @param X ppp
+#' @param lambda intensity 
+#' @param Ntrees number trees
+#' @param at point at which we estimate
+#' @param mc.cores how many cores
+#' @param test.connected do we test if the voronoi cells are connected
 #'
 #' @return
 #' @export

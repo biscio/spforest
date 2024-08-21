@@ -7,7 +7,16 @@
 tesstree(X, lambda, target.points, test.connected = TRUE)
 }
 \arguments{
-\item{test.connected}{}
+\item{X}{ppp}
+
+\item{lambda}{intensity}
+
+\item{target.points}{point a which we estimated the intensity}
+
+\item{test.connected}{do we test if the voronoi cells are connected}
+}
+\value{
+estimated intensity
 }
 \description{
 Intensity tesselation tree

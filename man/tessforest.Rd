@@ -14,7 +14,17 @@ tessforest(
 )
 }
 \arguments{
-\item{test.connected}{}
+\item{X}{ppp}
+
+\item{lambda}{intensity}
+
+\item{Ntrees}{number trees}
+
+\item{at}{point at which we estimate}
+
+\item{mc.cores}{how many cores}
+
+\item{test.connected}{do we test if the voronoi cells are connected}
 }
 \description{
 Intensity tesselation forest

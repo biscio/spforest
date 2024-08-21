@@ -1,10 +1,10 @@
 
 #' Find the small pixel area in list of images
 #'
-#' @param x 
+#' @param x an im object
 #'
 #' @return A number
-#' @export
+#' @export 
 #'
 #' @examples
 smallest_pixelarea <- function(x) {

@@ -1,6 +1,6 @@
 #' Title
 #'
-#' @param X A spatial point process as "ppp" object from spatstat.
+#' @param X A spatial point process \code{\link[spatstat.geom]{compatible.im}} [ppp] as  "ppp" object from spatstat.
 #' @param listcovariates A list of covariates as "im" objects from spatstat.
 #' @param score String specifying the score used to choose among splits, see details. 
 #' @param p Numeric. Control the thinning of the data applied to fit each tree.
@@ -11,7 +11,7 @@
 #' @param tol unused
 #' @param minpts Numeric. The minimum number of points in a region to allow a split.
 #' @param minsplitq unused
-#' @param maxsplitq unused
+#' @param maxsplitq unused [compatible.im]
 #'
 #' @return
 #' @export
@@ -185,13 +185,16 @@ plot.spforest <- function(x, ..., main) {
     output <- Reduce("+", list_im) / length(x$trees) / x$p
   }
 
-  spatstat.geom::plot.im(output, main = main, ...)
+  output <- spatstat.geom::plot.im(output, main = main, ...)
 
   return(invisible(output))
 }
 
 
-
+# `[.spforest` <- function(x, i, ...) {
+#    as.im.spforest(x)[i]
+#   return(output)
+# }
 
 
 #' Importance of one covariable

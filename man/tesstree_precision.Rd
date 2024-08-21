@@ -7,7 +7,16 @@
 tesstree_precision(X, lambda, target.points, test.connected = TRUE)
 }
 \arguments{
-\item{test.connected}{}
+\item{X}{a ppp}
+
+\item{lambda}{intensity}
+
+\item{target.points}{points at which we estimated the intensity}
+
+\item{test.connected}{do we test if the voronoi cells are connected}
+}
+\value{
+image of the intensity ? To check
 }
 \description{
 Intensity tesselation tree high definition

@@ -10,7 +10,7 @@ RforestPP(
   score = "lcv",
   p = 0,
   Ntree = 10,
-  threshold = spatstat.geom::area(X)/10000,
+  threshold = smallest_pixelarea(listcovariates),
   cores_trees = 1,
   mtry = 1/3,
   tol = Inf,
@@ -20,29 +20,29 @@ RforestPP(
 )
 }
 \arguments{
-\item{X}{XXX}
+\item{X}{A spatial point process \code{\link[spatstat.geom]{compatible.im}} \link{ppp} as  "ppp" object from spatstat.}
 
-\item{listcovariates}{XXX}
+\item{listcovariates}{A list of covariates as "im" objects from spatstat.}
 
-\item{score}{XXX}
+\item{score}{String specifying the score used to choose among splits, see details.}
 
-\item{p}{XXX}
+\item{p}{Numeric. Control the thinning of the data applied to fit each tree.}
 
-\item{Ntree}{XXX}
+\item{Ntree}{Numeric. The number of trees in the random intensity forest.}
 
-\item{threshold}{XXX}
+\item{threshold}{Numeric. The minimum area of a region for which we allow at most one split.}
 
-\item{cores_trees}{XXX}
+\item{cores_trees}{Numeric. The number of cores used to computes the intensity trees.}
 
-\item{mtry}{XXX}
+\item{mtry}{Numeric. Probability that a covariate is used at each a split.}
 
-\item{tol}{XXX}
+\item{tol}{unused}
 
-\item{minpts}{XXX}
+\item{minpts}{Numeric. The minimum number of points in a region to allow a split.}
 
-\item{minsplitq}{XXX}
+\item{minsplitq}{unused}
 
-\item{maxsplitq}{XXX}
+\item{maxsplitq}{unused \link{compatible.im}}
 }
 \description{
 Title

@@ -2,50 +2,65 @@
 % Please edit documentation in R/forest.R
 \name{RforestPP}
 \alias{RforestPP}
-\title{Title}
+\title{Random Intensity Forest}
 \usage{
 RforestPP(
   X,
   listcovariates = NULL,
-  score = "lcv",
-  p = 0,
   Ntree = 10,
-  threshold = smallest_pixelarea(listcovariates),
-  cores_trees = 1,
-  mtry = 1/3,
-  tol = Inf,
   minpts = spatstat.geom::npoints(X)/10,
+  mtry = 1/3,
+  p = 0,
+  cores_trees = 1,
+  score = "lcv",
+  threshold = smallest_pixelarea(listcovariates),
+  tol = Inf,
   minsplitq = 0.5,
   maxsplitq = 0.5
 )
 }
 \arguments{
-\item{X}{A spatial point process \code{\link[spatstat.geom]{compatible.im}} \link{ppp} as  "ppp" object from spatstat.}
+\item{X}{A spatial point process
+\code{\link[spatstat.geom]{ppp}} object from spatstat.}
 
-\item{listcovariates}{A list of covariates as "im" objects from spatstat.}
+\item{listcovariates}{A list of covariates as
+\code{\link[spatstat.geom]{im}} objects from spatstat.}
 
-\item{score}{String specifying the score used to choose among splits, see details.}
-
-\item{p}{Numeric. Control the thinning of the data applied to fit each tree.}
-
-\item{Ntree}{Numeric. The number of trees in the random intensity forest.}
-
-\item{threshold}{Numeric. The minimum area of a region for which we allow at most one split.}
-
-\item{cores_trees}{Numeric. The number of cores used to computes the intensity trees.}
-
-\item{mtry}{Numeric. Probability that a covariate is used at each a split.}
-
-\item{tol}{unused}
+\item{Ntree}{A positive integer.
+The number of trees in the random intensity forest.}
 
 \item{minpts}{Numeric. The minimum number of points in a region to allow a split.}
 
+\item{mtry}{A number in \eqn{[0,1)}.
+Probability that a covariate is used at each a split.}
+
+\item{p}{A number in \eqn{[0,1)}.
+Control the thinning process applied to the original point pattern X before
+fitting a tree intensity estimator.}
+
+\item{cores_trees}{A positive integer.
+The number of cores used to computes the intensity trees.}
+
+\item{score}{String specifying the score used to choose among splits, see details.}
+
+\item{threshold}{A positive number.
+The minimum area of a region for which we allow at most one split.}
+
+\item{tol}{unused}
+
 \item{minsplitq}{unused}
 
-\item{maxsplitq}{unused \link{compatible.im}}
+\item{maxsplitq}{unused}
+}
+\value{
+An object of class \code{spforest}.
 }
 \description{
-Title
+Random Intensity Forest
+}
+\details{
+This function is the core of the package and compute random intensity
+trees on a point pattern in presence of covariates.
 }
 \examples{
 forest <- RforestPP(
@@ -54,15 +69,10 @@ forest <- RforestPP(
     grad = spatstat.data::bei.extra$grad,
     elev = spatstat.data::bei.extra$elev
   ),
-  score = "lcv",
-  p = 1,
   Ntree = 3,
-  threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
-  cores_trees = 1,
+  minpts = 100,
   mtry = 1 / 3,
-  tol = Inf,
-  minpts = 50,
-  minsplitq = 0.5,
-  maxsplitq = 0.5
+  p = 0,
+  cores_trees = 1
 )
 }

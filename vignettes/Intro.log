@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  19 AUG 2024 16:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2024.3.15)  21 AUG 2024 14:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -194,45 +194,45 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 112.
  [2 <./Intro-006.pdf>]
 [3]
-<Intro-015.pdf, id=43, 578.16pt x 289.08pt>
-File: Intro-015.pdf Graphic file (type pdf)
-<use Intro-015.pdf>
-Package pdftex.def Info: Intro-015.pdf  used on input line 238.
+<Intro-016.pdf, id=43, 578.16pt x 289.08pt>
+File: Intro-016.pdf Graphic file (type pdf)
+<use Intro-016.pdf>
+Package pdftex.def Info: Intro-016.pdf  used on input line 250.
 (pdftex.def)             Requested size: 386.95897pt x 193.47968pt.
 <Intro-caching-viptoy.pdf, id=44, 578.16pt x 289.08pt>
 File: Intro-caching-viptoy.pdf Graphic file (type pdf)
 <use Intro-caching-viptoy.pdf>
-Package pdftex.def Info: Intro-caching-viptoy.pdf  used on input line 245.
+Package pdftex.def Info: Intro-caching-viptoy.pdf  used on input line 257.
 (pdftex.def)             Requested size: 386.95897pt x 193.47968pt.
- [4 <./Intro-015.pdf>]
-<Intro-018.pdf, id=56, 433.62pt x 144.54pt>
-File: Intro-018.pdf Graphic file (type pdf)
-<use Intro-018.pdf>
-Package pdftex.def Info: Intro-018.pdf  used on input line 259.
+ [4 <./Intro-016.pdf>]
+<Intro-019.pdf, id=56, 433.62pt x 144.54pt>
+File: Intro-019.pdf Graphic file (type pdf)
+<use Intro-019.pdf>
+Package pdftex.def Info: Intro-019.pdf  used on input line 271.
 (pdftex.def)             Requested size: 386.95897pt x 128.99306pt.
- [5 <./Intro-caching-viptoy.pdf> <./Intro-018.pdf>]
-<Intro-024.pdf, id=83, 433.62pt x 216.81pt>
-File: Intro-024.pdf Graphic file (type pdf)
-<use Intro-024.pdf>
-Package pdftex.def Info: Intro-024.pdf  used on input line 327.
-(pdftex.def)             Requested size: 386.95897pt x 193.48961pt.
-<Intro-025.pdf, id=84, 433.62pt x 216.81pt>
+ [5 <./Intro-caching-viptoy.pdf> <./Intro-019.pdf>]
+<Intro-025.pdf, id=83, 433.62pt x 216.81pt>
 File: Intro-025.pdf Graphic file (type pdf)
 <use Intro-025.pdf>
 Package pdftex.def Info: Intro-025.pdf  used on input line 339.
 (pdftex.def)             Requested size: 386.95897pt x 193.48961pt.
+<Intro-026.pdf, id=84, 433.62pt x 216.81pt>
+File: Intro-026.pdf Graphic file (type pdf)
+<use Intro-026.pdf>
+Package pdftex.def Info: Intro-026.pdf  used on input line 351.
+(pdftex.def)             Requested size: 386.95897pt x 193.48961pt.
 
-[6 <./Intro-024.pdf>]
+[6 <./Intro-025.pdf>]
 <Intro-caching-vipbei.pdf, id=96, 650.43pt x 289.08pt>
 File: Intro-caching-vipbei.pdf Graphic file (type pdf)
 <use Intro-caching-vipbei.pdf>
-Package pdftex.def Info: Intro-caching-vipbei.pdf  used on input line 351.
+Package pdftex.def Info: Intro-caching-vipbei.pdf  used on input line 363.
 (pdftex.def)             Requested size: 386.95897pt x 171.98488pt.
- [7 <./Intro-025.pdf> <./Intro-caching-vipbei.pdf>]
+ [7 <./Intro-026.pdf> <./Intro-caching-vipbei.pdf>]
 [8] (./Intro.aux) ) 
 Here is how much of TeX's memory you used:
  2449 strings out of 481239
- 37048 string characters out of 5920377
+ 37072 string characters out of 5920377
  270710 words of memory out of 5000000
  17683 multiletter control sequences out of 15000+600000
  542893 words of font info for 48 fonts, out of 8000000 for 9000
@@ -250,7 +250,7 @@ super/sfss1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfst1095.pfb><
 /usr/share/texmf/fonts/type1/public/cm-super/sfti1095.pfb></usr/share/texmf/fon
 ts/type1/public/cm-super/sftt1095.pfb></usr/share/texmf/fonts/type1/public/cm-s
 uper/sftt1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1440.pfb>
-Output written on Intro.pdf (8 pages, 627863 bytes).
+Output written on Intro.pdf (8 pages, 628559 bytes).
 PDF statistics:
  163 PDF objects out of 1000 (max. 8388607)
  97 compressed objects within 1 object stream

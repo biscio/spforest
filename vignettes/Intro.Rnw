@@ -122,6 +122,12 @@ predict(
   )
 )
 @
+Behind the scene this is equivalent to return the estimated intensity 
+as an \texttt{im} object and use \texttt{Extrat.im}. 
+<<>>=
+newdata <- runifpoint(n = 5, win = bei$window)
+as.im(forest)[newdata]
+@
 \end{itemize}
 
 
@@ -412,12 +418,11 @@ Here a plot of the $\log$ of
 the intensity is more revealing. 
 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=3>>=
-plot(log(imspforest(chosenforestbei)), main = "Logarithm of the estimated intensity")
+plot(log(as.im(chosenforestbei)), main = "Logarithm of the estimated intensity")
 @
 
 Interestingly, we can assess the most covariates that had the 
 most impact on the intensity of the point process. 
-
 
 <<eval=FALSE>>=
 vipplot(chosenforestbei, sorted = T)

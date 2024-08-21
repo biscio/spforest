@@ -106,7 +106,7 @@ R> plot(forest)
 R> predict(object = forest, newdata = runifpoint(n = 5, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
-[1] 0.011231049 0.010157757 0.005017145 0.003848850 0.009542764
+[1] 0.004741677 0.010579905 0.011380542 0.006267302 0.008133133
 \end{Soutput}
 \end{Schunk}
 or a matrix with the $x$-coordinates on the first column and the $y$-coordinates 
@@ -122,9 +122,21 @@ R> predict(
 +  )
 \end{Sinput}
 \begin{Soutput}
-[1] 0.010194710 0.012029024 0.005998878 0.009542764 0.012327293
+[1] 0.006075939 0.010579905 0.005110557 0.010306605 0.007859459
 \end{Soutput}
 \end{Schunk}
+Behind the scene this is equivalent to return the estimated intensity 
+as an \texttt{im} object and use \texttt{Extrat.im}. 
+\begin{Schunk}
+\begin{Sinput}
+R> newdata <- runifpoint(n = 5, win = bei$window)
+R> as.im(forest)[newdata]
+\end{Sinput}
+\begin{Soutput}
+[1] 0.001799140 0.012691622 0.012691622 0.004888117 0.012318141
+\end{Soutput}
+\end{Schunk}
+
 \end{itemize}
 
 
@@ -235,7 +247,7 @@ Finally, we:
 R> plot(chosenforesttoy)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-015}
+\includegraphics{Intro-016}
 \item Assess the VIP of each variable
 \begin{Schunk}
 \begin{Sinput}
@@ -256,7 +268,7 @@ to process a large number of covariates.
 We will re-study the point pattern \texttt{bei} but with a larger list of covariates, 
 made available in \pkg{Rsandbox} in the list \texttt{beisoilres}.
 
-\includegraphics{Intro-018}
+\includegraphics{Intro-019}
 
 From left to right and top to bottom, these covariates are: 
 the elevation and gradient of the terrain, and the concentration of the soils 
@@ -324,7 +336,7 @@ We can now visualise the estimated intensity and assess the VIP of each variable
 R> plot(chosenforestbei, main = "Estimated intensity")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-024}
+\includegraphics{Intro-025}
 
 There, the points in \texttt{bei} are very irregularly distributed
 which results in the intensity being very high in two locations. 
@@ -336,7 +348,7 @@ the intensity is more revealing.
 R> plot(log(imspforest(chosenforestbei)), main = "Logarithm of the estimated intensity")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{Intro-025}
+\includegraphics{Intro-026}
 
 Interestingly, we can assess the most covariates that had the 
 most impact on the intensity of the point process. 

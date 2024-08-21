@@ -36,10 +36,6 @@ print.spforest <- function(x, ...) {
 #'
 #' @examples
 predict.spforest <- function(object, newdata, ...) {
-  # Test if the covariates are im object
-
-  predim <- imspforest(forest)
-
   # Handles the newdata to be in the correct form
   if (missing(newdata) || is.null(newdata)) {
     X <- object$X
@@ -64,7 +60,7 @@ predict.spforest <- function(object, newdata, ...) {
     X <- newdata
   }
 
-  return(predim[X])
+  return(as.im(forest)[X])
 }
 
 

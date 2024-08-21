@@ -24,7 +24,7 @@ A numeric number
 It is used to compute the score.
 }
 \details{
-Provide a lot of infor blabla
+Provide a lot of info blabla
 }
 \examples{
 score.split(5, 5, 5, 5)

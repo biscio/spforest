@@ -1,19 +1,31 @@
-#' Title
+#' Random Intensity Forest
 #'
-#' @param X A spatial point process \code{\link[spatstat.geom]{compatible.im}} [ppp] as  "ppp" object from spatstat.
-#' @param listcovariates A list of covariates as "im" objects from spatstat.
-#' @param score String specifying the score used to choose among splits, see details. 
-#' @param p Numeric. Control the thinning of the data applied to fit each tree.
-#' @param Ntree Numeric. The number of trees in the random intensity forest.
-#' @param threshold Numeric. The minimum area of a region for which we allow at most one split.
-#' @param cores_trees Numeric. The number of cores used to computes the intensity trees.
-#' @param mtry Numeric. Probability that a covariate is used at each a split. 
-#' @param tol unused
+#' @param X A spatial point process
+#' \code{\link[spatstat.geom]{ppp}} object from spatstat.
+#' @param listcovariates A list of covariates as
+#' \code{\link[spatstat.geom]{im}} objects from spatstat.
+#' @param Ntree A positive integer. 
+#' The number of trees in the random intensity forest.
 #' @param minpts Numeric. The minimum number of points in a region to allow a split.
+#' @param mtry A number in \eqn{[0,1)}.
+#' Probability that a covariate is used at each a split.
+#' @param p A number in \eqn{[0,1)}.
+#' Control the thinning process applied to the original point pattern X before
+#' fitting a tree intensity estimator.
+#' @param cores_trees A positive integer.
+#' The number of cores used to computes the intensity trees.
+#' @param score String specifying the score used to choose among splits, see details.
+#' @param threshold A positive number.
+#' The minimum area of a region for which we allow at most one split.
+#' @param tol unused
 #' @param minsplitq unused
-#' @param maxsplitq unused [compatible.im]
+#' @param maxsplitq unused
 #'
-#' @return
+#' @details
+#' This function is the core of the package and compute random intensity
+#' trees on a point pattern in presence of covariates.
+#'
+#' @return An object of class \code{spforest}.
 #' @export
 #'
 #' @examples
@@ -23,27 +35,22 @@
 #'     grad = spatstat.data::bei.extra$grad,
 #'     elev = spatstat.data::bei.extra$elev
 #'   ),
-#'   score = "lcv",
-#'   p = 1,
 #'   Ntree = 3,
-#'   threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
-#'   cores_trees = 1,
+#'   minpts = 100,
 #'   mtry = 1 / 3,
-#'   tol = Inf,
-#'   minpts = 50,
-#'   minsplitq = 0.5,
-#'   maxsplitq = 0.5
+#'   p = 0,
+#'   cores_trees = 1
 #' )
 RforestPP <- function(X,
                       listcovariates = NULL,
-                      score = "lcv",
-                      p = 0,
                       Ntree = 10,
-                      threshold = smallest_pixelarea(listcovariates),
-                      cores_trees = 1,
-                      mtry = 1 / 3,
-                      tol = Inf,
                       minpts = spatstat.geom::npoints(X) / 10,
+                      mtry = 1 / 3,
+                      p = 0,
+                      cores_trees = 1,
+                      score = "lcv",
+                      threshold = smallest_pixelarea(listcovariates),
+                      tol = Inf,
                       minsplitq = 0.5,
                       maxsplitq = 0.5) {
   nbcov <- length(listcovariates)
@@ -52,8 +59,9 @@ RforestPP <- function(X,
   if (!do.call(spatstat.geom::compatible.im, unname(listcovariates))) {
     listcovariates <- do.call(
       spatstat.geom::harmonise.im,
-      listcovariates)
-    warning("The im objects in listcovariates have been 
+      listcovariates
+    )
+    warning("The im objects in listcovariates have been
     harmonised with the function harmonise.im.")
   }
 
@@ -136,6 +144,49 @@ RforestPP <- function(X,
 
 
 
+#' Plot spatial intensity forest
+#'
+#' @param x A spatial intensity tree return by RforestPP function
+#' @param ... additional arguments
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot.spforest <- function(x, ..., main) {
+  # Handling case if no main title is given for the plot
+  if (missing(main)) {
+    main <- "Spatial Intensity Forest"
+  }
+
+  output <- spatstat.geom::plot.im(as.im(x), main = main, ...)
+
+  return(invisible(output))
+}
+
+
+#' Convert to Pixel Image
+#'
+#' @param X A spforest object
+#' @param ...  ignored
+#'
+#' @return
+#' @export
+#'
+#' @examples
+as.im.spforest <- function(X, ...) {
+  list_im <- lapply(X$trees, FUN = function(i) {
+    i$im
+  })
+
+  if (X$p == 0) {
+    output <- Reduce("+", list_im) / length(X$trees)
+  } else {
+    output <- Reduce("+", list_im) / length(X$trees) / x$p
+  }
+
+  return(output)
+}
 #' Compute image of a spatial intensity forest
 #'
 #' @param x A spatial intensity tree return by RforestPP function
@@ -158,38 +209,6 @@ imspforest <- function(x, ...) {
 
   return(output)
 }
-
-
-#' Plot spatial intensity forest
-#'
-#' @param x A spatial intensity tree return by RforestPP function
-#' @param ... additional arguments
-#'
-#' @return
-#' @export
-#'
-#' @examples
-plot.spforest <- function(x, ..., main) {
-  # Handling case if no main title is given for the plot
-  if (missing(main)) {
-    main <- "Spatial Intensity Forest"
-  }
-
-  list_im <- lapply(x$trees, FUN = function(i) {
-    i$im
-  })
-
-  if (x$p == 0) {
-    output <- Reduce("+", list_im) / length(x$trees)
-  } else {
-    output <- Reduce("+", list_im) / length(x$trees) / x$p
-  }
-
-  output <- spatstat.geom::plot.im(output, main = main, ...)
-
-  return(invisible(output))
-}
-
 
 # `[.spforest` <- function(x, i, ...) {
 #    as.im.spforest(x)[i]

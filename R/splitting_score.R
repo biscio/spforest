@@ -13,7 +13,7 @@
 #' @return A numeric number
 #'
 #' @details
-#' Provide a lot of infor blabla
+#' Provide a lot of info blabla
 #'
 #' @export
 #'

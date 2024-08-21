@@ -93,7 +93,7 @@ splitcell <- function(X,
       rand_q <- stats::runif(n = 1, min = minsplitq, max = maxsplitq)
       return(stats::quantile(j, probs = rand_q))
     } else {
-      return(stats::median(j))
+      return(stats::median(j$v, na.rm = TRUE))
     }
     # median(j)
     # rand_q <- stats::runif(n = 1, min = minsplitq, max = maxsplitq)

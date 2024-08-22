@@ -22,15 +22,9 @@ Tree prediction (Save when attempting another version)
 \examples{
 arbre <- treerec(
   X = spatstat.data::bei,
-  threshold = 1000,
-  score = "lcv2",
-  listcovariates = list(
-    grad = spatstat.data::bei.extra$grad,
-    elev = spatstat.data::bei.extra$elev
-  ),
+  listcovariates = spatstat.data::bei.extra,
   mtry = 1,
-  tol = Inf,
-  minpts = 50
+  minpts = 300
 )
 arbre$listcov <- list(
   grad = spatstat.data::bei.extra$grad,

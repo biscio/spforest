@@ -21,3 +21,6 @@ estimated intensity
 \description{
 Intensity tesselation tree
 }
+\examples{
+tesstree(rpoispp(10), lambda = 50, target.points = rpoispp(10))
+}

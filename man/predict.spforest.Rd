@@ -19,3 +19,13 @@ A vector of predicted intensity
 \description{
 Forest prediction
 }
+\examples{
+ forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+predict(forest, c(100, 100))
+}

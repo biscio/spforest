@@ -11,8 +11,21 @@
 
 \item{cores}{To compute faster}
 
-\item{...}{why note}
+\item{...}{ignored.}
+}
+\value{
+Boxplot of the variable importances.
 }
 \description{
 Boxplot forest
+}
+\examples{
+ forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+boxplot(forest)
 }

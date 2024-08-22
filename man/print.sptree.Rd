@@ -11,6 +11,19 @@
 
 \item{...}{Additional arguments}
 }
+\value{
+A description of the random intensity tree with
+the number of points and covariates used.
+}
 \description{
 Printing spatial intensity tree
+}
+\examples{
+arbre <- treerec(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  minpts = 300,
+  mtry = 1
+)
+print(arbre)
 }

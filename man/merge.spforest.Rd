@@ -7,8 +7,33 @@
 \method{merge}{spforest}(x, y, ...)
 }
 \arguments{
-\item{...}{}
+\item{x}{First forest}
+
+\item{y}{Second forest}
+
+\item{...}{ignored}
+}
+\value{
+An \code{\link{spforest}} object
+the intensity trees from both forest.
 }
 \description{
 Merge two forests with same parameters
+}
+\examples{
+ forest1 <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+ forest2 <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+merge.spforest(forest1, forest2)
 }

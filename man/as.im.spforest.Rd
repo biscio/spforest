@@ -11,6 +11,19 @@
 
 \item{...}{ignored}
 }
+\value{
+A pixel image \code{\link[spatstat.geom]{im}}.
+}
 \description{
 Convert to Pixel Image
+}
+\examples{
+forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+as.im(forest)
 }

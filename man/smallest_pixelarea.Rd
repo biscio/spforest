@@ -10,8 +10,11 @@ smallest_pixelarea(x)
 \item{x}{an im object}
 }
 \value{
-A number
+A number.
 }
 \description{
 Find the small pixel area in list of images
+}
+\examples{
+smallest_pixelarea(spatstat.data::bei.extra)
 }

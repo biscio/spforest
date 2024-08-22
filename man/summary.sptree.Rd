@@ -13,6 +13,18 @@
 
 \item{...}{Additional arguments}
 }
+\value{
+A dataframe representing each node and spit of the intensity tree.
+}
 \description{
 Summary of a spatial intensity tree
+}
+\examples{
+arbre <- treerec(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  minpts = 300,
+  mtry = 1
+)
+summary(arbre)
 }

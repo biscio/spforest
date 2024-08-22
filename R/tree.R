@@ -32,7 +32,7 @@ rand_covar <- function(listcovariates, mtry = 1) {
 #' @param mtry Probability of choosing a covariable
 #' @param threshold minimum threshold to allow to split cell
 #'
-#' @return
+#' @return An object of class \code{sptree}.
 #' @export
 #'
 #' @examples

@@ -1,32 +1,41 @@
 #' Random Intensity Forest
 #'
-#' @param X A spatial point process
+#' Compute a random intensity forest from an observed point pattern 
+#' and a list of covariates.
+#' @param X A spatial point process as a
 #' \code{\link[spatstat.geom]{ppp}} object from spatstat.
 #' @param listcovariates A list of covariates as
 #' \code{\link[spatstat.geom]{im}} objects from spatstat.
-#' @param Ntree A positive integer. 
+#' @param Ntree A positive integer.
 #' The number of trees in the random intensity forest.
-#' @param minpts Numeric. The minimum number of points in a region to allow a split.
+#' @param minpts A positive integer.
+#' The minimum number of points in a region to allow a split.
 #' @param mtry A number in \eqn{[0,1)}.
 #' Probability that a covariate is used at each a split.
 #' @param p A number in \eqn{[0,1)}.
-#' Control the thinning process applied to the original point pattern X before
+#' Control the thinning process applied to the original point pattern __X__ before
 #' fitting a tree intensity estimator.
 #' @param cores_trees A positive integer.
 #' The number of cores used to computes the intensity trees.
 #' @param score String specifying the score used to choose among splits, see details.
 #' @param threshold A positive number.
 #' The minimum area of a region for which we allow at most one split.
-#' @param tol unused
-#' @param minsplitq unused
-#' @param maxsplitq unused
+#' @param tol unused.
+#' @param minsplitq unused.
+#' @param maxsplitq unused.
 #'
 #' @details
-#' This function is the core of the package and compute random intensity
-#' trees on a point pattern in presence of covariates.
+#' This function compute a random intensity forest using the covariates given
+#' in \code{listcovariates}. 
+# First the points of \code{X} are thinned or bootstra
+#' according to the parameter \code{p}. Then the function \code{\link{treerec}}
+#  The function uses the \code{\link{treerec}} function to
+#'
 #'
 #' @return An object of class \code{spforest}.
 #' @export
+#'
+#' @references \url{Article arxiv version}
 #'
 #' @examples
 #' forest <- RforestPP(
@@ -149,10 +158,18 @@ RforestPP <- function(X,
 #' @param x A spatial intensity tree return by RforestPP function
 #' @param ... additional arguments
 #'
-#' @return
+#' @return Same as \code{\link[spatstat.geom]{plot.im}}.
 #' @export
 #'
 #' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' plot.spforest(forest)
 plot.spforest <- function(x, ..., main) {
   # Handling case if no main title is given for the plot
   if (missing(main)) {
@@ -170,10 +187,18 @@ plot.spforest <- function(x, ..., main) {
 #' @param X A spforest object
 #' @param ...  ignored
 #'
-#' @return
+#' @return A pixel image \code{\link[spatstat.geom]{im}}.
 #' @export
 #'
 #' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' as.im(forest)
 as.im.spforest <- function(X, ...) {
   list_im <- lapply(X$trees, FUN = function(i) {
     i$im
@@ -187,15 +212,25 @@ as.im.spforest <- function(X, ...) {
 
   return(output)
 }
-#' Compute image of a spatial intensity forest
+
+
+#' Compute image of a spatial intensity forest (Deprecated)
 #'
 #' @param x A spatial intensity tree return by RforestPP function
 #' @param ... additional arguments
 #'
-#' @return
+#' @return A pixel image \code{\link[spatstat.geom]{im}}.
 #' @export
 #'
 #' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' imspforest(forest)
 imspforest <- function(x, ...) {
   list_im <- lapply(x$trees, FUN = function(i) {
     i$im
@@ -219,13 +254,22 @@ imspforest <- function(x, ...) {
 #' Importance of one covariable
 #'
 #' @param forest A spforest object
-#' @param id_cov The id in forest$listcov of the covariable looked at.
-#' @param cores how many cores to use to speed up computation
+#' @param id_cov The position in the list of covariates of \code{forest}.
+#' @param cores How many cores to use to speed up computation
 #'
-#' @return
+#' @return A vector of the importance of the covariable \code{id_cov}
+#' in the list of covariates of \code{forest}, for each tree.
 #' @export
 #'
 #' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' importance(forest, id_cov = 1)
 importance <- function(forest, id_cov, cores = 1) {
   # listZ <- forest$listcovsp
   X <- forest$X # this is alway the root
@@ -285,10 +329,18 @@ importance <- function(forest, id_cov, cores = 1) {
 #' @param forest spforest
 #' @param cores to speed up
 #'
-#' @return
+#' @return A number.
 #' @export
 #'
 #' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' OOBscr(forest, cores = 1)
 OOBscr <- function(forest, cores = 1) {
   X <- forest$X # this is always the root
 
@@ -351,10 +403,18 @@ OOBscr <- function(forest, cores = 1) {
 #' @param covariates list of covariates considered
 #' @param cores  to speed up
 #'
-#' @return
+#' @return A number
 #' @export
 #'
 #' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+# OOBppmscr(forest, covariates = spatstat.data::bei.extra)
 OOBppmscr <- function(forest, covariates, cores = 1) {
   X <- forest$X # this is always the root
 

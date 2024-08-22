@@ -40,6 +40,9 @@ of a covariable.}
 \item{maxsplitq}{A number in $(0,1)$. Determine the maximal allowed splitting value
 of a covariable.}
 }
+\value{
+An object of class \code{sptree}.
+}
 \description{
 Spatial Intensity tree function
 }

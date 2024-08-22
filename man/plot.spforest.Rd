@@ -11,6 +11,19 @@
 
 \item{...}{additional arguments}
 }
+\value{
+Same as \code{\link[spatstat.geom]{plot.im}}.
+}
 \description{
 Plot spatial intensity forest
+}
+\examples{
+forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+plot.spforest(forest)
 }

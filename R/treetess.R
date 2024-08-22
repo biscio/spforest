@@ -1,7 +1,7 @@
 #' Intensity tesselation tree
 #'
 #' @param X ppp
-#' @param lambda intensity 
+#' @param lambda intensity
 #' @param target.points point a which we estimated the intensity
 #' @param test.connected do we test if the voronoi cells are connected
 #'
@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @examples
+#' tesstree(rpoispp(10), lambda = 50, target.points = rpoispp(10))
 tesstree <- function(X,
                      lambda,
                      target.points,
@@ -42,7 +43,8 @@ tesstree <- function(X,
   if (test.connected) {
     tmp <- spatstat.geom::connected(tmp)
   } # split unconnected tiles
-  # tmp<-connected(tmp,dimyx=c(512,512)) #supply dimyx to improve precision (better way to deal with connected?)
+  # tmp<-connected(tmp,dimyx=c(512,512))
+  # supply dimyx to improve precision (better way to deal with connected?)
   delarea <- spatstat.geom::tile.areas(tmp) # collect the areas
 
 
@@ -152,6 +154,7 @@ tesstree <- function(X,
 #' @export
 #'
 #' @examples
+#' tesstree_precision(rpoispp(10), lambda = 50, target.points = rpoispp(10))
 tesstree_precision <- function(X,
                                lambda,
                                target.points,
@@ -289,16 +292,17 @@ tesstree_precision <- function(X,
 #' Intensity tesselation forest
 #'
 #' @param X ppp
-#' @param lambda intensity 
+#' @param lambda intensity
 #' @param Ntrees number trees
 #' @param at point at which we estimate
 #' @param mc.cores how many cores
 #' @param test.connected do we test if the voronoi cells are connected
 #'
-#' @return
+#' @return The estimated intensity as an \code{\link[spatstat.geom]{im}}.
 #' @export
 #'
 #' @examples
+#' tessforest(X = bei, lambda = 100, Ntree = 5, test.connected = FALSE)
 tessforest <- function(X,
                        lambda = NULL,
                        Ntrees = 100,

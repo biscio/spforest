@@ -3,10 +3,18 @@
 #' @param x A spatial intensity tree return by treerec function
 #' @param ... Additional arguments
 #'
-#' @return
+#' @return A description of the random intensity tree with
+#' the number of points and covariates used.
 #' @export
 #'
 #' @examples
+#' arbre <- treerec(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' print(arbre)
 print.sptree <- function(x, ...) {
   namecov <- x$namecov
   nb_termnode <- sum(sapply(x$tree, function(i) {
@@ -34,10 +42,17 @@ print.sptree <- function(x, ...) {
 #' @param fulltree Should we print all the column of the matrix?
 #' @param ... Additional arguments
 #'
-#' @return
+#' @return A dataframe representing each node and spit of the intensity tree.
 #' @export
 #'
 #' @examples
+#' arbre <- treerec(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' summary(arbre)
 summary.sptree <- function(object, fulltree = F, ...) {
   if (fulltree) {
     output <- Reduce(rbind, object$tree)
@@ -57,10 +72,18 @@ summary.sptree <- function(object, fulltree = F, ...) {
 #' @param x A spatial intensity tree return by treerec function
 #' @param ... additional arguments
 #'
-#' @return
+#' @return A plot of the spatial intensity tree 
+#' and an \code{\link[spatstat]{im}} object.
 #' @export
 #'
 #' @examples
+#' arbre <- treerec(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' plot(arbre)
 plot.sptree <- function(x, ..., main) {
   # Handling case if no main title is given for the plot
   if (missing(main)) {
@@ -85,15 +108,9 @@ plot.sptree <- function(x, ..., main) {
 #' @examples
 #' arbre <- treerec(
 #'   X = spatstat.data::bei,
-#'   threshold = 1000,
-#'   score = "lcv2",
-#'   listcovariates = list(
-#'     grad = spatstat.data::bei.extra$grad,
-#'     elev = spatstat.data::bei.extra$elev
-#'   ),
+#'   listcovariates = spatstat.data::bei.extra,
 #'   mtry = 1,
-#'   tol = Inf,
-#'   minpts = 50
+#'   minpts = 300
 #' )
 #' arbre$listcov <- list(
 #'   grad = spatstat.data::bei.extra$grad,
@@ -181,15 +198,9 @@ predict.sptree <- function(object, newdata, ...) {
 #' @examples
 #' arbre <- treerec(
 #'   X = spatstat.data::bei,
-#'   threshold = 1000,
-#'   score = "lcv2",
-#'   listcovariates = list(
-#'     grad = spatstat.data::bei.extra$grad,
-#'     elev = spatstat.data::bei.extra$elev
-#'   ),
+#'   listcovariates = spatstat.data::bei.extra,
 #'   mtry = 1,
-#'   tol = Inf,
-#'   minpts = 50
+#'   minpts = 300
 #' )
 #' arbre$listcov <- list(
 #'   grad = spatstat.data::bei.extra$grad,

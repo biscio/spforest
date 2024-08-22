@@ -20,7 +20,7 @@ RforestPP(
 )
 }
 \arguments{
-\item{X}{A spatial point process
+\item{X}{A spatial point process as a
 \code{\link[spatstat.geom]{ppp}} object from spatstat.}
 
 \item{listcovariates}{A list of covariates as
@@ -29,13 +29,14 @@ RforestPP(
 \item{Ntree}{A positive integer.
 The number of trees in the random intensity forest.}
 
-\item{minpts}{Numeric. The minimum number of points in a region to allow a split.}
+\item{minpts}{A positive integer.
+The minimum number of points in a region to allow a split.}
 
 \item{mtry}{A number in \eqn{[0,1)}.
 Probability that a covariate is used at each a split.}
 
 \item{p}{A number in \eqn{[0,1)}.
-Control the thinning process applied to the original point pattern X before
+Control the thinning process applied to the original point pattern \strong{X} before
 fitting a tree intensity estimator.}
 
 \item{cores_trees}{A positive integer.
@@ -46,21 +47,23 @@ The number of cores used to computes the intensity trees.}
 \item{threshold}{A positive number.
 The minimum area of a region for which we allow at most one split.}
 
-\item{tol}{unused}
+\item{tol}{unused.}
 
-\item{minsplitq}{unused}
+\item{minsplitq}{unused.}
 
-\item{maxsplitq}{unused}
+\item{maxsplitq}{unused.}
 }
 \value{
 An object of class \code{spforest}.
 }
 \description{
-Random Intensity Forest
+Compute a random intensity forest from an observed point pattern
+and a list of covariates.
 }
 \details{
-This function is the core of the package and compute random intensity
-trees on a point pattern in presence of covariates.
+This function compute a random intensity forest using the covariates given
+in \code{listcovariates}.
+according to the parameter \code{p}. Then the function \code{\link{treerec}}
 }
 \examples{
 forest <- RforestPP(
@@ -75,4 +78,7 @@ forest <- RforestPP(
   p = 0,
   cores_trees = 1
 )
+}
+\references{
+\url{Article arxiv version}
 }

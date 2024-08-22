@@ -26,6 +26,12 @@ tessforest(
 
 \item{test.connected}{do we test if the voronoi cells are connected}
 }
+\value{
+The estimated intensity as an \code{\link[spatstat.geom]{im}}.
+}
 \description{
 Intensity tesselation forest
+}
+\examples{
+tessforest(X = bei, lambda = 100, Ntree = 5, test.connected = FALSE)
 }

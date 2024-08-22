@@ -9,10 +9,24 @@ importance(forest, id_cov, cores = 1)
 \arguments{
 \item{forest}{A spforest object}
 
-\item{id_cov}{The id in forest$listcov of the covariable looked at.}
+\item{id_cov}{The position in the list of covariates of \code{forest}.}
 
-\item{cores}{how many cores to use to speed up computation}
+\item{cores}{How many cores to use to speed up computation}
+}
+\value{
+A vector of the importance of the covariable \code{id_cov}
+in the list of covariates of \code{forest}, for each tree.
 }
 \description{
 Importance of one covariable
+}
+\examples{
+forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+importance(forest, id_cov = 1)
 }

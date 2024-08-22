@@ -21,3 +21,6 @@ image of the intensity ? To check
 \description{
 Intensity tesselation tree high definition
 }
+\examples{
+tesstree_precision(rpoispp(10), lambda = 50, target.points = rpoispp(10))
+}

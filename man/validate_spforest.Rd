@@ -9,6 +9,19 @@ validate_spforest(x)
 \arguments{
 \item{x}{}
 }
+\value{
+The input forest if it is valid
+}
 \description{
 Validator for spforest
+}
+\examples{
+ forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+validate_spforest(forest)
 }

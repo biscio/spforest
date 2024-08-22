@@ -11,8 +11,21 @@ vipplot(x, sorted = F, cores = 1, ...)
 
 \item{cores}{To compute faster}
 
-\item{...}{why not}
+\item{...}{ignoted}
+}
+\value{
+Variable importance plot
 }
 \description{
 Vip barplot of forest
+}
+\examples{
+ forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+vipplot(forest, sorted = T)
 }

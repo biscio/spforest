@@ -3,10 +3,19 @@
 #' @param x A spatial intensity forst return by RforestPP function
 #' @param ... Additional arguments
 #'
-#' @return
+#' @return A description of the random intensity forest with 
+#' the number of points, number of covariates, and number of trees used.
 #' @export
 #'
 #' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' print(forest)
 print.spforest <- function(x, ...) {
   ncov <- length(x$listcov)
   a <- paste0(names(x$listcov), collapse = "", sep = ", ")
@@ -35,6 +44,14 @@ print.spforest <- function(x, ...) {
 #' @export
 #'
 #' @examples
+#'  forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' predict(forest, c(100, 100))
 predict.spforest <- function(object, newdata, ...) {
   # Handles the newdata to be in the correct form
   if (missing(newdata) || is.null(newdata)) {
@@ -68,12 +85,20 @@ predict.spforest <- function(object, newdata, ...) {
 #'
 #' @param x the forest
 #' @param cores To compute faster
-#' @param ... why note
+#' @param ... ignored.
 #'
-#' @return
+#' @return Boxplot of the variable importances.
 #' @export
 #'
 #' @examples
+#'  forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' boxplot(forest)
 boxplot.spforest <- function(x, cores = 1, ...) {
   vipval <- sapply(X = seq_along(x$listcov), FUN = function(i) {
     importance(x, id_cov = i, cores = cores)
@@ -96,12 +121,20 @@ boxplot.spforest <- function(x, cores = 1, ...) {
 #'
 #' @param x  An spforest object
 #' @param cores To compute faster
-#' @param ... why not
+#' @param ... ignoted
 #'
-#' @return
+#' @return Variable importance plot
 #' @export
 #'
 #' @examples
+#'  forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' vipplot(forest, sorted = T)
 vipplot <- function(x, sorted = F, cores = 1, ...) {
   vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
     importance(x, id_cov = i, cores = cores)
@@ -167,14 +200,30 @@ vipplot <- function(x, sorted = F, cores = 1, ...) {
 
 #' Merge two forests with same parameters
 #'
-#' @param x
-#' @param y
-#' @param ...
+#' @param x First forest
+#' @param y Second forest
+#' @param ... ignored
 #'
-#' @return
+#' @return An \code{\link{spforest}} object 
+#' the intensity trees from both forest.
 #' @export
 #'
 #' @examples
+#'  forest1 <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#'  forest2 <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' merge.spforest(forest1, forest2)
 merge.spforest <- function(x, y, ...) {
   # Check if x and y are valid forests
   # TODO: how to handle if they are not?
@@ -209,48 +258,22 @@ merge.spforest <- function(x, y, ...) {
 # Function below to remove ?? ----
 
 
-
-
-#' Constructor for spforest
-#'
-#' @param trees
-#' @param pt_intree
-#' @param X
-#' @param listcov
-#' @param p
-#' @param mtry
-#'
-#' @return
-#' @export
-#'
-#' @examples
-new_spforest <- function(trees = list(),
-                         pt_intree = list(),
-                         X = ppp(),
-                         listcov = list(),
-                         p = double(),
-                         mtry = double()) {
-  output <- list(
-    trees = trees,
-    pt_intree = pt_intree,
-    X = X,
-    listcov = listcov,
-    p = p,
-    mtry = mtry
-  )
-  return(structure(output, class = "spforest"))
-}
-
-
-
 #' Validator for spforest
 #'
 #' @param x
 #'
-#' @return
+#' @return The input forest if it is valid
 #' @export
 #'
 #' @examples
+#'  forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' validate_spforest(forest)
 validate_spforest <- function(x) {
   # TODO: add conformity checks on the entries of the forest
   values <- unclass(x)

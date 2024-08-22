@@ -11,6 +11,20 @@
 
 \item{...}{Additional arguments}
 }
+\value{
+A description of the random intensity forest with
+the number of points, number of covariates, and number of trees used.
+}
 \description{
 Printing spatial intensity forest
+}
+\examples{
+forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+print(forest)
 }

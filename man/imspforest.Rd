@@ -2,7 +2,7 @@
 % Please edit documentation in R/forest.R
 \name{imspforest}
 \alias{imspforest}
-\title{Compute image of a spatial intensity forest}
+\title{Compute image of a spatial intensity forest (Deprecated)}
 \usage{
 imspforest(x, ...)
 }
@@ -11,6 +11,19 @@ imspforest(x, ...)
 
 \item{...}{additional arguments}
 }
+\value{
+A pixel image \code{\link[spatstat.geom]{im}}.
+}
 \description{
-Compute image of a spatial intensity forest
+Compute image of a spatial intensity forest (Deprecated)
+}
+\examples{
+forest <- RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 300,
+  mtry = 1
+)
+imspforest(forest)
 }

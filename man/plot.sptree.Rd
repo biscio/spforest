@@ -11,6 +11,19 @@
 
 \item{...}{additional arguments}
 }
+\value{
+A plot of the spatial intensity tree
+and an \code{\link[spatstat]{im}} object.
+}
 \description{
 Plot spatial intensity tree
+}
+\examples{
+arbre <- treerec(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  minpts = 300,
+  mtry = 1
+)
+plot(arbre)
 }

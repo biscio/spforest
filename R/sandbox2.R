@@ -33,7 +33,6 @@
 # im(A*XX$v, xrange=XX$xrange, yrange=XX$yrange)
 # }
 # 
-# 
 # g <- function(){XX[XX<=thres,drop=F]}
 # microbenchmark(f())
 # microbenchmark(g())

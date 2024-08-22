@@ -17,6 +17,12 @@ Same as \code{\link[spatstat.geom]{plot.im}}.
 \description{
 Plot spatial intensity forest
 }
+\details{
+This function first convert an \code{\link{spforest}}
+as an \code{\link[spatstat.geom]{im}} object and then plot it with
+\code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to
+\code{\link[spatstat.geom]{plot.im}}.
+}
 \examples{
 forest <- RforestPP(
   X = spatstat.data::bei,

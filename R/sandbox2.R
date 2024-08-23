@@ -1,3 +1,21 @@
+Y <- X[intensity_tree2[[i]]$nodePP]
+save(Y, file="Ytest.RData")
+load(subpp, file = "subpptest_newtreerec.RData")
+X <- bei[subpp]
+score <- "lcv"
+threshold <- spatstat.geom::area(X) / 1e4
+listcovariates <- beisoilres
+mtry <- 1
+tol <- Inf
+minpts <- 20
+minsplitq <- 0.5
+maxsplitq <- 0.5
+inforest <- F
+
+# Problem with Y, it split differently between splitcell and splitcell2. 
+# It also triggers an infinite loop in treerec2
+
+
 # library(spatstat)
 # 
 # 

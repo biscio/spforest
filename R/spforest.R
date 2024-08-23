@@ -3,7 +3,7 @@
 #' @param x A spatial intensity forst return by RforestPP function
 #' @param ... Additional arguments
 #'
-#' @return A description of the random intensity forest with 
+#' @return A description of the random intensity forest with
 #' the number of points, number of covariates, and number of trees used.
 #' @export
 #'
@@ -44,7 +44,7 @@ print.spforest <- function(x, ...) {
 #' @export
 #'
 #' @examples
-#'  forest <- RforestPP(
+#' forest <- RforestPP(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -91,7 +91,7 @@ predict.spforest <- function(object, newdata, ...) {
 #' @export
 #'
 #' @examples
-#'  forest <- RforestPP(
+#' forest <- RforestPP(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -127,7 +127,7 @@ boxplot.spforest <- function(x, cores = 1, ...) {
 #' @export
 #'
 #' @examples
-#'  forest <- RforestPP(
+#' forest <- RforestPP(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -204,19 +204,19 @@ vipplot <- function(x, sorted = F, cores = 1, ...) {
 #' @param y Second forest
 #' @param ... ignored
 #'
-#' @return An \code{\link{spforest}} object 
+#' @return An \code{\link{spforest}} object
 #' the intensity trees from both forest.
 #' @export
 #'
 #' @examples
-#'  forest1 <- RforestPP(
+#' forest1 <- RforestPP(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
 #'   minpts = 300,
 #'   mtry = 1
 #' )
-#'  forest2 <- RforestPP(
+#' forest2 <- RforestPP(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -257,6 +257,27 @@ merge.spforest <- function(x, y, ...) {
 
 # Function below to remove ?? ----
 
+#' Constructor for spforest
+new_spforest <- function(trees = list(),
+                         pt_intree = list(),
+                         X = ppp(),
+                         listcov = list(),
+                         p = double(),
+                         mtry = double()) {
+  output <- list(
+    trees = trees,
+    pt_intree = pt_intree,
+    X = X,
+    listcov = listcov,
+    p = p,
+    mtry = mtry
+  )
+  
+  return(structure(output, class = "spforest"))
+}
+
+
+
 
 #' Validator for spforest
 #'
@@ -266,7 +287,7 @@ merge.spforest <- function(x, y, ...) {
 #' @export
 #'
 #' @examples
-#'  forest <- RforestPP(
+#' forest <- RforestPP(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,

@@ -14,13 +14,17 @@ splitcell2 <- function(X,
   stopifnot(spatstat.geom::is.im(listcovariates[[1]]))
 
   # Cas pathologique si pas de covariable - no split
-  if (sum(usecovariates) == 0 | spatstat.geom::npoints(X) <= minpts) { # normally I always have one
+  if (sum(usecovariates) == 0 | spatstat.geom::npoints(X) <= minpts) {
+    # normally I always have one
     whynot <- c("no covariate or less than minpts")
     # return(NULL)
   }
 
   listcovar <- listcovariates[usecovariates == 1]
   vecval <- lapply(listcovar, FUN = function(i) {
+    if (!spatstat.geom::is.im(i)) {
+      stop("Elements of listcovar must be an im object")
+    }
     c(i$v)
   })
 
@@ -55,10 +59,7 @@ splitcell2 <- function(X,
 
   # Determination of level sets for all covariables
   for (i in 1:length(listcovar)) {
-    if (!spatstat.geom::is.im(listcovar[[i]])) {
-      stop("Elements of listcovar must be an im object")
-    }
-    maxsplitq = 0.5
+    maxsplitq <- 0.5
     Wleft <- areapixel * sum(leftlvl0[[i]])
     Wright <- areapixel * sum(!leftlvl0[[i]])
 
@@ -67,7 +68,7 @@ splitcell2 <- function(X,
       Wright <= thres.cell) {
       scr_cov[i] <- -Inf
     } else {
-      n1 <- sum(valpts[[i]]<split_scrs[[i]])
+      n1 <- sum(valpts[[i]] < split_scrs[[i]])
       scr_cov[i] <- score.split(
         n1 = n1,
         n2 = spatstat.geom::npoints(X) - n1,
@@ -111,9 +112,9 @@ splitcell2 <- function(X,
   } else {
     nodeChilds <- list(
       PPleft = valpts[[id_best_scr]] < split_scrs[[id_best_scr]],
-      Wleft =  (vecval[[id_best_scr]] < split_scrs[[id_best_scr]]),
+      Wleft = (vecval[[id_best_scr]] < split_scrs[[id_best_scr]]),
       split_var = which(usecovariates == 1)[id_best_scr],
-      split_val = split_scrs[id_best_scr],
+      split_val = split_scrs[[id_best_scr]],
       improvement = newimp,
       scr_parent = scr_parent,
       whystop = NULL
@@ -122,7 +123,7 @@ splitcell2 <- function(X,
   return(nodeChilds)
 }
 
-# 
+#### ----
 # f = function(){ splitcell2(
 #   X = spatstat.data::bei,
 #   score = "lcv",
@@ -147,41 +148,52 @@ splitcell2 <- function(X,
 #   minsplitq = 0.5,
 #   maxsplitq = 0.5
 # )}
-# 
+#
 # library(microbenchmark)
-# 
+#
 # microbenchmark(f(),g())
-
-
+# subpp <- sample(x = 3604, size = 100)
+# save(subpp, file = "subpptest_newtreerec.RData")
+X <- bei[subpp]
+score <- "lcv"
+threshold <- spatstat.geom::area(X) / 1e4
+listcovariates <- beisoilres
+mtry <- 1
+tol <- Inf
+minpts <- 20
+minsplitq <- 0.5
+maxsplitq <- 0.5
+inforest <- F
+#### ----
 treerec2 <- function(X,
-                    score = "lcv",
-                    threshold = spatstat.geom::area(X) / 1e4,
-                    listcovariates = NULL,
-                    mtry = 1,
-                    tol = Inf,
-                    minpts = spatstat.geom::npoints(X) / 10,
-                    minsplitq = 0.5,
-                    maxsplitq = 0.5,
-                    inforest = F) {
+                     score = "lcv",
+                     threshold = spatstat.geom::area(X) / 1e4,
+                     listcovariates = NULL,
+                     mtry = 1,
+                     tol = Inf,
+                     minpts = spatstat.geom::npoints(X) / 10,
+                     minsplitq = 0.5,
+                     maxsplitq = 0.5,
+                     inforest = F) {
   # Sanity checks
   if (threshold <= 0 & minpts <= 0) {
     stop("Either threshold or minpts must be strictly greater than 0.")
   }
-  
-  areapixel <-  listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
-  
+
+  areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
+
   # The code works quicker when the windows is on a mask
   spatstat.geom::Window(X) <- spatstat.geom::as.mask(spatstat.geom::Window(X),
-                                                     xy = listcovariates[[1]]
+    xy = listcovariates[[1]]
   )
-  
-  
-  #### TODO 
-  #### 
-  ####  in place of a ppp in nodePP, 
+
+
+  #### TODO
+  ####
+  ####  in place of a ppp in nodePP,
   ####  put a logical vector with T if the point is present.
-  #### 
-  #### 
+  ####
+  ####
   # Initiating the root
   root <- list(
     nodeID = 1,
@@ -197,7 +209,7 @@ treerec2 <- function(X,
     already_split = FALSE,
     whystop = NULL
   )
-  
+
   # Check if there is something to do on the initial point pattern.
   # if (spatstat.geom::area.owin(X$window) <= threshold |
   #   spatstat.geom::npoints(X) <= minpts) {
@@ -205,7 +217,7 @@ treerec2 <- function(X,
   #   return(list(root))
   # }
   if (spatstat.geom::area.owin(X$window) <= threshold |
-      spatstat.geom::npoints(X) <= minpts) {
+    spatstat.geom::npoints(X) <= minpts) {
     root$status <- 0
     output <- list(
       tree = list(root),
@@ -213,68 +225,64 @@ treerec2 <- function(X,
       namecov = names(listcovariates),
       namelist = as.character(match.call()[4]),
       im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-                 W = X$window
+        W = X$window
       )
     )
-    class(output) <- "sptree" 
+    class(output) <- "sptree"
     return(output)
   }
-  
-  intensity_tree <- list(root)
-  
+
+  intensity_tree2 <- list(root)
+
   # Initialise the while loop
   k <- 0
   knew <- 1
   # Core computation of the tree
-  ### TODO 
+  ### TODO
   ### CHECK THAT WE CAN STOP !!!!
   while (k != knew) {
-    k <- length(intensity_tree)
-    
-    already_split_node <- sapply(intensity_tree,
-                                 FUN = function(j) {
-                                   j$already_split
-                                 }
+    k <- length(intensity_tree2)
+
+    already_split_node <- sapply(intensity_tree2,
+      FUN = function(j) {
+        j$already_split
+      }
     )
-    
-    # Never used visibly
-    # if (all(already_split_node) & k > 1) {
-    #   return(intensity_tree)
-    # }
-    
+
+
     for (i in (1:k)[!already_split_node]) {
       ## Select randomly covariates
       usedcov <- rand_covar(
         listcovariates = listcovariates,
         mtry = mtry
       )
-      
+
       # Split the cell, if the split is valid under the chosen parameters
       res.split <- splitcell2(
-        X = X[intensity_tree[[i]]$nodePP],
+        X = X[intensity_tree2[[i]]$nodePP],
         score = score,
         listcovariates = listcovariates,
         usecovariates = usedcov,
         thres.cell = threshold,
         minpts = minpts,
         tol = tol,
-        imp = intensity_tree[[i]]$improvement,
+        imp = intensity_tree2[[i]]$improvement,
         minsplitq = minsplitq,
         maxsplitq = maxsplitq
       )
-      
+
       if (is.character(res.split)) {
-        intensity_tree[[i]]$status <- 0
-        intensity_tree[[i]]$already_split <- TRUE
-        intensity_tree[[i]]$whystop <- res.split
+        intensity_tree2[[i]]$status <- 0
+        intensity_tree2[[i]]$already_split <- TRUE
+        intensity_tree2[[i]]$whystop <- res.split
       } else {
         # Update the parent
-        intensity_tree[[i]]$left_daughter <- knew + 1
-        intensity_tree[[i]]$right_daughter <- knew + 2
-        intensity_tree[[i]]$split_var <- res.split$split_var
-        intensity_tree[[i]]$split_val <- res.split$split_val
-        intensity_tree[[i]]$already_split <- TRUE
-        
+        intensity_tree2[[i]]$left_daughter <- knew + 1
+        intensity_tree2[[i]]$right_daughter <- knew + 2
+        intensity_tree2[[i]]$split_var <- res.split$split_var
+        intensity_tree2[[i]]$split_val <- res.split$split_val
+        intensity_tree2[[i]]$already_split <- TRUE
+
         # Define the children
         childleft <- list(
           nodeID = knew + 1,
@@ -284,7 +292,7 @@ treerec2 <- function(X,
           split_var = NA,
           split_val = NA,
           status = 1,
-          intensity_pred = sum(res.split$PPleft)/(areapixel*sum(res.split$Wleft)),
+          intensity_pred = sum(res.split$PPleft) / (areapixel * sum(res.split$Wleft)),
           scr_parent = res.split$scr_parent,
           improvement = res.split$improvement,
           already_split = FALSE,
@@ -298,72 +306,93 @@ treerec2 <- function(X,
           split_var = NA,
           split_val = NA,
           status = 1,
-          intensity_pred = sum(!res.split$PPleft)/(areapixel*sum(!res.split$Wleft)),
+          intensity_pred = sum(!res.split$PPleft) / (areapixel * sum(!res.split$Wleft)),
           scr_parent = res.split$scr_parent,
           improvement = res.split$improvement,
           already_split = FALSE,
           whystop = NULL
         )
         # append the children
-        intensity_tree <- append(
-          intensity_tree,
+        intensity_tree2 <- append(
+          intensity_tree2,
           list(childleft, childright)
         )
       }
-      knew <- length(intensity_tree)
+    knew <- length(intensity_tree2)
     }
+    # intensity_tree2
+    sapply(intensity_tree2, FUN=function(i){
+      i$right_daughter
+    })
+    sapply(intensity_tree2, FUN=function(i){
+      i$left_daughter
+    })
+    sapply(intensity_tree2, FUN=function(i){
+      sum(i$nodePP)
+    })
+    sapply(intensity_tree2, FUN=function(i){
+      i$status
+    })
   }
-  
-  # Compute the image
-  idterm <- sapply(intensity_tree, FUN = function(i) {
-    i$status
-  })
-  
-  ### TODO 
-  ### HOW TO COMPUTE THE IMAGE NOW?
-  
-  listmask <- lapply(intensity_tree[idterm == 0], FUN = function(i) {
-    i$nodePP$window$m # It is a mask usually but if no split is done then it is not.
-  })
-  
-  intensity_prediction <- sapply(intensity_tree[idterm == 0], FUN = function(i) {
-    i$intensity_pred
-  })
-  
-  matim <- mapply("*", listmask, intensity_prediction, SIMPLIFY = FALSE)
-  
-  imoutput <- spatstat.geom::as.im(Reduce("+", matim),
-                                   W = intensity_tree[[1]]$nodePP
-  )
-  
-  # Remove all the intermediary PP in nodePP
-  for (i in seq_along(intensity_tree)) {
-    intensity_tree[[i]]$nodePP <- NULL
-    intensity_tree[[i]]$already_split <- NULL
-    # x$tree[[i]]$improvement <- NULL
-  }
-  
-  if (inforest) {
-    output <- list(
-      tree = intensity_tree,
-      X = X,
-      namecov = names(listcovariates),
-      namelist = as.character(match.call()[4]),
-      im = imoutput
-    )
-  } else {
-    output <- list(
-      tree = intensity_tree,
-      X = X,
-      namecov = names(listcovariates),
-      namelist = as.character(match.call()[4]),
-      listcov = listcovariates,
-      im = imoutput
-    )
-  }
-  
-  class(output) <- "sptree" # For when I will define class
-  
-  return(output)
-}
 
+  # # Compute the image
+  # idterm <- sapply(intensity_tree2, FUN = function(i) {
+  #   i$status
+  # })
+
+  ### TODO
+  ### HOW TO COMPUTE THE IMAGE NOW?
+  #
+  # listmask <- lapply(intensity_tree2[idterm == 0], FUN = function(i) {
+  #   i$nodePP$window$m # It is a mask usually but if no split is done then it is not.
+  # })
+  #
+  # intensity_prediction <- sapply(intensity_tree2[idterm == 0], FUN = function(i) {
+  #   i$intensity_pred
+  # })
+  #
+  # matim <- mapply("*", listmask, intensity_prediction, SIMPLIFY = FALSE)
+  #
+  # imoutput <- spatstat.geom::as.im(Reduce("+", matim),
+  #                                  W = intensity_tree2[[1]]$nodePP
+  # )
+  #
+  # # Remove all the intermediary PP in nodePP
+  # for (i in seq_along(intensity_tree2)) {
+  #   intensity_tree2[[i]]$nodePP <- NULL
+  #   intensity_tree2[[i]]$already_split <- NULL
+  #   # x$tree[[i]]$improvement <- NULL
+  # }
+  #
+  # if (inforest) {
+  #   output <- list(
+  #     tree = intensity_tree2,
+  #     X = X,
+  #     namecov = names(listcovariates),
+  #     namelist = as.character(match.call()[4]),
+  #     im = imoutput
+  #   )
+  # } else {
+  #   output <- list(
+  #     tree = intensity_tree2,
+  #     X = X,
+  #     namecov = names(listcovariates),
+  #     namelist = as.character(match.call()[4]),
+  #     listcov = listcovariates,
+  #     im = imoutput
+  #   )
+  # }
+  #
+  # class(output) <- "sptree" # For when I will define class
+  #
+  # return(output)
+}
+#
+#
+# treerec2(
+#     X = spatstat.data::bei,
+#     minpts = 50,
+#     threshold = 1000,
+#     listcovariates = bei.extra,
+#     mtry = 1,
+#   )

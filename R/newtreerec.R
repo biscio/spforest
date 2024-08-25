@@ -20,27 +20,32 @@ splitcell2 <- function(X,
     # return(NULL)
   }
 
-  listcovar <- listcovariates[usecovariates == 1]
-  vecval <- lapply(listcovar, FUN = function(i) {
+  vecval <- lapply(listcovariates, FUN = function(i) {
     if (!spatstat.geom::is.im(i)) {
       stop("Elements of listcovar must be an im object")
     }
-    c(i$v)
+    c(as.matrix.im(i))
   })
 
-  valpts <- lapply(listcovar, FUN = function(i) {
-    i[X]
-  })
+  vecvalused <- vecval[usecovariates == 1]
+
+  listcovar <- listcovariates[usecovariates == 1]
+
+  valpts <- lapply(listcovariates[usecovariates == 1],
+    FUN = function(i) {
+      i[X, drop = FALSE]
+    }
+  )
 
   scr_cov <- NULL
   id_best_scr <- NULL
   scr_parent <- score.pp(X = X, score = score)
 
   # Calculate the splitting scores of all covariates
-  split_scrs <- lapply(vecval, FUN = function(j) {
+  split_scrs <- lapply(vecvalused, FUN = function(j) {
     if (minsplitq != maxsplitq) {
       rand_q <- stats::runif(n = 1, min = minsplitq, max = maxsplitq)
-      return(stats::quantile(j, probs = rand_q))
+      return(stats::quantile(j, probs = rand_q, na.rm = TRUE))
     } else {
       return(stats::median(j, na.rm = TRUE))
     }
@@ -51,24 +56,24 @@ splitcell2 <- function(X,
 
   leftlvl0 <- lapply(1:length(split_scrs),
     FUN = function(j) {
-      vecval[[j]] < split_scrs[[j]]
+      vecvalused[[j]] < split_scrs[[j]]
     }
   )
 
-  areapixel <- listcovar[[1]]$xstep * listcovar[[1]]$ystep
+  areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
 
   # Determination of level sets for all covariables
-  for (i in 1:length(listcovar)) {
+  for (i in 1:sum(usecovariates)) {
     maxsplitq <- 0.5
-    Wleft <- areapixel * sum(leftlvl0[[i]])
-    Wright <- areapixel * sum(!leftlvl0[[i]])
+    Wleft <- areapixel * sum(leftlvl0[[i]], na.rm = TRUE)
+    Wright <- areapixel * sum(!leftlvl0[[i]], na.rm = TRUE)
 
     # Test if they are too small and computation of the score if not
     if (Wleft <= thres.cell |
       Wright <= thres.cell) {
       scr_cov[i] <- -Inf
     } else {
-      n1 <- sum(valpts[[i]] < split_scrs[[i]])
+      n1 <- sum(valpts[[i]] < split_scrs[[i]], na.rm = TRUE)
       scr_cov[i] <- score.split(
         n1 = n1,
         n2 = spatstat.geom::npoints(X) - n1,
@@ -110,11 +115,28 @@ splitcell2 <- function(X,
   if (!is.null(whynot)) {
     return(whynot)
   } else {
+    split_var <- which(usecovariates == 1)[id_best_scr]
+    split_val <- split_scrs[[id_best_scr]]
+    
+    splitsub <- (vecval[[split_var]] < split_scrs[[id_best_scr]])
+    splitsup <- !splitsub
+    
+    splitsub[!splitsub] <- NA
+    splitsup[!splitsup] <- NA
+    sublevels <- lapply(vecval, FUN = function(j) {
+      return(j * splitsub)
+    })
+    suplevels <- lapply(vecval, FUN = function(j) {
+      return(j * splitsup)
+    })
+
     nodeChilds <- list(
-      PPleft = valpts[[id_best_scr]] < split_scrs[[id_best_scr]],
-      Wleft = (vecval[[id_best_scr]] < split_scrs[[id_best_scr]]),
-      split_var = which(usecovariates == 1)[id_best_scr],
-      split_val = split_scrs[[id_best_scr]],
+      PPleft = (valpts[[id_best_scr]] < split_val),
+      Wleft = (vecval[[id_best_scr]] < split_val),
+      split_var = split_var,
+      split_val = split_val,
+      sublevels = sublevels,
+      suplevels = suplevels,
       improvement = newimp,
       scr_parent = scr_parent,
       whystop = NULL
@@ -123,24 +145,24 @@ splitcell2 <- function(X,
   return(nodeChilds)
 }
 
-#### ----
-# f = function(){ splitcell2(
-#   X = spatstat.data::bei,
-#   score = "lcv",
-#   listcovariates = beisoilres,
-#   usecovariates = rep(1,15),
-#   thres.cell = 100,
-#   minpts = 10,
-#   tol = Inf,
-#   imp = NULL,
-#   minsplitq = 0.5,
-#   maxsplitq = 0.5
-# )}
+#### Test for splitcell2 ----
+f = function(){ splitcell2(
+  X = spatstat.data::bei,
+  score = "lcv",
+  listcovariates = beisoilres,
+  usecovariates = rep(c(1,0,1),each=5),
+  thres.cell = 100,
+  minpts = 10,
+  tol = Inf,
+  imp = NULL,
+  minsplitq = 0.5,
+  maxsplitq = 0.5
+)}
 # g <- function() {splitcell(
 #   X = spatstat.data::bei,
 #   score = "lcv",
 #   listcovariates = beisoilres,
-#   usecovariates = rep(1,15),
+#   usecovariates = rep(c(1,0,1),each=5),
 #   thres.cell = 100,
 #   minpts = 10,
 #   tol = Inf,
@@ -148,23 +170,26 @@ splitcell2 <- function(X,
 #   minsplitq = 0.5,
 #   maxsplitq = 0.5
 # )}
+# A <- f()
+# B <- g()
 #
 # library(microbenchmark)
 #
 # microbenchmark(f(),g())
 # subpp <- sample(x = 3604, size = 100)
 # save(subpp, file = "subpptest_newtreerec.RData")
+load(file = "subpptest_newtreerec.RData")
 X <- bei[subpp]
 score <- "lcv"
 threshold <- spatstat.geom::area(X) / 1e4
-listcovariates <- beisoilres
+listcovariates <- Rsandbox::beisoilres
 mtry <- 1
 tol <- Inf
 minpts <- 20
 minsplitq <- 0.5
 maxsplitq <- 0.5
 inforest <- F
-#### ----
+#### treerec2 code----
 treerec2 <- function(X,
                      score = "lcv",
                      threshold = spatstat.geom::area(X) / 1e4,
@@ -182,22 +207,19 @@ treerec2 <- function(X,
 
   areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
 
-  # The code works quicker when the windows is on a mask
-  spatstat.geom::Window(X) <- spatstat.geom::as.mask(spatstat.geom::Window(X),
-    xy = listcovariates[[1]]
-  )
+    # Initiating the root
+  
+  # vecval <- lapply(listcovariates, FUN = function(i) {
+  #   if (!spatstat.geom::is.im(i)) {
+  #     stop("Elements of listcovar must be an im object")
+  #   }
+  #   c(i$v)
+  # })
 
-
-  #### TODO
-  ####
-  ####  in place of a ppp in nodePP,
-  ####  put a logical vector with T if the point is present.
-  ####
-  ####
-  # Initiating the root
   root <- list(
     nodeID = 1,
     nodePP = rep(T, spatstat.geom::npoints(X)),
+    nodeCov = listcovariates,
     left_daughter = NA,
     right_daughter = NA,
     split_var = NA,
@@ -209,7 +231,6 @@ treerec2 <- function(X,
     already_split = FALSE,
     whystop = NULL
   )
-
   # Check if there is something to do on the initial point pattern.
   # if (spatstat.geom::area.owin(X$window) <= threshold |
   #   spatstat.geom::npoints(X) <= minpts) {
@@ -237,6 +258,9 @@ treerec2 <- function(X,
   # Initialise the while loop
   k <- 0
   knew <- 1
+  dimcov <- listcovariates[[1]]$dim
+  covrangex <- listcovariates[[1]]$xrange
+  covrangey <- listcovariates[[1]]$yrange
   # Core computation of the tree
   ### TODO
   ### CHECK THAT WE CAN STOP !!!!
@@ -249,7 +273,6 @@ treerec2 <- function(X,
       }
     )
 
-
     for (i in (1:k)[!already_split_node]) {
       ## Select randomly covariates
       usedcov <- rand_covar(
@@ -261,7 +284,7 @@ treerec2 <- function(X,
       res.split <- splitcell2(
         X = X[intensity_tree2[[i]]$nodePP],
         score = score,
-        listcovariates = listcovariates,
+        listcovariates = intensity_tree2[[i]]$nodeCov,
         usecovariates = usedcov,
         thres.cell = threshold,
         minpts = minpts,
@@ -282,11 +305,21 @@ treerec2 <- function(X,
         intensity_tree2[[i]]$split_var <- res.split$split_var
         intensity_tree2[[i]]$split_val <- res.split$split_val
         intensity_tree2[[i]]$already_split <- TRUE
+        
+        newsublvl <- lapply(res.split$sublevels, FUN=function(jj){
+          A <- matrix(jj, nrow=dimcov[1], ncol=dimcov[2], byrow = F)
+          im(A, xrange=covrangex, yrange=covrangey)
+        })
+        newsuplvl <- lapply(res.split$suplevels, FUN=function(jj){
+          A <- matrix(jj, nrow=dimcov[1], ncol=dimcov[2], byrow = F)
+          im(A, xrange=covrangex, yrange=covrangey)
+        })
 
         # Define the children
         childleft <- list(
           nodeID = knew + 1,
           nodePP = res.split$PPleft,
+          nodeCov = newsublvl,
           left_daughter = NA,
           right_daughter = NA,
           split_var = NA,
@@ -301,6 +334,7 @@ treerec2 <- function(X,
         childright <- list(
           nodeID = knew + 2,
           nodePP = !res.split$PPleft,
+          nodeCov = newsuplvl, 
           left_daughter = NA,
           right_daughter = NA,
           split_var = NA,
@@ -318,20 +352,23 @@ treerec2 <- function(X,
           list(childleft, childright)
         )
       }
-    knew <- length(intensity_tree2)
+      knew <- length(intensity_tree2)
     }
     # intensity_tree2
-    sapply(intensity_tree2, FUN=function(i){
+    sapply(intensity_tree2, FUN = function(i) {
       i$right_daughter
     })
-    sapply(intensity_tree2, FUN=function(i){
+    sapply(intensity_tree2, FUN = function(i) {
       i$left_daughter
     })
-    sapply(intensity_tree2, FUN=function(i){
+    sapply(intensity_tree2, FUN = function(i) {
       sum(i$nodePP)
     })
-    sapply(intensity_tree2, FUN=function(i){
+    sapply(intensity_tree2, FUN = function(i) {
       i$status
+    })
+    sapply(intensity_tree2, FUN = function(i) {
+      i$already_split
     })
   }
 

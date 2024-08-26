@@ -8,7 +8,10 @@ score <- "lcv"
 usecovariates <- rep(c(1, 0, 1), each = 5)
 # limit small cell
 threshold <- 100
-
+# Limit number points
+minpts <- 100
+# randomisation covariates
+mtry <- 1
 
 
 valpts <- lapply(listcovariates,
@@ -27,13 +30,21 @@ vecval <- lapply(listcovariates, FUN = function(i) {
 })
 
 # In while loop in tree function
+dimcov <- listcovariates[[1]]$dim
+covrangex <- listcovariates[[1]]$xrange
+covrangey <- listcovariates[[1]]$yrange
 
+#### TODO, add X as arguments, for consistency 
 splitcell3 <- function(valpts,
-                       vecval, 
-                       usecovariates, 
+                       vecval,
+                       usecovariates,
                        areapixel,
-                       threshold) {
-  whynot = NULL
+                       threshold,
+                       dimcov,
+                       covrangex,
+                       covrangey) {
+  
+  whynot <- NULL
   vecvalused <- vecval[usecovariates == 1]
   listcovar <- listcovariates[usecovariates == 1]
 
@@ -50,19 +61,24 @@ splitcell3 <- function(valpts,
   # Determination of level sets for all covariables
   scr_cov <- NULL
   for (i in 1:sum(usecovariates)) {
-    Wleft <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
-    Wright <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
+    Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
+    Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
 
     # Test if they are too small and computation of the score if not
-    if (Wleft <= threshold | Wright <= threshold) {
+    if (Wsub <= threshold | Wsup <= threshold) {
       scr_cov[i] <- -Inf
     } else {
-      n1 <- sum(valpts[usecovariates == 1][[i]] < mediancov[[i]], na.rm = TRUE)
+      tempsublvl <- im(matrix(sublvl[[i]], 
+                            nrow = dimcov[1], 
+                            ncol = dimcov[2], byrow = F), 
+                     xrange = covrangex, yrange = covrangey)
+      n1 <- npoints(X[tempsublvl])
+      n2 <- npoints(X[!tempsublvl])
       scr_cov[i] <- score.split(
         n1 = n1,
-        n2 = spatstat.geom::npoints(X) - n1,
-        W1area = Wleft,
-        W2area = Wright
+        n2 = n2,
+        W1area = Wsub,
+        W2area = Wsup
       )
     }
   }
@@ -82,10 +98,8 @@ splitcell3 <- function(valpts,
   } else {
     split_var <- which(usecovariates == 1)[id_best_scr]
     split_val <- mediancov[[id_best_scr]]
-
     splitsub <- (vecval[[split_var]] < split_val)
     splitsup <- !splitsub
-
     splitsub[!splitsub] <- NA
     splitsup[!splitsup] <- NA
     sublevels <- lapply(vecval, FUN = function(j) {
@@ -94,22 +108,43 @@ splitcell3 <- function(valpts,
     suplevels <- lapply(vecval, FUN = function(j) {
       return(j * splitsup)
     })
-
+    
+    imlvlset <- im(matrix(splitsub, 
+                          nrow = dimcov[1], 
+                          ncol = dimcov[2], byrow = F), 
+                   xrange = covrangex, yrange = covrangey)
+    
+    nsub <- spatstat.geom::npoints(X[imlvlset])
+    nsup <- spatstat.geom::npoints(X[!imlvlset])
+    
     nodeChilds <- list(
       split_var = split_var,
       split_val = split_val,
       sublevels = sublevels,
+      nsub = nsub,
       suplevels = suplevels,
+      nsup = nsup, 
       whystop = NULL
     )
   }
 }
 
+# A<-splitcell3(
+#   valpts = valpts,
+#   vecval = vecval,
+#   usecovariates = usecovariates,
+#   areapixel = areapixel,
+#   threshold = threshold
+# )
+
+#### TODO
+#### Harmonise to work with splitcell3
 root <- list(
   nodeID = 1,
-  nodeCov = listcovariates,
+  nodeCov = vecval,
   left_daughter = NA,
   right_daughter = NA,
+  nX = spatstat.geom::npoints(X), 
   split_var = NA,
   split_val = NA,
   status = 1,
@@ -120,7 +155,7 @@ root <- list(
 
 # Check if there is something to do on the initial point pattern.
 if (spatstat.geom::area.owin(X$window) <= threshold |
-    spatstat.geom::npoints(X) <= minpts) {
+  spatstat.geom::npoints(X) <= minpts) {
   root$status <- 0
   output <- list(
     tree = list(root),
@@ -128,7 +163,7 @@ if (spatstat.geom::area.owin(X$window) <= threshold |
     namecov = names(listcovariates),
     namelist = as.character(match.call()[4]),
     im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-               W = X$window
+      W = X$window
     )
   )
   class(output) <- "sptree"
@@ -141,84 +176,109 @@ intensity_tree2 <- list(root)
 k <- 0
 knew <- 1
 
-while (k != knew) {TODO stop("TODO")}
+while (k != knew) {
+  TODO
+  k <- length(intensity_tree2)
 
-
-#### treerec2 code----
-treerec2 <- function(X,
-                     score = "lcv",
-                     threshold = spatstat.geom::area(X) / 1e4,
-                     listcovariates = NULL,
-                     mtry = 1,
-                     tol = Inf,
-                     minpts = spatstat.geom::npoints(X) / 10,
-                     minsplitq = 0.5,
-                     maxsplitq = 0.5,
-                     inforest = F) {
-  # Sanity checks
-  if (threshold <= 0 & minpts <= 0) {
-    stop("Either threshold or minpts must be strictly greater than 0.")
-  }
-
-  areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
-
-  # Initiating the root
-
-  # vecval <- lapply(listcovariates, FUN = function(i) {
-  #   if (!spatstat.geom::is.im(i)) {
-  #     stop("Elements of listcovar must be an im object")
-  #   }
-  #   c(i$v)
-  # })
-
-  root <- list(
-    nodeID = 1,
-    nodePP = rep(T, spatstat.geom::npoints(X)),
-    nodeCov = listcovariates,
-    left_daughter = NA,
-    right_daughter = NA,
-    split_var = NA,
-    split_val = NA,
-    status = 1,
-    intensity_pred = spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-    scr_parent = NA,
-    improvement = NULL,
-    already_split = FALSE,
-    whystop = NULL
+  already_split_node <- sapply(intensity_tree2,
+    FUN = function(j) {
+      j$already_split
+    }
   )
-  # Check if there is something to do on the initial point pattern.
-  # if (spatstat.geom::area.owin(X$window) <= threshold |
-  #   spatstat.geom::npoints(X) <= minpts) {
-  #   root$status <- 0
-  #   return(list(root))
-  # }
-  if (spatstat.geom::area.owin(X$window) <= threshold |
-    spatstat.geom::npoints(X) <= minpts) {
-    root$status <- 0
-    output <- list(
-      tree = list(root),
-      X = X,
-      namecov = names(listcovariates),
-      namelist = as.character(match.call()[4]),
-      im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-        W = X$window
-      )
+
+  for (i in (1:k)[!already_split_node]) {
+    ## Select randomly covariates
+    usedcov <- rand_covar(
+      listcovariates = listcovariates,
+      mtry = mtry
     )
-    class(output) <- "sptree"
-    return(output)
+    
+    if (intensity_tree2[[1]]$nX <= minpts) {
+      res.split <- "Not enough points to attempt to split"
+    } else {
+      # Split the cell, if the split is valid under the chosen parameters
+      res.split <- splitcell3(
+        valpts = valpts,
+        vecval = intensity_tree2[[i]]$nodeCov,
+        usecovariates = usedcov,
+        areapixel = areapixel,
+        threshold = threshold,
+        dimcov = dimcov,
+        covrangex = covrangex,
+        covrangey = covrangey
+      )
+    }
+
+    if (is.character(res.split)) {
+      intensity_tree2[[i]]$status <- 0
+      intensity_tree2[[i]]$already_split <- TRUE
+      intensity_tree2[[i]]$whystop <- res.split
+    } else {
+      # Update the parent
+      intensity_tree2[[i]]$left_daughter <- knew + 1
+      intensity_tree2[[i]]$right_daughter <- knew + 2
+      intensity_tree2[[i]]$split_var <- res.split$split_var
+      intensity_tree2[[i]]$split_val <- res.split$split_val
+      intensity_tree2[[i]]$already_split <- TRUE
+
+      # Define the children
+      areasub <- (areapixel * sum(!is.na(res.split$sublevels[[res.split$split_var]])))
+      areasup <- (areapixel * sum(!is.na(res.split$suplevels[[res.split$split_var]])))
+      
+      childleft <- list(
+        nodeID = knew + 1,
+        nodeCov = res.split$sublevels,
+        nX = res.split$nsub,
+        left_daughter = NA,
+        right_daughter = NA,
+        split_var = NA,
+        split_val = NA,
+        status = 1,
+        intensity_pred = nsub / areasub,
+        already_split = FALSE,
+        whystop = NULL
+      )
+
+      childright <- list(
+        nodeID = knew + 2,
+        nodeCov = res.split$suplevels,
+        nX = res.split$nsup,
+        left_daughter = NA,
+        right_daughter = NA,
+        split_var = NA,
+        split_val = NA,
+        status = 1,
+        intensity_pred = nsup / areasup,
+        already_split = FALSE,
+        whystop = NULL
+      )
+      # append the children
+      intensity_tree2 <- append(
+        intensity_tree2,
+        list(childleft, childright)
+      )
+    }
+    knew <- length(intensity_tree2)
   }
+}
 
-  intensity_tree2 <- list(root)
+sapply(intensity_tree2, FUN = function(i) {
+  i$right_daughter
+})
+sapply(intensity_tree2, FUN = function(i) {
+  i$left_daughter
+})
+sapply(intensity_tree2, FUN = function(i) {
+  i$status
+})
+sapply(intensity_tree2, FUN = function(i) {
+  i$already_split
+})
+sapply(intensity_tree2, FUN = function(i) {
+  i$nX
+})
+#### treerec2 code old ----
 
-  # Initialise the while loop
-  k <- 0
-  knew <- 1
-  dimcov <- listcovariates[[1]]$dim
-  covrangex <- listcovariates[[1]]$xrange
-  covrangey <- listcovariates[[1]]$yrange
-  # Core computation of the tree
-  ### TODO
-  ### CHECK THAT WE CAN STOP !!!!
   while (k != knew) {
     k <- length(intensity_tree2)
 
@@ -280,7 +340,7 @@ treerec2 <- function(X,
           split_var = NA,
           split_val = NA,
           status = 1,
-          intensity_pred = sum(res.split$PPleft) / (areapixel * sum(res.split$Wleft)),
+          intensity_pred = sum(res.split$PPleft) / (areapixel * sum(res.split$Wsub)),
           scr_parent = res.split$scr_parent,
           improvement = res.split$improvement,
           already_split = FALSE,
@@ -295,7 +355,7 @@ treerec2 <- function(X,
           split_var = NA,
           split_val = NA,
           status = 1,
-          intensity_pred = sum(!res.split$PPleft) / (areapixel * sum(!res.split$Wleft)),
+          intensity_pred = sum(!res.split$PPleft) / (areapixel * sum(!res.split$Wsub)),
           scr_parent = res.split$scr_parent,
           improvement = res.split$improvement,
           already_split = FALSE,

@@ -329,6 +329,9 @@ f <- function(){treerec(
 library(microbenchmark)
 microbenchmark(f(),g())
 
+library(profvis)
+profvis(f())
+profvis(g())
 #### treerec2 code old ----
 
 #

@@ -91,8 +91,15 @@ splitcell2 <- function(X,
         ),
         xrange = covrangex, yrange = covrangey
       )
+      tempsuplvl <- im(
+        matrix(!sublvl[[i]],
+               nrow = dimcov[1],
+               ncol = dimcov[2], byrow = F
+        ),
+        xrange = covrangex, yrange = covrangey
+      )
       n1 <- npoints(X[tempsublvl])
-      n2 <- npoints(X[!tempsublvl])
+      n2 <- npoints(X[tempsuplvl])
       scr_cov[i] <- score.split(
         n1 = n1,
         n2 = n2,
@@ -165,7 +172,6 @@ splitcell2 <- function(X,
 #' The minimum number of points allowed to try to split a cell.
 #' @param mtry Probability of choosing a covariable.
 #' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
-#' @param usecovariates  Vector of 0,1 with covariate to choose.
 #' @param threshold Minimum threshold to allow to split cell.
 #' @param inforest Logical. Indicates if the function is run in a forest or not. 
 #'
@@ -185,7 +191,6 @@ intensitytree <- function(X,
                           minpts = 500,
                           mtry = 1,
                           score = "lcv",
-                          usecovariates = rep(1, length(listcovariates)),
                           threshold = spatstat.geom::area(X) / 1e4,
                           inforest = F) {
   valpts <- lapply(listcovariates,

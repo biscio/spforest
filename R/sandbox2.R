@@ -16,6 +16,13 @@ gtree <- function(){
   )
 }
 
+A<-ftree()
+B <- gtree()
+plot(A)
+plot(B)
+test<-A$im-B$im ### Small difference why ??
+max(abs(test))
+
 microbenchmark(ftree(), gtree(), times = 5)
 
 library(profvis)

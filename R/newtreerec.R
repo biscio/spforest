@@ -88,22 +88,24 @@ splitcell2 <- function(X,
     if (Wsub <= threshold | Wsup <= threshold) {
       scr_cov[i] <- -Inf
     } else {
-      tempsublvl <- im(
-        matrix(sublvl[[i]],
-          nrow = dimcov[1],
-          ncol = dimcov[2], byrow = F
-        ),
-        xrange = covrangex, yrange = covrangey
-      )
-      tempsuplvl <- im(
-        matrix(!sublvl[[i]],
-               nrow = dimcov[1],
-               ncol = dimcov[2], byrow = F
-        ),
-        xrange = covrangex, yrange = covrangey
-      )
-      n1 <- npoints(X[tempsublvl])
-      n2 <- npoints(X[tempsuplvl])
+      n1 <- sum(valpts[[i]] < mediancov[[i]], na.rm = T)
+      n2 <- sum(valpts[[i]] >= mediancov[[i]], na.rm = T)
+      # tempsublvl <- im(
+      #   matrix(sublvl[[i]],
+      #     nrow = dimcov[1],
+      #     ncol = dimcov[2], byrow = F
+      #   ),
+      #   xrange = covrangex, yrange = covrangey
+      # )
+      # tempsuplvl <- im(
+      #   matrix(!sublvl[[i]],
+      #          nrow = dimcov[1],
+      #          ncol = dimcov[2], byrow = F
+      #   ),
+      #   xrange = covrangex, yrange = covrangey
+      # )
+      # n1 <- npoints(X[tempsublvl])
+      # n2 <- npoints(X[tempsuplvl])
       scr_cov[i] <- score.split(
         n1 = n1,
         n2 = n2,
@@ -138,9 +140,24 @@ splitcell2 <- function(X,
       ),
       xrange = covrangex, yrange = covrangey
     )
-
-    nsub <- spatstat.geom::npoints(X[imsublvl])
-    nsup <- spatstat.geom::npoints(X[!imsublvl])
+    ####
+    ##### HERE 
+    ##### 
+    subvalpts <- (valpts[[split_var]] <= split_val)
+    nsub <- sum(subvalpts, na.rm=T)
+    nsup <- sum(!subvalpts, na.rm=T)
+    
+    valptssub <- lapply(valpts, FUN = function(j){
+      ifelse(subvalpts, 
+             j, NA)
+    })
+    valptssup <- lapply(valpts, FUN = function(j){
+      ifelse(!subvalpts, 
+             j, NA)
+    })
+    
+    # nsub <- spatstat.geom::npoints(X[imsublvl])
+    # nsup <- spatstat.geom::npoints(X[!imsublvl])
 
     splitsup <- !splitsub
     splitsub[!splitsub] <- NA
@@ -155,6 +172,8 @@ splitcell2 <- function(X,
     nodeChilds <- list(
       split_var = split_var,
       split_val = split_val,
+      valptssub = valptssub, 
+      valptssup = valptssup,
       sublevels = sublevels,
       nsub = nsub,
       suplevels = suplevels,
@@ -215,6 +234,7 @@ intensitytree <- function(X,
   root <- list(
     nodeID = 1,
     nodeCov = vecval,
+    nodeValpts = valpts,
     left_daughter = NA,
     right_daughter = NA,
     nX = spatstat.geom::npoints(X),
@@ -292,7 +312,7 @@ intensitytree <- function(X,
         # Split the cell, if the split is valid under the chosen parameters
         res.split <- splitcell2(
           X = X,
-          valpts = valpts,
+          valpts = intensity_tree[[i]]$nodeValpts,
           vecval = intensity_tree[[i]]$nodeCov,
           usecovariates = usedcov,
           areapixel = areapixel,
@@ -323,6 +343,7 @@ intensitytree <- function(X,
         childleft <- list(
           nodeID = knew + 1,
           nodeCov = res.split$sublevels,
+          nodeValpts = res.split$valptssub,
           nX = res.split$nsub,
           left_daughter = NA,
           right_daughter = NA,
@@ -337,6 +358,7 @@ intensitytree <- function(X,
         childright <- list(
           nodeID = knew + 2,
           nodeCov = res.split$suplevels,
+          nodeValpts = res.split$valptssup,
           nX = res.split$nsup,
           left_daughter = NA,
           right_daughter = NA,

@@ -423,7 +423,7 @@ intensitytree <- function(X,
 
   return(output)
 
-  return(spatstat.geom::as.im(Reduce("+", patchworks), W = X$window))
+  # return(spatstat.geom::as.im(Reduce("+", patchworks), W = X$window))
 }
 
 

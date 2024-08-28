@@ -10,7 +10,7 @@ ftree <- function(){
 gtree <- function(){
   intensitytree(
     X = spatstat.data::bei,
-    listcovariates = beisoilres,
+    listcovariates = Rsandbox::beisoilres,
     mtry = 1,
     minpts = 500
   )
@@ -56,21 +56,25 @@ g <- function(){
 library(microbenchmark)
 microbenchmark(f(), g(), times = 2)
 
-# sapply(intensity_tree2, FUN = function(i) {
-#   i$right_daughter
-# })
-# sapply(intensity_tree2, FUN = function(i) {
-#   i$left_daughter
-# })
-# sapply(intensity_tree2, FUN = function(i) {
-#   i$status
-# })
-# sapply(intensity_tree2, FUN = function(i) {
-#   i$already_split
-# })
-# sapply(intensity_tree2, FUN = function(i) {
-#   i$nX
-# })
+sapply(intensity_tree2, FUN = function(i) {
+  i$right_daughter
+})
+sapply(intensity_tree2, FUN = function(i) {
+  i$left_daughter
+})
+sapply(intensity_tree2, FUN = function(i) {
+  i$status
+})
+sapply(intensity_tree2, FUN = function(i) {
+  i$already_split
+})
+sapply(B$tree, FUN = function(i) {
+  i$intensity_pred
+})
+sapply(A$tree, FUN = function(i) {
+  i$intensity_pred
+})
+
 
 # 
 # 

@@ -16,7 +16,7 @@ The input forest if it is valid
 Validator for spforest
 }
 \examples{
- forest <- RforestPP(
+forest <- RforestPP(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

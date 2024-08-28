@@ -1,11 +1,62 @@
-
-
-splitcell3 <- function(X,
+#' Splitting cell
+#'
+#' @param X The observed data point pattern.
+#' @param valpts A list. Values of each covariates at the points of \code{X}.
+#' @param vecval A list. Values of the covariates at each pixel.
+#' @param usecovariates  Vector of 0 and 1 values indicating which covariates
+#' to choose
+#' @param areapixel The pixel area used in each covariates.
+#' @param threshold Minimum threshold to allow to split cell.
+#' @param dimcov The element \code{dim} of the covariates which are
+#' \code{\link[spatstat.geom]{im}}.
+#' @param covrangex The element \code{xrange} of the covariates which are
+#' \code{\link[spatstat.geom]{im}}.
+#' @param covrangey The element \code{yrange} of the covariates which are
+#' \code{\link[spatstat.geom]{im}}.
+#'
+#' @return A list with  split_var = split_var,
+#' split_val = split_val,
+#' sublevels = sublevels,
+#' nsub = nsub,
+#' suplevels = suplevels,
+#' nsup = nsup,
+#' whystop = NULL
+#' @export
+#'
+#' @examples
+#' listcovariates <- Rsandbox::beisoilres
+#' X <- bei
+#' valpts <- lapply(listcovariates,
+#'   FUN = function(i) {
+#'     i[X]
+#'   }
+#' )
+#' vecval <- lapply(Rsandbox::beisoilres, FUN = function(i) {
+#'   if (!spatstat.geom::is.im(i)) {
+#'     stop("Elements of listcovar must be an im object")
+#'   }
+#'   c(as.matrix.im(i))
+#' })
+#' usecovariates <- rep(1, 15)
+#' areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
+#' score <- "lcv"
+#' dimcov <- listcovariates[[1]]$dim
+#' covrangex <- listcovariates[[1]]$xrange
+#' covrangey <- listcovariates[[1]]$yrange
+# A<-splitcell2(
+#   valpts = valpts,
+#   vecval = vecval,
+#   usecovariates = usecovariates,
+#   areapixel = areapixel,
+#   threshold = threshold
+# )
+splitcell2 <- function(X,
                        valpts,
                        vecval,
                        usecovariates,
                        areapixel,
-                       threshold,
+                       score = "lcv",
+                       threshold = spatstat.geom::area(X) / 1e4,
                        dimcov,
                        covrangex,
                        covrangey) {
@@ -46,7 +97,8 @@ splitcell3 <- function(X,
         n1 = n1,
         n2 = n2,
         W1area = Wsub,
-        W2area = Wsup
+        W2area = Wsup,
+        score = score
       )
     }
   }
@@ -101,15 +153,33 @@ splitcell3 <- function(X,
   }
 }
 
-# A<-splitcell3(
-#   valpts = valpts,
-#   vecval = vecval,
-#   usecovariates = usecovariates,
-#   areapixel = areapixel,
-#   threshold = threshold
-# )
 
 
+
+#' Spatial Intensity tree function (improved)
+#'
+#' @param X The observed data point pattern.
+#' @param listcovariates A list with all the covariates used for the tree. The
+#' covariates must be given as im object from the package spatstat.
+#' @param minpts A positive integer. 
+#' The minimum number of points allowed to try to split a cell.
+#' @param mtry Probability of choosing a covariable.
+#' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
+#' @param usecovariates  Vector of 0,1 with covariate to choose.
+#' @param threshold Minimum threshold to allow to split cell.
+#' @param inforest Logical. Indicates if the function is run in a forest or not. 
+#'
+#' @return An object of class \code{sptree}.
+#' @export
+#'
+#' @examples
+#' mytree <- intensitytree(
+#'   X = spatstat.data::bei,
+#'   listcovariates = beisoilres,
+#'   mtry = 1,
+#'   minpts = 500
+#' )
+#' plot(mytree)
 intensitytree <- function(X,
                           listcovariates,
                           minpts = 500,
@@ -184,7 +254,7 @@ intensitytree <- function(X,
     return(output)
   }
 
-  intensity_tree2 <- list(root)
+  intensity_tree <- list(root)
 
   # Initialise the while loop
   k <- 0
@@ -192,9 +262,9 @@ intensitytree <- function(X,
 
 
   while (k != knew) {
-    k <- length(intensity_tree2)
+    k <- length(intensity_tree)
 
-    already_split_node <- sapply(intensity_tree2,
+    already_split_node <- sapply(intensity_tree,
       FUN = function(j) {
         j$already_split
       }
@@ -207,16 +277,17 @@ intensitytree <- function(X,
         mtry = mtry
       )
 
-      if (intensity_tree2[[i]]$nX <= minpts) {
+      if (intensity_tree[[i]]$nX <= minpts) {
         res.split <- "Not enough points to attempt to split"
       } else {
         # Split the cell, if the split is valid under the chosen parameters
-        res.split <- splitcell3(
+        res.split <- splitcell2(
           X = X,
           valpts = valpts,
-          vecval = intensity_tree2[[i]]$nodeCov,
+          vecval = intensity_tree[[i]]$nodeCov,
           usecovariates = usedcov,
           areapixel = areapixel,
+          score = score,
           threshold = threshold,
           dimcov = dimcov,
           covrangex = covrangex,
@@ -225,16 +296,16 @@ intensitytree <- function(X,
       }
 
       if (is.character(res.split)) {
-        intensity_tree2[[i]]$status <- 0
-        intensity_tree2[[i]]$already_split <- TRUE
-        intensity_tree2[[i]]$whystop <- res.split
+        intensity_tree[[i]]$status <- 0
+        intensity_tree[[i]]$already_split <- TRUE
+        intensity_tree[[i]]$whystop <- res.split
       } else {
         # Update the parent
-        intensity_tree2[[i]]$left_daughter <- knew + 1
-        intensity_tree2[[i]]$right_daughter <- knew + 2
-        intensity_tree2[[i]]$split_var <- res.split$split_var
-        intensity_tree2[[i]]$split_val <- res.split$split_val
-        intensity_tree2[[i]]$already_split <- TRUE
+        intensity_tree[[i]]$left_daughter <- knew + 1
+        intensity_tree[[i]]$right_daughter <- knew + 2
+        intensity_tree[[i]]$split_var <- res.split$split_var
+        intensity_tree[[i]]$split_val <- res.split$split_val
+        intensity_tree[[i]]$already_split <- TRUE
 
         # Define the children
         areasub <- (areapixel * sum(!is.na(res.split$sublevels[[res.split$split_var]])))
@@ -268,20 +339,20 @@ intensitytree <- function(X,
           whystop = NULL
         )
         # append the children
-        intensity_tree2 <- append(
-          intensity_tree2,
+        intensity_tree <- append(
+          intensity_tree,
           list(childleft, childright)
         )
       }
-      knew <- length(intensity_tree2)
+      knew <- length(intensity_tree)
     }
   }
 
-  idterm <- sapply(intensity_tree2, FUN = function(i) {
+  idterm <- sapply(intensity_tree, FUN = function(i) {
     i$status
   })
 
-  patchworks <- lapply(intensity_tree2[idterm == 0],
+  patchworks <- lapply(intensity_tree[idterm == 0],
     FUN = function(i) {
       patchs <- ifelse(!is.na(i$nodeCov[[1]]),
         i$intensity_pred,
@@ -298,114 +369,71 @@ intensitytree <- function(X,
     }
   )
 
+  if (inforest) {
+    output <- list(
+      tree = intensity_tree,
+      X = X,
+      namecov = names(listcovariates),
+      namelist = as.character(match.call()[4]),
+      im = spatstat.geom::as.im(Reduce("+", patchworks), W = X$window)
+    )
+  } else {
+    output <- list(
+      tree = intensity_tree,
+      X = X,
+      namecov = names(listcovariates),
+      namelist = as.character(match.call()[4]),
+      listcov = listcovariates,
+      im = spatstat.geom::as.im(Reduce("+", patchworks), W = X$window)
+    )
+  }
+
+  class(output) <- "sptree" # For when I will define class
+
+  return(output)
+
   return(spatstat.geom::as.im(Reduce("+", patchworks), W = X$window))
 }
 
 
-
 # plot(spatstat.geom::as.im(Reduce("+", A), W = X$window))
+#
+# f <- function() {
+#   treerec(
+#     X = spatstat.data::bei,
+#     threshold = 1000,
+#     listcovariates = beisoilres,
+#     mtry = 1,
+#     minpts = 100
+#   )
+# }
+#
+# g <- function() {
+#   intensitytree(
+#     X = spatstat.data::bei,
+#     listcovariates = beisoilres,
+#     mtry = 1,
+#     minpts = 100,
+#     threshold = 1000
+#   )
+# }
+#
+# A <- f()
+# B <- g()
+# plot(A)
+# plot(B)
 
-f <- function() {
-  treerec(
-    X = spatstat.data::bei,
-    threshold = 1000,
-    listcovariates = beisoilres,
-    mtry = 1,
-    minpts = 100
-  )
-}
-
-g <- function() { 
-  intensitytree(
-    X = spatstat.data::bei,
-    listcovariates = beisoilres,
-    mtry = 1,
-    minpts = 100,
-    threshold = 1000
-  )
-}
-
-A<-f()
-B<-g()
-plot(A)
-plot(B)
-
-# 
+#
 # library(microbenchmark)
 # microbenchmark(f(), g())
-# 
+#
 # library(profvis)
 # profvis(f())
 # profvis(g())
-#### treerec2 code old ----
 
 #
-# plot(im(matrix(intensity_tree2[idterm == 0][[1]]$nodeCov[[1]],
+# plot(im(matrix(intensity_tree[idterm == 0][[1]]$nodeCov[[1]],
 #                nrow = dimcov[1],
 #                ncol = dimcov[2], byrow = F),
 #         xrange = covrangex, yrange = covrangey) )
 #
-
-# # Compute the image
-# idterm <- sapply(intensity_tree2, FUN = function(i) {
-#   i$status
-# })
-
-### TODO
-### HOW TO COMPUTE THE IMAGE NOW?
-#
-# listmask <- lapply(intensity_tree2[idterm == 0],
-# FUN = function(i) {
-#   i$nodePP$window$m # It is a mask usually but if no split is done then it is not.
-# })
-#
-# intensity_prediction <- sapply(intensity_tree2[idterm == 0],
-# FUN = function(i) {
-#   i$intensity_pred
-# })
-#
-# matim <- mapply("*", listmask, intensity_prediction, SIMPLIFY = FALSE)
-#
-# imoutput <- spatstat.geom::as.im(Reduce("+", matim),
-#                                  W = intensity_tree2[[1]]$nodePP
-# )
-#
-# # Remove all the intermediary PP in nodePP
-# for (i in seq_along(intensity_tree2)) {
-#   intensity_tree2[[i]]$nodePP <- NULL
-#   intensity_tree2[[i]]$already_split <- NULL
-#   # x$tree[[i]]$improvement <- NULL
-# }
-#
-# if (inforest) {
-#   output <- list(
-#     tree = intensity_tree2,
-#     X = X,
-#     namecov = names(listcovariates),
-#     namelist = as.character(match.call()[4]),
-#     im = imoutput
-#   )
-# } else {
-#   output <- list(
-#     tree = intensity_tree2,
-#     X = X,
-#     namecov = names(listcovariates),
-#     namelist = as.character(match.call()[4]),
-#     listcov = listcovariates,
-#     im = imoutput
-#   )
-# }
-#
-# class(output) <- "sptree" # For when I will define class
-#
-# return(output)
-# }
-#
-#
-# treerec2(
-#     X = spatstat.data::bei,
-#     minpts = 50,
-#     threshold = 1000,
-#     listcovariates = bei.extra,
-#     mtry = 1,
-#   )

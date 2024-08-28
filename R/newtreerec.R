@@ -1,51 +1,5 @@
-# Original point pattern
-X <- bei
-# Covariates
-listcovariates <- Rsandbox::beisoilres
-# Choose a score
-score <- "lcv"
-# Used a subset each time
-# usecovariates <- rep(c(1, 0, 1), each = 5)
-usecovariates <- rep(1, 15)
-# limit small cell
-threshold <- 100
-# Limit number points
-minpts <- 500
-# randomisation covariates
-mtry <- 1
-
-arbre <- treerec(
-  X = spatstat.data::bei,
-  threshold = 100,
-  listcovariates = Rsandbox::beisoilres,
-  mtry = 1,
-  minpts = 500
-)
 
 
-g <- function() {
-
-valpts <- lapply(listcovariates,
-  FUN = function(i) {
-    i[X]
-  }
-)
-areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
-
-
-vecval <- lapply(listcovariates, FUN = function(i) {
-  if (!spatstat.geom::is.im(i)) {
-    stop("Elements of listcovar must be an im object")
-  }
-  c(as.matrix.im(i))
-})
-
-# In while loop in tree function
-dimcov <- listcovariates[[1]]$dim
-covrangex <- listcovariates[[1]]$xrange
-covrangey <- listcovariates[[1]]$yrange
-
-#### TODO, add X as arguments, for consistency
 splitcell3 <- function(X,
                        valpts,
                        vecval,
@@ -155,183 +109,234 @@ splitcell3 <- function(X,
 #   threshold = threshold
 # )
 
-root <- list(
-  nodeID = 1,
-  nodeCov = vecval,
-  left_daughter = NA,
-  right_daughter = NA,
-  nX = spatstat.geom::npoints(X),
-  split_var = NA,
-  split_val = NA,
-  status = 1,
-  intensity_pred = spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-  already_split = FALSE,
-  whystop = NULL
-)
 
-# Check if there is something to do on the initial point pattern.
-if (spatstat.geom::area.owin(X$window) <= threshold |
-  spatstat.geom::npoints(X) <= minpts) {
-  root$status <- 0
-  output <- list(
-    tree = list(root),
-    X = X,
-    namecov = names(listcovariates),
-    namelist = as.character(match.call()[4]),
-    im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-      W = X$window
-    )
-  )
-  class(output) <- "sptree"
-  return(output)
-}
-
-intensity_tree2 <- list(root)
-
-# Initialise the while loop
-k <- 0
-knew <- 1
-
-while (k != knew) {
-  k <- length(intensity_tree2)
-
-  already_split_node <- sapply(intensity_tree2,
-    FUN = function(j) {
-      j$already_split
+intensitytree <- function(X,
+                          listcovariates,
+                          minpts = 500,
+                          mtry = 1,
+                          score = "lcv",
+                          usecovariates = rep(1, length(listcovariates)),
+                          threshold = spatstat.geom::area(X) / 1e4,
+                          inforest = F) {
+  valpts <- lapply(listcovariates,
+    FUN = function(i) {
+      i[X]
     }
   )
 
-  for (i in (1:k)[!already_split_node]) {
-    ## Select randomly covariates
-    usedcov <- rand_covar(
-      listcovariates = listcovariates,
-      mtry = mtry
+  areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
+
+  vecval <- lapply(listcovariates, FUN = function(i) {
+    if (!spatstat.geom::is.im(i)) {
+      stop("Elements of listcovar must be an im object")
+    }
+    c(as.matrix.im(i))
+  })
+
+  root <- list(
+    nodeID = 1,
+    nodeCov = vecval,
+    left_daughter = NA,
+    right_daughter = NA,
+    nX = spatstat.geom::npoints(X),
+    split_var = NA,
+    split_val = NA,
+    status = 1,
+    intensity_pred = spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
+    already_split = FALSE,
+    whystop = NULL
+  )
+
+  dimcov <- listcovariates[[1]]$dim
+  covrangex <- listcovariates[[1]]$xrange
+  covrangey <- listcovariates[[1]]$yrange
+
+  if (spatstat.geom::area.owin(X$window) <= threshold |
+    spatstat.geom::npoints(X) <= minpts) {
+    root$status <- 0
+    output <- list(
+      tree = list(root),
+      X = X,
+      namecov = names(listcovariates),
+      namelist = as.character(match.call()[4]),
+      im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
+        W = X$window
+      )
     )
-
-    if (intensity_tree2[[i]]$nX <= minpts) {
-      res.split <- "Not enough points to attempt to split"
-    } else {
-      # Split the cell, if the split is valid under the chosen parameters
-      res.split <- splitcell3(
-        X = X, 
-        valpts = valpts,
-        vecval = intensity_tree2[[i]]$nodeCov,
-        usecovariates = usedcov,
-        areapixel = areapixel,
-        threshold = threshold,
-        dimcov = dimcov,
-        covrangex = covrangex,
-        covrangey = covrangey
-      )
-    }
-
-    if (is.character(res.split)) {
-      intensity_tree2[[i]]$status <- 0
-      intensity_tree2[[i]]$already_split <- TRUE
-      intensity_tree2[[i]]$whystop <- res.split
-    } else {
-      # Update the parent
-      intensity_tree2[[i]]$left_daughter <- knew + 1
-      intensity_tree2[[i]]$right_daughter <- knew + 2
-      intensity_tree2[[i]]$split_var <- res.split$split_var
-      intensity_tree2[[i]]$split_val <- res.split$split_val
-      intensity_tree2[[i]]$already_split <- TRUE
-
-      # Define the children
-      areasub <- (areapixel * sum(!is.na(res.split$sublevels[[res.split$split_var]])))
-      areasup <- (areapixel * sum(!is.na(res.split$suplevels[[res.split$split_var]])))
-
-      childleft <- list(
-        nodeID = knew + 1,
-        nodeCov = res.split$sublevels,
-        nX = res.split$nsub,
-        left_daughter = NA,
-        right_daughter = NA,
-        split_var = NA,
-        split_val = NA,
-        status = 1,
-        intensity_pred = res.split$nsub / areasub,
-        already_split = FALSE,
-        whystop = NULL
-      )
-
-      childright <- list(
-        nodeID = knew + 2,
-        nodeCov = res.split$suplevels,
-        nX = res.split$nsup,
-        left_daughter = NA,
-        right_daughter = NA,
-        split_var = NA,
-        split_val = NA,
-        status = 1,
-        intensity_pred = res.split$nsup / areasup,
-        already_split = FALSE,
-        whystop = NULL
-      )
-      # append the children
-      intensity_tree2 <- append(
-        intensity_tree2,
-        list(childleft, childright)
-      )
-    }
-    knew <- length(intensity_tree2)
+    class(output) <- "sptree"
+    return(output)
   }
 
-  # sapply(intensity_tree2, FUN = function(i) {
-  #   i$right_daughter
-  # })
-  # sapply(intensity_tree2, FUN = function(i) {
-  #   i$left_daughter
-  # })
-  # sapply(intensity_tree2, FUN = function(i) {
-  #   i$status
-  # })
-  # sapply(intensity_tree2, FUN = function(i) {
-  #   i$already_split
-  # })
-  # sapply(intensity_tree2, FUN = function(i) {
-  #   i$nX
-  # })
-}
-
-idterm <- sapply(intensity_tree2, FUN = function(i) {
-  i$status
-})
-A <- lapply(intensity_tree2[idterm == 0],
-  FUN = function(i) {
-    A <- ifelse(!is.na(i$nodeCov[[1]]),
-      i$intensity_pred,
-      0
+  # Check if there is something to do on the initial point pattern.
+  if (spatstat.geom::area.owin(X$window) <= threshold |
+    spatstat.geom::npoints(X) <= minpts) {
+    root$status <- 0
+    output <- list(
+      tree = list(root),
+      X = X,
+      namecov = names(listcovariates),
+      namelist = as.character(match.call()[4]),
+      im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
+        W = X$window
+      )
     )
-    return(im(
-      matrix(A,
-        nrow = dimcov[1],
-        ncol = dimcov[2], byrow = F
-      ),
-      xrange = covrangex, 
-      yrange = covrangey
-    ))
+    class(output) <- "sptree"
+    return(output)
   }
-)
-return(spatstat.geom::as.im(Reduce("+", A), W = X$window))
+
+  intensity_tree2 <- list(root)
+
+  # Initialise the while loop
+  k <- 0
+  knew <- 1
+
+
+  while (k != knew) {
+    k <- length(intensity_tree2)
+
+    already_split_node <- sapply(intensity_tree2,
+      FUN = function(j) {
+        j$already_split
+      }
+    )
+
+    for (i in (1:k)[!already_split_node]) {
+      ## Select randomly covariates
+      usedcov <- rand_covar(
+        listcovariates = listcovariates,
+        mtry = mtry
+      )
+
+      if (intensity_tree2[[i]]$nX <= minpts) {
+        res.split <- "Not enough points to attempt to split"
+      } else {
+        # Split the cell, if the split is valid under the chosen parameters
+        res.split <- splitcell3(
+          X = X,
+          valpts = valpts,
+          vecval = intensity_tree2[[i]]$nodeCov,
+          usecovariates = usedcov,
+          areapixel = areapixel,
+          threshold = threshold,
+          dimcov = dimcov,
+          covrangex = covrangex,
+          covrangey = covrangey
+        )
+      }
+
+      if (is.character(res.split)) {
+        intensity_tree2[[i]]$status <- 0
+        intensity_tree2[[i]]$already_split <- TRUE
+        intensity_tree2[[i]]$whystop <- res.split
+      } else {
+        # Update the parent
+        intensity_tree2[[i]]$left_daughter <- knew + 1
+        intensity_tree2[[i]]$right_daughter <- knew + 2
+        intensity_tree2[[i]]$split_var <- res.split$split_var
+        intensity_tree2[[i]]$split_val <- res.split$split_val
+        intensity_tree2[[i]]$already_split <- TRUE
+
+        # Define the children
+        areasub <- (areapixel * sum(!is.na(res.split$sublevels[[res.split$split_var]])))
+        areasup <- (areapixel * sum(!is.na(res.split$suplevels[[res.split$split_var]])))
+
+        childleft <- list(
+          nodeID = knew + 1,
+          nodeCov = res.split$sublevels,
+          nX = res.split$nsub,
+          left_daughter = NA,
+          right_daughter = NA,
+          split_var = NA,
+          split_val = NA,
+          status = 1,
+          intensity_pred = res.split$nsub / areasub,
+          already_split = FALSE,
+          whystop = NULL
+        )
+
+        childright <- list(
+          nodeID = knew + 2,
+          nodeCov = res.split$suplevels,
+          nX = res.split$nsup,
+          left_daughter = NA,
+          right_daughter = NA,
+          split_var = NA,
+          split_val = NA,
+          status = 1,
+          intensity_pred = res.split$nsup / areasup,
+          already_split = FALSE,
+          whystop = NULL
+        )
+        # append the children
+        intensity_tree2 <- append(
+          intensity_tree2,
+          list(childleft, childright)
+        )
+      }
+      knew <- length(intensity_tree2)
+    }
+  }
+
+  idterm <- sapply(intensity_tree2, FUN = function(i) {
+    i$status
+  })
+
+  patchworks <- lapply(intensity_tree2[idterm == 0],
+    FUN = function(i) {
+      patchs <- ifelse(!is.na(i$nodeCov[[1]]),
+        i$intensity_pred,
+        0
+      )
+      return(im(
+        matrix(patchs,
+          nrow = dimcov[1],
+          ncol = dimcov[2], byrow = F
+        ),
+        xrange = covrangex,
+        yrange = covrangey
+      ))
+    }
+  )
+
+  return(spatstat.geom::as.im(Reduce("+", patchworks), W = X$window))
 }
-plot(spatstat.geom::as.im(Reduce("+", A), W = X$window))
 
-f <- function(){treerec(
-  X = spatstat.data::bei,
-  threshold = 1000,
-  listcovariates = beisoilres,
-  mtry = 1,
-  minpts = 100
-)
+
+
+# plot(spatstat.geom::as.im(Reduce("+", A), W = X$window))
+
+f <- function() {
+  treerec(
+    X = spatstat.data::bei,
+    threshold = 1000,
+    listcovariates = beisoilres,
+    mtry = 1,
+    minpts = 100
+  )
 }
 
-library(microbenchmark)
-microbenchmark(f(),g())
+g <- function() { 
+  intensitytree(
+    X = spatstat.data::bei,
+    listcovariates = beisoilres,
+    mtry = 1,
+    minpts = 100,
+    threshold = 1000
+  )
+}
 
-library(profvis)
-profvis(f())
-profvis(g())
+A<-f()
+B<-g()
+plot(A)
+plot(B)
+
+# 
+# library(microbenchmark)
+# microbenchmark(f(), g())
+# 
+# library(profvis)
+# profvis(f())
+# profvis(g())
 #### treerec2 code old ----
 
 #

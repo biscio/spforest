@@ -1,3 +1,20 @@
+
+# sapply(intensity_tree2, FUN = function(i) {
+#   i$right_daughter
+# })
+# sapply(intensity_tree2, FUN = function(i) {
+#   i$left_daughter
+# })
+# sapply(intensity_tree2, FUN = function(i) {
+#   i$status
+# })
+# sapply(intensity_tree2, FUN = function(i) {
+#   i$already_split
+# })
+# sapply(intensity_tree2, FUN = function(i) {
+#   i$nX
+# })
+
 # 
 # 
 # sum(valpts[[res.split$split_var]]<=res.split$split_val)

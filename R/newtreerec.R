@@ -43,13 +43,17 @@
 #' dimcov <- listcovariates[[1]]$dim
 #' covrangex <- listcovariates[[1]]$xrange
 #' covrangey <- listcovariates[[1]]$yrange
-# A<-splitcell2(
-#   valpts = valpts,
-#   vecval = vecval,
-#   usecovariates = usecovariates,
-#   areapixel = areapixel,
-#   threshold = threshold
-# )
+#' A<-splitcell2(
+#'   X=X,
+#'   valpts = valpts,
+#'   vecval = vecval,
+#'   usecovariates = usecovariates,
+#'   dimcov = dimcov,
+#'   covrangex = covrangex,
+#'   covrangey = covrangey,
+#'   areapixel = areapixel,
+#'   threshold = 100
+#' )
 splitcell2 <- function(X,
                        valpts,
                        vecval,

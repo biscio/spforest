@@ -1,3 +1,29 @@
+ftree <- function(){
+  treerec(
+    X = spatstat.data::bei,
+    listcovariates = Rsandbox::beisoilres,
+    mtry = 1,
+    minpts = 500
+  )
+}
+
+gtree <- function(){
+  intensitytree(
+    X = spatstat.data::bei,
+    listcovariates = beisoilres,
+    mtry = 1,
+    minpts = 500
+  )
+}
+
+microbenchmark(ftree(), gtree(), times = 5)
+
+library(profvis)
+profvis(ftree())
+profvis(gtree())
+
+
+
 f <- function(){
   RforestPP(
     X = spatstat.data::bei,
@@ -23,30 +49,6 @@ g <- function(){
 library(microbenchmark)
 microbenchmark(f(), g(), times = 2)
 
-
-ftree <- function(){
-  treerec(
-    X = spatstat.data::bei,
-    listcovariates = Rsandbox::beisoilres,
-    mtry = 1,
-    minpts = 500
-  )
-}
-
-gtree <- function(){
-  intensitytree(
-    X = spatstat.data::bei,
-    listcovariates = beisoilres,
-    mtry = 1,
-    minpts = 500
-  )
-}
-
-microbenchmark(ftree(), gtree(), times = 100)
-
-library(profvis)
-profvis(ftree())
-profvis(gtree())
 # sapply(intensity_tree2, FUN = function(i) {
 #   i$right_daughter
 # })

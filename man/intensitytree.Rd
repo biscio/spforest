@@ -2,7 +2,7 @@
 % Please edit documentation in R/newtreerec.R
 \name{intensitytree}
 \alias{intensitytree}
-\title{Spatial Intensity tree function (improved)}
+\title{Splitting cell}
 \usage{
 intensitytree(
   X,
@@ -10,7 +10,6 @@ intensitytree(
   minpts = 500,
   mtry = 1,
   score = "lcv",
-  usecovariates = rep(1, length(listcovariates)),
   threshold = spatstat.geom::area(X)/10000,
   inforest = F
 )
@@ -28,19 +27,75 @@ The minimum number of points allowed to try to split a cell.}
 
 \item{score}{A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".}
 
-\item{usecovariates}{Vector of 0,1 with covariate to choose.}
-
 \item{threshold}{Minimum threshold to allow to split cell.}
 
 \item{inforest}{Logical. Indicates if the function is run in a forest or not.}
+
+\item{valpts}{A list. Values of each covariates at the points of \code{X}.}
+
+\item{vecval}{A list. Values of the covariates at each pixel.}
+
+\item{usecovariates}{Vector of 0 and 1 values indicating which covariates
+to choose}
+
+\item{areapixel}{The pixel area used in each covariates.}
+
+\item{dimcov}{The element \code{dim} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
+
+\item{covrangex}{The element \code{xrange} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
+
+\item{covrangey}{The element \code{yrange} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
 }
 \value{
+A list with  split_var = split_var,
+split_val = split_val,
+sublevels = sublevels,
+nsub = nsub,
+suplevels = suplevels,
+nsup = nsup,
+whystop = NULL
+
 An object of class \code{sptree}.
 }
 \description{
-Spatial Intensity tree function (improved)
+Splitting cell
 }
 \examples{
+listcovariates <- Rsandbox::beisoilres
+X <- bei
+valpts <- lapply(listcovariates,
+  FUN = function(i) {
+    i[X]
+  }
+)
+vecval <- lapply(Rsandbox::beisoilres, FUN = function(i) {
+  if (!spatstat.geom::is.im(i)) {
+    stop("Elements of listcovar must be an im object")
+  }
+  c(as.matrix.im(i))
+})
+usecovariates <- rep(1, 15)
+areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
+score <- "lcv"
+dimcov <- listcovariates[[1]]$dim
+covrangex <- listcovariates[[1]]$xrange
+covrangey <- listcovariates[[1]]$yrange
+A<-splitcell2(
+  X=X,
+  valpts = valpts,
+  vecval = vecval,
+  usecovariates = usecovariates,
+  dimcov = dimcov,
+  covrangex = covrangex,
+  covrangey = covrangey,
+  areapixel = areapixel,
+  threshold = 100
+)
+Spatial Intensity tree function (improved)
+
 mytree <- intensitytree(
   X = spatstat.data::bei,
   listcovariates = beisoilres,

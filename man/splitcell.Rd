@@ -44,12 +44,8 @@ of a covariable.}
 of a covariable.}
 }
 \value{
-A list with PPleft = split.left[\link{id_best_scr}],
-PPright = X[!leftlvl[\link{id_best_scr}]],
-split_var = which(usecovariates == 1)\link{id_best_scr},
-split_val = split_scrs\link{id_best_scr},
-improvement = newimp,
-scr_parent = scr_parent
+A list with PPleft, PPright, split_var, split_val,
+improvement, scr_parent.
 }
 \description{
 Splitting cell

@@ -6,6 +6,7 @@
 #' @param usecovariates  Vector of 0 and 1 values indicating which covariates
 #' to choose
 #' @param areapixel The pixel area used in each covariates.
+#' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
 #' @param threshold Minimum threshold to allow to split cell.
 #' @param dimcov The element \code{dim} of the covariates which are
 #' \code{\link[spatstat.geom]{im}}.
@@ -259,7 +260,7 @@ intensitytree <- function(X,
       X = X,
       namecov = names(listcovariates),
       namelist = as.character(match.call()[4]),
-      im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
+      im = spatstat.geom::as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
         W = X$window
       )
     )
@@ -276,7 +277,7 @@ intensitytree <- function(X,
       X = X,
       namecov = names(listcovariates),
       namelist = as.character(match.call()[4]),
-      im = as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
+      im = spatstat.geom::as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
         W = X$window
       )
     )

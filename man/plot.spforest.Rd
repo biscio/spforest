@@ -4,12 +4,14 @@
 \alias{plot.spforest}
 \title{Plot spatial intensity forest}
 \usage{
-\method{plot}{spforest}(x, ..., main)
+\method{plot}{spforest}(x, ..., main = "Spatial Intensity Forest")
 }
 \arguments{
 \item{x}{A spatial intensity tree return by RforestPP function}
 
 \item{...}{additional arguments}
+
+\item{main}{A title for the plot.}
 }
 \value{
 Same as \code{\link[spatstat.geom]{plot.im}}.
@@ -18,7 +20,7 @@ Same as \code{\link[spatstat.geom]{plot.im}}.
 Plot spatial intensity forest
 }
 \details{
-This function first convert an \code{\link{spforest}}
+This function first convert an \code{\link[Rsandbox]{spforest}}
 as an \code{\link[spatstat.geom]{im}} object and then plot it with
 \code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to
 \code{\link[spatstat.geom]{plot.im}}.

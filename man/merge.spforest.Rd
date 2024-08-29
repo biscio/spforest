@@ -14,7 +14,7 @@
 \item{...}{ignored}
 }
 \value{
-An \code{\link{spforest}} object
+An \code{\link[Rsandbox]{spforest}} object
 the intensity trees from both forest.
 }
 \description{

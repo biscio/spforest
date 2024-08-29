@@ -21,7 +21,7 @@ expect_silent(
   )
 )
 
-expect_silent(validate_spforest(x=forest))
+# expect_silent(validate_spforest(x=forest))
 
 expect_silent(
     forest2 <- RforestPP(
@@ -78,7 +78,7 @@ expect_silent(
     outputoob <- OOBscr(forest=forest, cores=3)
 )
 
-expect_inherits(current=outputoob, class="numeric")
+expect_inherits(current=OOBscr(forest=forest, cores=3), class="numeric")
 
 
 

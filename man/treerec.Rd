@@ -39,6 +39,8 @@ of a covariable.}
 
 \item{maxsplitq}{A number in $(0,1)$. Determine the maximal allowed splitting value
 of a covariable.}
+
+\item{inforest}{Logical. Indicates if the function is run inside RforestPP.}
 }
 \value{
 An object of class \code{sptree}.

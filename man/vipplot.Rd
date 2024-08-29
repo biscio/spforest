@@ -9,6 +9,8 @@ vipplot(x, sorted = F, cores = 1, ...)
 \arguments{
 \item{x}{An spforest object}
 
+\item{sorted}{Logical. If TRUE, the variables are sorted by importance.}
+
 \item{cores}{To compute faster}
 
 \item{...}{ignoted}

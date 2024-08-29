@@ -31,6 +31,7 @@ rand_covar <- function(listcovariates, mtry = 1) {
 #' @inheritParams splitcell
 #' @param mtry Probability of choosing a covariable
 #' @param threshold minimum threshold to allow to split cell
+#' @param inforest Logical. Indicates if the function is run inside RforestPP.
 #'
 #' @return An object of class \code{sptree}.
 #' @export

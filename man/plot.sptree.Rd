@@ -4,16 +4,18 @@
 \alias{plot.sptree}
 \title{Plot spatial intensity tree}
 \usage{
-\method{plot}{sptree}(x, ..., main)
+\method{plot}{sptree}(x, ..., main = "Spatial Intensity Tree")
 }
 \arguments{
 \item{x}{A spatial intensity tree return by treerec function}
 
 \item{...}{additional arguments}
+
+\item{main}{Title of the plot.}
 }
 \value{
 A plot of the spatial intensity tree
-and an \code{\link[spatstat]{im}} object.
+and an \code{\link[spatstat::geom]{im}} object.
 }
 \description{
 Plot spatial intensity tree

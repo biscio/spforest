@@ -16,12 +16,8 @@
 #' @param maxsplitq A number in $(0,1)$. Determine the maximal allowed splitting value
 #' of a covariable.
 #'
-#' @return A list with PPleft = split.left[[id_best_scr]],
-#' PPright = X[!leftlvl[[id_best_scr]]],
-#' split_var = which(usecovariates == 1)[id_best_scr],
-#' split_val = split_scrs[id_best_scr],
-#' improvement = newimp,
-#' scr_parent = scr_parent
+#' @return A list with PPleft, PPright, split_var, split_val,
+#' improvement, scr_parent.
 #' @export
 #'
 #' @examples

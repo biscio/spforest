@@ -31,7 +31,7 @@
 #' \eqn{p>0} or bootstrapped if \eqn{p=0}.
 #' Then the function call \code{\link{treerec}} to compute 
 #' an intensity tree estimate. This is repeated \code{Ntree} times.
-#' The result returns in an \code{\link{spforest}} object.
+#' The result returns in an \code{\link[Rsandbox]{spforest}} object.
 #'
 #' When computing a random intensity, one need a stopping criterion after 
 #' which we do not try to split the domain of observation any more. 
@@ -196,9 +196,10 @@ RforestPP <- function(X,
 #'
 #' @param x A spatial intensity tree return by RforestPP function
 #' @param ... additional arguments
+#' @param main A title for the plot.
 #'
 #' @details
-#' This function first convert an \code{\link{spforest}} 
+#' This function first convert an \code{\link[Rsandbox]{spforest}} 
 #' as an \code{\link[spatstat.geom]{im}} object and then plot it with 
 #' \code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to 
 #' \code{\link[spatstat.geom]{plot.im}}.
@@ -214,11 +215,11 @@ RforestPP <- function(X,
 #'   mtry = 1
 #' )
 #' plot.spforest(forest)
-plot.spforest <- function(x, ..., main) {
+plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
   # Handling case if no main title is given for the plot
-  if (missing(main)) {
-    main <- "Spatial Intensity Forest"
-  }
+  # if (missing(main)) {
+  #   main <- "Spatial Intensity Forest"
+  # }
 
   output <- spatstat.geom::plot.im(as.im(x), main = main, ...)
 

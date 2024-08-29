@@ -71,9 +71,10 @@ summary.sptree <- function(object, fulltree = F, ...) {
 #'
 #' @param x A spatial intensity tree return by treerec function
 #' @param ... additional arguments
+#' @param main Title of the plot.
 #'
 #' @return A plot of the spatial intensity tree 
-#' and an \code{\link[spatstat]{im}} object.
+#' and an \code{\link[spatstat::geom]{im}} object.
 #' @export
 #'
 #' @examples
@@ -84,11 +85,11 @@ summary.sptree <- function(object, fulltree = F, ...) {
 #'   mtry = 1
 #' )
 #' plot(arbre)
-plot.sptree <- function(x, ..., main) {
+plot.sptree <- function(x, ..., main="Spatial Intensity Tree") {
   # Handling case if no main title is given for the plot
-  if (missing(main)) {
-    main <- "Spatial Intensity Tree"
-  }
+  # if (missing(main)) {
+  #   main <- "Spatial Intensity Tree"
+  # }
 
   spatstat.geom::plot.im(x$im, main = main, ...)
 

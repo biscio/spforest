@@ -54,7 +54,7 @@ The minimum area of a region for which we allow at most one split.}
 \item{maxsplitq}{unused.}
 }
 \value{
-An object of class \code{spforest}.
+An object of class \code{\link[Rsandbox]{spforest}}.
 }
 \description{
 Compute a random intensity forest from an observed point pattern

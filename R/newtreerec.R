@@ -141,9 +141,7 @@ splitcell2 <- function(X,
       ),
       xrange = covrangex, yrange = covrangey
     )
-    ####
-    ##### HERE 
-    ##### 
+
     subvalpts <- (valpts[[split_var]] < split_val)
     nsub <- sum(subvalpts, na.rm=T)
     nsup <- sum(!subvalpts, na.rm=T)

@@ -20,9 +20,6 @@
 #' @param score String specifying the score used to choose among splits, see details.
 #' @param threshold A positive number.
 #' The minimum area of a region for which we allow at most one split.
-#' @param tol unused.
-#' @param minsplitq unused.
-#' @param maxsplitq unused.
 #'
 #' @details
 #' This function compute a random intensity forest using the covariates given
@@ -70,9 +67,6 @@
 #' Empirically, there has been no score outputting better
 #' integrated mean squares error than others.
 #'
-#' The arguments \code{tol}, \code{minsplitq} and \code{maxsplitq}
-#' are relics from the research development of the method and will most likely be dropped
-#' in future versions.
 #'
 #' @return An object of class \code{\link{spforest}}.
 #' @export
@@ -97,10 +91,7 @@ RforestPP2 <- function(X,
                        p = 0,
                        cores_trees = 1,
                        score = "lcv",
-                       threshold = smallest_pixelarea(listcovariates),
-                       tol = Inf,
-                       minsplitq = 0.5,
-                       maxsplitq = 0.5) {
+                       threshold = smallest_pixelarea(listcovariates)) {
   nbcov <- length(listcovariates)
   namescov <- names(listcovariates)
 
@@ -130,7 +121,7 @@ RforestPP2 <- function(X,
       while (sum(ptintree) == 0 & safety <= 1e3) {
         ptintree <- stats::rbinom(n = X$n, size = 1, prob = p)
         safety <- safety + 1
-      }
+      }intensitytree
       if (safety > 1e3) {
         stop("Check your parameters, there is no point sampled in the trees")
       }

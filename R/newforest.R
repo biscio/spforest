@@ -74,7 +74,7 @@
 #' are relics from the research development of the method and will most likely be dropped
 #' in future versions.
 #'
-#' @return An object of class \code{\link[Rsandbox]{spforest}}.
+#' @return An object of class \code{\link{spforest}}.
 #' @export
 #'
 #' @references \url{Article arxiv version}

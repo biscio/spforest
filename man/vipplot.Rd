@@ -4,7 +4,7 @@
 \alias{vipplot}
 \title{Vip barplot of forest}
 \usage{
-vipplot(x, sorted = F, cores = 1, ...)
+vipplot(x, sorted = FALSE, cores = 1, ...)
 }
 \arguments{
 \item{x}{An spforest object}
@@ -29,5 +29,5 @@ forest <- RforestPP(
   minpts = 300,
   mtry = 1
 )
-vipplot(forest, sorted = T)
+vipplot(forest, sorted = TRUE)
 }

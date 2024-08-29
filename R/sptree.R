@@ -74,7 +74,7 @@ summary.sptree <- function(object, fulltree = F, ...) {
 #' @param main Title of the plot.
 #'
 #' @return A plot of the spatial intensity tree 
-#' and an \code{\link[spatstat::geom]{im}} object.
+#' and an \code{\link[spatstat.geom]{im}} object.
 #' @export
 #'
 #' @examples

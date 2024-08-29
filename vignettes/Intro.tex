@@ -106,7 +106,7 @@ R> plot(forest)
 R> predict(object = forest, newdata = runifpoint(n = 5, win = bei$window))
 \end{Sinput}
 \begin{Soutput}
-[1] 0.004741677 0.010579905 0.011380542 0.006267302 0.008133133
+[1] 0.008481462 0.006127169 0.012198582 0.003744775 0.004985443
 \end{Soutput}
 \end{Schunk}
 or a matrix with the $x$-coordinates on the first column and the $y$-coordinates 
@@ -122,7 +122,7 @@ R> predict(
 +  )
 \end{Sinput}
 \begin{Soutput}
-[1] 0.006075939 0.010579905 0.005110557 0.010306605 0.007859459
+[1] 0.006127169 0.002238794 0.007694197 0.002238794 0.004985443
 \end{Soutput}
 \end{Schunk}
 Behind the scene this is equivalent to return the estimated intensity 
@@ -133,10 +133,9 @@ R> newdata <- runifpoint(n = 5, win = bei$window)
 R> as.im(forest)[newdata]
 \end{Sinput}
 \begin{Soutput}
-[1] 0.001799140 0.012691622 0.012691622 0.004888117 0.012318141
+[1] 0.004985443 0.003286403 0.002238794 0.012503937 0.011560107
 \end{Soutput}
 \end{Schunk}
-
 \end{itemize}
 
 
@@ -345,14 +344,13 @@ the intensity is more revealing.
 
 \begin{Schunk}
 \begin{Sinput}
-R> plot(log(imspforest(chosenforestbei)), main = "Logarithm of the estimated intensity")
+R> plot(log(as.im(chosenforestbei)), main = "Logarithm of the estimated intensity")
 \end{Sinput}
 \end{Schunk}
 \includegraphics{Intro-026}
 
 Interestingly, we can assess the most covariates that had the 
 most impact on the intensity of the point process. 
-
 
 \begin{Schunk}
 \begin{Sinput}

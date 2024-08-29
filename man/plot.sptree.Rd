@@ -15,7 +15,7 @@
 }
 \value{
 A plot of the spatial intensity tree
-and an \code{\link[spatstat::geom]{im}} object.
+and an \code{\link[spatstat.geom]{im}} object.
 }
 \description{
 Plot spatial intensity tree

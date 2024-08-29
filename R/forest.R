@@ -3,7 +3,7 @@
 #' Compute a random intensity forest from an observed point pattern 
 #' and a list of covariates.
 #' @param X A spatial point process as a
-#' \code{\link[spatstat.geom]{ppp}} object from spatstat.
+#' \code{\link[spatstat.geom]{ppp.object}} object from spatstat.
 #' @param listcovariates A list of covariates as
 #' \code{\link[spatstat.geom]{im}} objects from spatstat.
 #' @param Ntree A positive integer.
@@ -31,7 +31,7 @@
 #' \eqn{p>0} or bootstrapped if \eqn{p=0}.
 #' Then the function call \code{\link{treerec}} to compute 
 #' an intensity tree estimate. This is repeated \code{Ntree} times.
-#' The result returns in an \code{\link[Rsandbox]{spforest}} object.
+#' The result returns in an \code{\link{spforest}} object.
 #'
 #' When computing a random intensity, one need a stopping criterion after 
 #' which we do not try to split the domain of observation any more. 
@@ -192,47 +192,16 @@ RforestPP <- function(X,
 
 
 
-#' Plot spatial intensity forest
-#'
-#' @param x A spatial intensity tree return by RforestPP function
-#' @param ... additional arguments
-#' @param main A title for the plot.
-#'
-#' @details
-#' This function first convert an \code{\link[Rsandbox]{spforest}} 
-#' as an \code{\link[spatstat.geom]{im}} object and then plot it with 
-#' \code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to 
-#' \code{\link[spatstat.geom]{plot.im}}.
-#' @return Same as \code{\link[spatstat.geom]{plot.im}}.
-#' @export
-#'
-#' @examples
-#' forest <- RforestPP(
-#'   X = spatstat.data::bei,
-#'   listcovariates = spatstat.data::bei.extra,
-#'   Ntree = 3,
-#'   minpts = 300,
-#'   mtry = 1
-#' )
-#' plot.spforest(forest)
-plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
-  # Handling case if no main title is given for the plot
-  # if (missing(main)) {
-  #   main <- "Spatial Intensity Forest"
-  # }
-
-  output <- spatstat.geom::plot.im(as.im(x), main = main, ...)
-
-  return(invisible(output))
-}
-
 
 #' Convert to Pixel Image
 #'
 #' @param X A spforest object
 #' @param ...  ignored
 #'
-#' @return A pixel image \code{\link[spatstat.geom]{im}}.
+#' @return A pixel image \code{\link[spatstat.geom]{im.object}}.
+#' @import spatstat.geom
+#' @import spatstat.model
+#' @import spatstat.random
 #' @export
 #'
 #' @examples
@@ -248,15 +217,52 @@ as.im.spforest <- function(X, ...) {
   list_im <- lapply(X$trees, FUN = function(i) {
     i$im
   })
-
+  
   if (X$p == 0) {
     output <- Reduce("+", list_im) / length(X$trees)
   } else {
-    output <- Reduce("+", list_im) / length(X$trees) / x$p
+    output <- Reduce("+", list_im) / length(X$trees) / X$p
   }
-
+  
   return(output)
 }
+
+
+
+#' Plot spatial intensity forest
+#'
+#' @param x A spatial intensity tree return by RforestPP function
+#' @param ... additional arguments
+#' @param main A title for the plot.
+#'
+#' @details
+#' This function first convert an \code{\link{spforest}} 
+#' as an \code{\link[spatstat.geom]{im}} object and then plot it with 
+#' \code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to 
+#' \code{\link[spatstat.geom]{plot.im}}.
+#' @return Same as \code{\link[spatstat.geom]{plot.im}}.
+#' @export
+#'
+#' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' plot(forest)
+plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
+  # Handling case if no main title is given for the plot
+  # if (missing(main)) {
+  #   main <- "Spatial Intensity Forest"
+  # }
+
+  output <- spatstat.geom::plot.im(as.im.spforest(x), main = main, ...)
+
+  return(invisible(output))
+}
+
 
 
 #' Compute image of a spatial intensity forest (Deprecated)

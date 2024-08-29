@@ -12,7 +12,7 @@
 \item{...}{ignored}
 }
 \value{
-A pixel image \code{\link[spatstat.geom]{im}}.
+A pixel image \code{\link[spatstat.geom]{im.object}}.
 }
 \description{
 Convert to Pixel Image

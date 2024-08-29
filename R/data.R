@@ -38,3 +38,27 @@
 #'
 #'
 "beisoilnorm"
+
+#' @title Data on position on trout
+#'
+#' @description Toy datasets
+#'
+#' @format TODO
+#' \describe{
+#'     \item{Al}{Al concentration ...}
+#' }
+#'
+#'
+"trout"
+
+#' @title Data for testing purposes
+#'
+#' @description Toy datasets
+#'
+#' @format TODO
+#' \describe{
+#'     \item{Al}{Al concentration ...}
+#' }
+#'
+#'
+"Xtest"

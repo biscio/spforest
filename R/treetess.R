@@ -5,6 +5,7 @@
 #' @param target.points point a which we estimated the intensity
 #' @param test.connected do we test if the voronoi cells are connected
 #'
+#' @importFrom sf st_as_sf
 #' @return estimated intensity
 #' @export
 #'
@@ -341,7 +342,7 @@ tessforest <- function(X,
     )
     return(output[[1]])
   }
-  tmp <- unlist(mclapply(1:Ntrees, fun, mc.cores = mc.cores))
+  tmp <- unlist(parallel::mclapply(1:Ntrees, fun, mc.cores = mc.cores))
   res <- rowMeans(matrix(tmp, nrow = length(tmp) / Ntrees)) # TODO: use columns ?
 
   if (is.null(at)) {

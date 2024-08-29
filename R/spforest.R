@@ -1,3 +1,11 @@
+#' spforest.object
+#'
+#' S3 class use to define random forest intensity
+#'
+#' @name spforest
+#' @rdname spforest
+NULL
+
 #' Printing spatial intensity forest
 #'
 #' @param x A spatial intensity forst return by RforestPP function
@@ -77,7 +85,7 @@ predict.spforest <- function(object, newdata, ...) {
     X <- newdata
   }
 
-  return(as.im(forest)[X])
+  return(as.im(object)[X])
 }
 
 
@@ -88,6 +96,7 @@ predict.spforest <- function(object, newdata, ...) {
 #' @param ... ignored.
 #'
 #' @return Boxplot of the variable importances.
+#' @importFrom graphics boxplot
 #' @export
 #'
 #' @examples
@@ -135,8 +144,8 @@ boxplot.spforest <- function(x, cores = 1, ...) {
 #'   minpts = 300,
 #'   mtry = 1
 #' )
-#' vipplot(forest, sorted = T)
-vipplot <- function(x, sorted = F, cores = 1, ...) {
+#' vipplot(forest, sorted = TRUE)
+vipplot <- function(x, sorted = FALSE, cores = 1, ...) {
   vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
     importance(x, id_cov = i, cores = cores)
   })
@@ -144,8 +153,8 @@ vipplot <- function(x, sorted = F, cores = 1, ...) {
   avvip <- unlist(lapply(vipval, mean))
 
   avvipsort <- sort(avvip,
-    decreasing = T,
-    index.return = T
+    decreasing = TRUE,
+    index.return = TRUE
   )
 
   if (sorted) {
@@ -205,7 +214,7 @@ vipplot <- function(x, sorted = F, cores = 1, ...) {
 #' @param y Second forest
 #' @param ... ignored
 #'
-#' @return An \code{\link[Rsandbox]{spforest}} object
+#' @return An \code{\link{spforest}} object
 #' the intensity trees from both forest.
 #' @export
 #'
@@ -224,7 +233,7 @@ vipplot <- function(x, sorted = F, cores = 1, ...) {
 #'   minpts = 300,
 #'   mtry = 1
 #' )
-#' merge.spforest(forest1, forest2)
+#' merge(forest1, forest2)
 merge.spforest <- function(x, y, ...) {
   # Check if x and y are valid forests
   # TODO: how to handle if they are not?

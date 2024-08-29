@@ -2,3 +2,7 @@
 ^\.Rproj\.user$
 ^doc$
 ^Meta$
+^sandbox\.R$
+^R/sandbox2\.R$
+^maps$
+^LICENSE\.md$

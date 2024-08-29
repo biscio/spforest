@@ -1,5 +1,5 @@
-expect_silent(library(spatstat.data))
-expect_silent(library(spatstat.geom))
+# expect_silent(library(spatstat.data))
+# expect_silent(library(spatstat.geom))
 
 expect_silent(
   forest <- RforestPP(
@@ -43,8 +43,7 @@ expect_silent(
     )
 )
 
-
-expect_silent(merge.spforest(x=forest, y=forest2))
+expect_silent(merge(x=forest, y=forest2))
 
 expect_length(forest$trees, 3)
 
@@ -75,10 +74,10 @@ expect_true(spatstat.geom::is.im(imforest))
 
 
 expect_silent(
-    outputoob <- OOBscr(forest=forest, cores=3)
+    outputoob <- OOBscr(forest=forest, cores=1)
 )
 
-expect_inherits(current=OOBscr(forest=forest, cores=3), class="numeric")
+expect_inherits(current=OOBscr(forest=forest, cores=1), class="numeric")
 
 
 

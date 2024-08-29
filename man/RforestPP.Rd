@@ -21,7 +21,7 @@ RforestPP(
 }
 \arguments{
 \item{X}{A spatial point process as a
-\code{\link[spatstat.geom]{ppp}} object from spatstat.}
+\code{\link[spatstat.geom]{ppp.object}} object from spatstat.}
 
 \item{listcovariates}{A list of covariates as
 \code{\link[spatstat.geom]{im}} objects from spatstat.}
@@ -67,7 +67,7 @@ First the points of \code{X} are thinned with probability \code{p} if
 \eqn{p>0} or bootstrapped if \eqn{p=0}.
 Then the function call \code{\link{treerec}} to compute
 an intensity tree estimate. This is repeated \code{Ntree} times.
-The result returns in an \code{\link[Rsandbox]{spforest}} object.
+The result returns in an \code{\link{spforest}} object.
 
 When computing a random intensity, one need a stopping criterion after
 which we do not try to split the domain of observation any more.

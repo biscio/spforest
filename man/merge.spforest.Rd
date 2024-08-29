@@ -14,7 +14,7 @@
 \item{...}{ignored}
 }
 \value{
-An \code{\link[Rsandbox]{spforest}} object
+An \code{\link{spforest}} object
 the intensity trees from both forest.
 }
 \description{
@@ -35,5 +35,5 @@ forest2 <- RforestPP(
   minpts = 300,
   mtry = 1
 )
-merge.spforest(forest1, forest2)
+merge(forest1, forest2)
 }

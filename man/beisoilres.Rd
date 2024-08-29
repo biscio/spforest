@@ -16,5 +16,6 @@ beisoilres
 }
 \description{
 Contains the soil data of bei put at the same resolution
+It has been obtained with the following code
 }
 \keyword{datasets}

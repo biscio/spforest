@@ -143,7 +143,7 @@ splitcell2 <- function(X,
     ####
     ##### HERE 
     ##### 
-    subvalpts <- (valpts[[split_var]] <= split_val)
+    subvalpts <- (valpts[[split_var]] < split_val)
     nsub <- sum(subvalpts, na.rm=T)
     nsup <- sum(!subvalpts, na.rm=T)
     
@@ -231,6 +231,7 @@ intensitytree <- function(X,
     c(as.matrix.im(i))
   })
 
+  
   root <- list(
     nodeID = 1,
     nodeCov = vecval,

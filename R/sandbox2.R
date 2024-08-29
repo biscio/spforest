@@ -23,39 +23,6 @@ plot(B)
 test<-A$im-B$im ### Small difference why ??
 max(abs(test))
 
-microbenchmark(ftree(), gtree(), times = 5)
-
-library(profvis)
-profvis(ftree())
-profvis(gtree())
-
-
-
-f <- function(){
-  RforestPP(
-    X = spatstat.data::bei,
-    listcovariates = Rsandbox::beisoilres,
-    Ntree = 10,
-    minpts = 500,
-    mtry = 1,
-    cores_trees = 1
-  )
-}
-
-g <- function(){
-  RforestPP2(
-    X = spatstat.data::bei,
-    listcovariates = Rsandbox::beisoilres,
-    Ntree = 10,
-    minpts = 500,
-    mtry = 1, 
-    cores_trees = 1
-  )
-}
-
-library(microbenchmark)
-microbenchmark(f(), g(), times = 2)
-
 sapply(intensity_tree2, FUN = function(i) {
   i$right_daughter
 })
@@ -74,6 +41,52 @@ sapply(B$tree, FUN = function(i) {
 sapply(A$tree, FUN = function(i) {
   i$intensity_pred
 })
+
+microbenchmark(ftree(), gtree(), times = 5)
+
+library(profvis)
+profvis(ftree())
+profvis(gtree())
+
+
+
+f <- function(){
+  RforestPP(
+    X = spatstat.data::bei,
+    listcovariates = Rsandbox::beisoilres,
+    Ntree = 10,
+    minpts = 500,
+    mtry = 1,
+    cores_trees = 5
+  )
+}
+
+g <- function(){
+  RforestPP2(
+    X = spatstat.data::bei,
+    listcovariates = Rsandbox::beisoilres,
+    Ntree = 10,
+    minpts = 500,
+    mtry = 1, 
+    cores_trees = 5
+  )
+}
+
+library(microbenchmark)
+microbenchmark(f(), g(), times = 5)
+
+plot(f())
+
+RforestPP2(
+  X = spatstat.data::bei,
+  listcovariates = Rsandbox::beisoilres,
+  Ntree = 100,
+  minpts = 500,
+  mtry = 1, 
+  cores_trees = 5
+)
+
+plot(g())
 
 
 # 

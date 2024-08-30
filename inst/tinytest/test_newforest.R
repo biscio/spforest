@@ -1,12 +1,45 @@
+x <- beisoilres[[1]]
+
+plot(as.im(x, dimyx=c(101,201)))
+length(c(x$v))
+y<-as.im(beisoilres[[8]], dimyx=c(25,50))
+length(c(y$v))
+plot(y)
+
+lapply(beisoilres, FUN=function(i){
+  as.im(i, dimyx=c(25,50))
+})
+
+timer <- proc.time()
+forestnewsmall <- RforestPP2(
+  X = spatstat.data::bei,
+  listcovariates = lapply(beisoilres, FUN=function(i){
+    as.im(i, dimyx=c(10,20))
+  }),
+  Ntree = 200,
+  minpts = 100,
+  mtry = 1,
+  p = 0,
+  cores_trees = 5
+)
+timer <- proc.time() - timer; timer
+vipplot(forestnewsmall, sorted=T, cores=5)
+
+OOBscr(forestnewsmall, cores=1)
+
 forestnew <- RforestPP2(
   X = spatstat.data::bei,
   listcovariates = beisoilres,
-  Ntree = 10,
+  Ntree = 200,
   minpts = 100,
-  mtry = 1 / 3,
+  mtry = 1,
   p = 0,
   cores_trees = 1
 )
+f(forestnew)
+
+vipplot(forestnew, sorted=T)
+boxplot(forestnew)
 
 timer <- proc.time()
 forestold <- RforestPP(

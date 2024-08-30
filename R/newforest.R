@@ -121,7 +121,7 @@ RforestPP2 <- function(X,
       while (sum(ptintree) == 0 & safety <= 1e3) {
         ptintree <- stats::rbinom(n = X$n, size = 1, prob = p)
         safety <- safety + 1
-      }intensitytree
+      }
       if (safety > 1e3) {
         stop("Check your parameters, there is no point sampled in the trees")
       }

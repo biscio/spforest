@@ -400,10 +400,15 @@ intensitytree <- function(X,
     }
   )
 
+  for (i in seq_along(intensity_tree)) {
+    intensity_tree[[i]]$nodeCov <- NULL
+    intensity_tree[[i]]$nodeValpts <- NULL
+  }
+  
   if (inforest) {
     output <- list(
       tree = intensity_tree,
-      X = X,
+      X = NULL,
       namecov = names(listcovariates),
       namelist = as.character(match.call()[4]),
       im = spatstat.geom::as.im(Reduce("+", patchworks), W = X$window)

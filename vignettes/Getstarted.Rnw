@@ -24,8 +24,6 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 \setkeys{Gin}{width=0.8\textwidth}
 
 <<echo=FALSE,results=hide>>=
-library(spatstat)
-library(here)
 library(Rsandbox)
 # spatstat.options(image.colfun=function(n) { grey(seq(0,1,length=n)) })
 sdate <- read.dcf(
@@ -51,13 +49,10 @@ The package \pkg{Rsandbox} relies on \spst to work.
 For the user, it means that a point pattern must be input as a \texttt{ppp} object 
 and the covariates as \texttt{im} objects rather than rasters.
 Specifically, \pkg{Rsandbox}  depends on  \pkg{spatstat.model},
-\pkg{spatstat.geom}. In this document, 
-we will additionally use the packages \pkg{spatstat.data} and \pkg{spatstat.random}.
+\pkg{spatstat.geom}, \pkg{spatstat.data} and \pkg{spatstat.random}.
 
 <<>>=
 library(Rsandbox)
-library(spatstat.data)
-library(spatstat.random)
 @ 
 
 \section{Getting started}
@@ -81,14 +76,14 @@ beismall <- lapply(bei.extra, as.im, dimyx = c(10,20))
 The function \texttt{RforestPP} is the core function of \pkg{Rsandbox} and 
 generate random forest intensity estimates. 
 
-<<>>=
+<<first example Rforest>>=
 forest <- RforestPP2(
   X = bei,
   listcovariates = beismall,
   Ntree = 3,
   mtry = 1 / 3,
   minpts = 500,
-  cores_trees = 3
+  cores_trees = 1
 )
 @
 
@@ -184,7 +179,7 @@ We will use the \texttt{mapply} function.
 <<Computing all forests toy example>>=
 extrarg <- list(
   Ntree = 5,
-  cores_tree = 2,
+  cores_tree = 1,
   X = bei,
   listcovariates = beismall
 )
@@ -200,7 +195,7 @@ We can now compute the OOB score of all the random intensity forests above
 and choose the one with the highest score. 
 <<>>=
 allscore <- lapply(allforesttoy, FUN = function(i) {
-  OOBscr(i, cores = 2)
+  OOBscr(i, cores = 1)
 })
 allargs[which.max(allscore), ]
 @
@@ -287,7 +282,7 @@ allforestbei <- mapply(RforestPP2,
 Then, we find the combination of hyperparameters that maximises the OOB score.
 <<>>=
 allscore <- lapply(allforestbei, FUN = function(i) {
-  OOBscr(i, cores = 3)
+  OOBscr(i, cores = 1)
 })
 allargs[which.max(allscore), ]
 @

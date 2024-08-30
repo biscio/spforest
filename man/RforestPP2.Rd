@@ -13,10 +13,7 @@ RforestPP2(
   p = 0,
   cores_trees = 1,
   score = "lcv",
-  threshold = smallest_pixelarea(listcovariates),
-  tol = Inf,
-  minsplitq = 0.5,
-  maxsplitq = 0.5
+  threshold = smallest_pixelarea(listcovariates)
 )
 }
 \arguments{
@@ -46,12 +43,6 @@ The number of cores used to computes the intensity trees.}
 
 \item{threshold}{A positive number.
 The minimum area of a region for which we allow at most one split.}
-
-\item{tol}{unused.}
-
-\item{minsplitq}{unused.}
-
-\item{maxsplitq}{unused.}
 }
 \value{
 An object of class \code{\link{spforest}}.
@@ -105,10 +96,6 @@ Currently, several scores implemented to compute the performance of a split:
 }
 Empirically, there has been no score outputting better
 integrated mean squares error than others.
-
-The arguments \code{tol}, \code{minsplitq} and \code{maxsplitq}
-are relics from the research development of the method and will most likely be dropped
-in future versions.
 }
 \examples{
 forest <- RforestPP2(

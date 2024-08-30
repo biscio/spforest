@@ -1,20 +1,71 @@
-# 
-# 
+# expect_silent(library(spatstat.data))
+# expect_silent(library(spatstat.geom))
 
-x <- beisoilres[[1]]
+expect_silent(
+  forest <- RforestPP2(
+    X = spatstat.data::bei,
+    listcovariates = spatstat.data::bei.extra,
+    score = "lcv",
+    p = 1 / 2,
+    Ntree = 3,
+    threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
+    cores_trees = 1,
+    mtry = 1 / 3,
+    minpts = 50
+  )
+)
+expect_length(forest$trees, 3)
 
-plot(as.im(x, dimyx=c(101,201)))
-length(c(x$v))
-y<-as.im(beisoilres[[8]], dimyx=c(25,50))
-length(c(y$v))
-plot(y)
+expect_silent(
+  forest2 <- RforestPP2(
+    X = spatstat.data::bei,
+    listcovariates = spatstat.data::bei.extra,
+    score = "lcv",
+    p = 1 / 2,
+    Ntree = 2,
+    threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
+    cores_trees = 1,
+    mtry = 1 / 3,
+    minpts = 50
+  )
+)
+expect_length(forest2$trees, 2)
 
-lapply(beisoilres, FUN=function(i){
-  as.im(i, dimyx=c(25,50))
-})
+expect_silent(merge(x=forest, y=forest2))
+expect_length(merge(x=forest, y=forest2)$trees, 5)
 
-timer <- proc.time()
-forestnewsmall <- RforestPP2(
+expect_equal(forest$X, spatstat.data::bei)
+
+expect_equal(sum(forest$listcov[[1]] - spatstat.data::bei.extra$elev), 0)
+expect_equal(sum(forest$listcov[[2]] - spatstat.data::bei.extra$grad), 0)
+
+expect_equal(forest$p, 1 / 2)
+
+expect_equal(forest$mtry, 1 / 3)
+
+expect_silent(
+  imtrees <- lapply(forest$trees,
+                    FUN = function(i) {
+                      i$im
+                    }
+  )
+)
+
+expect_silent(
+  imforest <- Reduce("+", imtrees) / length(forest$trees) / forest$p
+)
+
+expect_true(spatstat.geom::is.im(imforest))
+
+
+expect_silent(
+  outputoob <- OOBscr(forest=forest, cores=1)
+)
+
+expect_inherits(current=OOBscr(forest=forest, cores=1), class="numeric")
+
+
+A <- RforestPP2(
   X = spatstat.data::bei,
   listcovariates = lapply(beisoilres, FUN=function(i){
     as.im(i, dimyx=c(10,20))
@@ -25,23 +76,55 @@ forestnewsmall <- RforestPP2(
   p = 0,
   cores_trees = 2
 )
-timer <- proc.time() - timer; timer
-# vipplot(forestnewsmall, sorted=T, cores=5)
-# OOBscr(forestnewsmall, cores=1)
+B <- format(object.size(A), units = "Mb")
+expect_true(as.numeric(gsub(" Mb", "",B)) < 8)
 
-timer <- proc.time()
-forestoldsmall <- RforestPP(
-  X = spatstat.data::bei,
-  listcovariates = lapply(beisoilres, FUN=function(i){
-    as.im(i, dimyx=c(10,20))
-  }),
-  Ntree = 50,
-  minpts = 100,
-  mtry = 1,
-  p = 0,
-  cores_trees = 2
-)
-timer <- proc.time() - timer; timer
+
+
+
+# 
+# 
+# x <- beisoilres[[1]]
+# 
+# plot(as.im(x, dimyx=c(101,201)))
+# length(c(x$v))
+# y<-as.im(beisoilres[[8]], dimyx=c(25,50))
+# length(c(y$v))
+# plot(y)
+# 
+# lapply(beisoilres, FUN=function(i){
+#   as.im(i, dimyx=c(25,50))
+# })
+# 
+# timer <- proc.time()
+# forestnewsmall <- RforestPP2(
+#   X = spatstat.data::bei,
+#   listcovariates = lapply(beisoilres, FUN=function(i){
+#     as.im(i, dimyx=c(10,20))
+#   }),
+#   Ntree = 50,
+#   minpts = 100,
+#   mtry = 1,
+#   p = 0,
+#   cores_trees = 2
+# )
+# timer <- proc.time() - timer; timer
+# # vipplot(forestnewsmall, sorted=T, cores=5)
+# # OOBscr(forestnewsmall, cores=1)
+# 
+# timer <- proc.time()
+# forestoldsmall <- RforestPP2(
+#   X = spatstat.data::bei,
+#   listcovariates = lapply(beisoilres, FUN=function(i){
+#     as.im(i, dimyx=c(10,20))
+#   }),
+#   Ntree = 50,
+#   minpts = 100,
+#   mtry = 1,
+#   p = 0,
+#   cores_trees = 2
+# )
+# timer <- proc.time() - timer; timer
 
 
 

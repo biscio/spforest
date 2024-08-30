@@ -339,9 +339,6 @@ The combination maximising the OOB score was
 $\texttt{mtry} = 1$ and $\texttt{minpts} = 10$ and the corresponding VIP plots 
 showed the same five most important covariates. 
  
-
-
-
 \section{More advanced uses}
 
 The function \texttt{RforestPP} has more arguments that can be modified to train 

@@ -104,6 +104,18 @@ RforestPP2 <- function(X,
     harmonised with the function harmonise.im.")
   }
 
+  # Used in all trees
+  areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
+  vecval <- lapply(listcovariates, FUN = function(i) {
+    if (!spatstat.geom::is.im(i)) {
+      stop("Elements of listcovar must be an im object")
+    }
+    c(as.matrix.im(i))
+  })
+  dimcov <- listcovariates[[1]]$dim
+  covrangex <- listcovariates[[1]]$xrange
+  covrangey <- listcovariates[[1]]$yrange
+  
   # Compute the forest's trees
   treeinforest <- parallel::mclapply(1:Ntree, FUN = function(i) {
     # Determine points in and out
@@ -134,6 +146,11 @@ RforestPP2 <- function(X,
 
     tree <- intensitytree(
       X = Xintree,
+      vecval = vecval,
+      areapixel = areapixel,
+      dimcov = dimcov,
+      covrangex = covrangex,
+      covrangey = covrangey,
       listcovariates = listcovariates,
       minpts = minpts,
       mtry = mtry,

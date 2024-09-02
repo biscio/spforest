@@ -209,6 +209,11 @@ splitcell2 <- function(X,
 #' )
 #' plot(mytree)
 intensitytree <- function(X,
+                          vecval,
+                          areapixel,
+                          dimcov,
+                          covrangex,
+                          covrangey,
                           listcovariates,
                           minpts = 500,
                           mtry = 1,
@@ -217,20 +222,10 @@ intensitytree <- function(X,
                           inforest = F) {
   
   valpts <- lapply(listcovariates,
-    FUN = function(i) {
-      i[X]
-    }
+                   FUN = function(i) {
+                     i[X]
+                   }
   )
-
-  areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
-
-  vecval <- lapply(listcovariates, FUN = function(i) {
-    if (!spatstat.geom::is.im(i)) {
-      stop("Elements of listcovar must be an im object")
-    }
-    c(as.matrix.im(i))
-  })
-
   
   root <- list(
     nodeID = 1,
@@ -246,10 +241,6 @@ intensitytree <- function(X,
     already_split = FALSE,
     whystop = NULL
   )
-
-  dimcov <- listcovariates[[1]]$dim
-  covrangex <- listcovariates[[1]]$xrange
-  covrangey <- listcovariates[[1]]$yrange
 
   if (spatstat.geom::area.owin(X$window) <= threshold |
     spatstat.geom::npoints(X) <= minpts) {

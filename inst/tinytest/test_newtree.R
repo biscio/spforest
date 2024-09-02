@@ -1,5 +1,18 @@
+areapixel0 <- beisoilres[[1]]$xstep * beisoilres[[1]]$ystep
+vecval0 <- lapply(beisoilres, FUN = function(i) {
+  c(spatstat.geom::as.matrix.im(i))
+})
+dimcov0 <- beisoilres[[1]]$dim
+covrangex0 <- beisoilres[[1]]$xrange
+covrangey0 <- beisoilres[[1]]$yrange
+
 expect_silent(arbre <- intensitytree(
   X = spatstat.data::bei,
+  vecval = vecval0,
+  areapixel = areapixel0,
+  dimcov = dimcov0,
+  covrangex = covrangex0,
+  covrangey = covrangey0,
   listcovariates = beisoilres,
   mtry = 1,
   minpts = 500
@@ -39,6 +52,11 @@ expect_equal(arbre$tree[[4]]$intensity_pred, 0.00862606,
 A <- intensitytree(
   X = spatstat.data::bei,
   listcovariates = beisoilres,
+  vecval = vecval0,
+  areapixel = areapixel0,
+  dimcov = dimcov0,
+  covrangex = covrangex0,
+  covrangey = covrangey0,
   mtry = 1,
   minpts = 100
 )

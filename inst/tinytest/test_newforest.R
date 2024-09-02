@@ -70,14 +70,14 @@ A <- RforestPP2(
   listcovariates = lapply(beisoilres, FUN=function(i){
     as.im(i, dimyx=c(10,20))
   }),
-  Ntree = 50,
+  Ntree = 10,
   minpts = 100,
   mtry = 1,
   p = 0,
   cores_trees = 2
 )
 B <- format(object.size(A), units = "Mb")
-expect_true(as.numeric(gsub(" Mb", "",B)) < 8)
+expect_true(as.numeric(gsub(" Mb", "",B)) < 2)
 
 
 

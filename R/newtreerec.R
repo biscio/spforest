@@ -215,6 +215,7 @@ intensitytree <- function(X,
                           score = "lcv",
                           threshold = spatstat.geom::area(X) / 1e4,
                           inforest = F) {
+  
   valpts <- lapply(listcovariates,
     FUN = function(i) {
       i[X]

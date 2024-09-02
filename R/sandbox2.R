@@ -1,3 +1,42 @@
+library(microbenchmark)
+
+
+microbenchmark(RforestPP2(
+  X = spatstat.data::bei,
+  listcovariates = lapply(beisoilres, FUN=function(i){
+    as.im(i, dimyx=c(10,20))
+  }),
+  Ntree = 10,
+  minpts = 100,
+  mtry = 1,
+  p = 0,
+  cores_trees = 1
+), 
+RforestPP(
+  X = spatstat.data::bei,
+  listcovariates = lapply(beisoilres, FUN=function(i){
+    as.im(i, dimyx=c(10,20))
+  }),
+  Ntree = 10,
+  minpts = 100,
+  mtry = 1,
+  p = 0,
+  cores_trees = 1
+))
+
+library(profvis)
+
+profvis(RforestPP2(
+  X = spatstat.data::bei,
+  listcovariates = lapply(beisoilres, FUN=function(i){
+    as.im(i, dimyx=c(10,20))
+  }),
+  Ntree = 1,
+  minpts = 100,
+  mtry = 1,
+  p = 0,
+  cores_trees = 1
+))
 
 # ftree <- function(){
 #   treerec(

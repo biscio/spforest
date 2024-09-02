@@ -15,12 +15,12 @@
 #' @title soil data for bei
 #'
 #' @description Contains the soil data of bei put at the same resolution
-#'It has been obtained with the following code 
+#' It has been obtained with the following code
 # beisoil <- list(
 #   bei.extra$elev, bei.extra$grad,
 #   Al, B, Ca, Cu, Fe, K, Mg, Mn, P, Zn, N, Nmin, pH
 # )
-# 
+#
 # ## Put them in the same resolution ----
 # beisoilres <- NULL
 # beisoilres[[1]] <- beisoil[[1]]
@@ -35,18 +35,17 @@
 #   "Cu", "Fe", "K", "Mg", "Mn",
 #   "P", "Zn", "N", "Nmin", "pH"
 # )
-# 
+#
 # ## center and scale
 # beisoilnorm <- lapply(beisoilres, FUN = function(i) {
 #   (i - mean(i)) / sd(i)
 # })
-# 
+#
 # names(beisoilnorm) <- c(
 #   "elev", "grad", "Al", "B", "Ca",
 #   "Cu", "Fe", "K", "Mg", "Mn",
 #   "P", "Zn", "N", "Nmin", "pH"
 # )
-
 #'
 #' @format A list of 15 \code{im} with same resolutions, and given in the
 #' same order as in Jeff's paper
@@ -57,6 +56,31 @@
 #'
 "beisoilres"
 
+#' @title Downscaled soil data for bei
+#'
+#' @description Contains a downscaled version of the data for testing and vignette
+#'
+#' @format A list of 15 \code{im} with same resolutions, and given in the
+#' same order as in Jeff's paper
+#' \describe{
+#'     \item{Al}{Al concentration ...}
+#' }
+#'
+#'
+"beisoilsmall"
+
+#' @title Extra Downscaled soil data for bei
+#'
+#' @description Contains an extra downscaled version of the data for testing and vignette
+#'
+#' @format A list of 15 \code{im} with same resolutions, and given in the
+#' same order as in Jeff's paper
+#' \describe{
+#'     \item{Al}{Al concentration ...}
+#' }
+#'
+#'
+"beisoilxsmall"
 
 #' @title Normalised soil data for bei
 #'

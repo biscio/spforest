@@ -33,10 +33,25 @@ names(beisoilnorm) <- c(
 )
 
 
-# Generate thicker resolution for vignettes and testings purposes ----
+# Downscaled version of the data for vignettes and testing purposes ----
 
-beisoilsmall <- lapply(beisoilres, FUN=function(i){
+beisoilxsmall <- lapply(beisoilres, FUN=function(i){
   as.im(i, dimyx=c(10,20))
 })
+
+beisoilxsmall <- lapply(beisoilres, FUN=function(i){
+  as.im(i, dimyx=c(5,10))
+})
+
+usethis::use_data(beisoilsmall, compress = "xz")
+usethis::use_data(beisoilxsmall, compress = "xz")
+
+# save(beisoilsmall, 
+#      file = "data/beisoilsmall.RData", 
+#      compress = "xz")
+# 
+# save(beisoilxsmall, 
+#      file = "data/beisoilxsmall.RData", 
+#      compress = "xz")
 
 plot(beisoilsmall[[8]])

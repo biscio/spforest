@@ -12,7 +12,7 @@
 #      threshold = 100
 #    ))
 # A
-# 
+#
 # microbenchmark(RforestPP2(
 #   X = spatstat.data::bei,
 #   listcovariates = lapply(beisoilres, FUN=function(i){
@@ -24,8 +24,8 @@
 #   p = 0,
 #   cores_trees = 1
 # ))
-# 
-# 
+#
+#
 # A<-RforestPP2(
 #   X = spatstat.data::bei,
 #   listcovariates = beisoilres,
@@ -35,9 +35,9 @@
 #   p = 0,
 #   cores_trees = 1
 # )
-# 
+#
 # plot(A)
-# 
+#
 # microbenchmark(RforestPP2(
 #   X = spatstat.data::bei,
 #   listcovariates = lapply(beisoilres, FUN=function(i){
@@ -60,9 +60,9 @@
 #   p = 0,
 #   cores_trees = 1
 # ))
-# # 
+# #
 # # library(profvis)
-# # 
+# #
 # # profvis(RforestPP2(
 # #   X = spatstat.data::bei,
 # #   listcovariates = lapply(beisoilres, FUN=function(i){
@@ -74,7 +74,7 @@
 # #   p = 0,
 # #   cores_trees = 1
 # # ))
-# # 
+# #
 # # profvis(splitcell2(
 # #   X=X,
 # #   valpts = valpts,
@@ -86,7 +86,7 @@
 # #   areapixel = areapixel,
 # #   threshold = 100
 # # ))
-# # 
+# #
 # # # ftree <- function(){
 # # #   treerec(
 # # #     X = spatstat.data::bei,

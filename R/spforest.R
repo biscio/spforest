@@ -260,15 +260,14 @@ merge.spforest <- function(x, y, ...) {
     p = x$p,
     mtry = x$mtry
   )
-  
+
   return(structure(output, class = "spforest"))
-  
 }
 
 
 
 # Function below to remove ?? ----
-#' 
+#'
 #' #' Constructor for spforest
 #' new_spforest <- function(trees = list(),
 #'                          pt_intree = list(),
@@ -284,13 +283,13 @@ merge.spforest <- function(x, y, ...) {
 #'     p = p,
 #'     mtry = mtry
 #'   )
-#'   
+#'
 #'   return(structure(output, class = "spforest"))
 #' }
-#' 
-#' 
-#' 
-#' 
+#'
+#'
+#'
+#'
 #' #' Validator for spforest
 #' #'
 #' #' @param x
@@ -310,7 +309,7 @@ merge.spforest <- function(x, y, ...) {
 #' validate_spforest <- function(x) {
 #'   # TODO: add conformity checks on the entries of the forest
 #'   values <- unclass(x)
-#' 
+#'
 #'   # Check for correct entries' name in the forest
 #'   if (sum(is.element(
 #'     c(
@@ -341,14 +340,14 @@ merge.spforest <- function(x, y, ...) {
 #'       call. = FALSE
 #'     )
 #'   }
-#' 
+#'
 #'   # check if entries have possible values
 #'   if (values$p < 0 | values$p > 1 | values$mtry > 1 | values$mtry < 0) {
 #'     stop("p and mtry must be between 0 and 1.",
 #'       call. = FALSE
 #'     )
 #'   }
-#' 
+#'
 #'   alllength_ptintree <- sapply(values$pt_intree, length)
 #'   if (!all(alllength_ptintree == npoints(values$X))) {
 #'     stop("pt_intree should be a vector with
@@ -356,6 +355,6 @@ merge.spforest <- function(x, y, ...) {
 #'       call. = FALSE
 #'     )
 #'   }
-#' 
+#'
 #'   x
 #' }

@@ -24,13 +24,13 @@ score.split <- function(n1, n2, W1area, W2area, score = "lcv") {
 
   # Return value depending on the score considered
   ## likelihood cross validation
-  ## QUESTION: quoi mettre si n1 ou n2 = 0 ?? 
+  ## QUESTION: quoi mettre si n1 ou n2 = 0 ??
   if (score == "lcv") {
     val <- ifelse(n1 > 1, n1 * log((n1 - 1) / W1area), 0) +
       ifelse(n2 > 1, n2 * log((n2 - 1) / W2area), 0)
     return(val)
   }
-  
+
   # After some simulations it does not appear to change the result
   if (score == "lcv2") {
     val <- ifelse(n1 > 1, n1 * log((n1 - 1) / W1area), -Inf) +

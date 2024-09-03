@@ -70,7 +70,7 @@ plot(bei.extra[[2]], ribbon = F, main = "")
 
 To run the code faster in this vignette, we will downscale these data. 
 <<downscaling>>=
-beismall <- lapply(bei.extra, as.im, dimyx = c(10,20))
+beismall <- lapply(bei.extra, as.im, dimyx = c(10, 20))
 @
 
 The function \texttt{RforestPP} is the core function of \pkg{Rsandbox} and 
@@ -264,7 +264,7 @@ of parameters together with the original resolution of the data.
 argmtry <- c(0.5, 0.75)
 argminpts <- c(75, 100)
 allargs <- expand.grid(mtry = argmtry, minpts = argminpts)
-beismall <- lapply(beisoilres, as.im, dimyx = c(10,20))
+beismall <- lapply(beisoilres, as.im, dimyx = c(10, 20))
 
 extrarg <- list(
   Ntree = 5,

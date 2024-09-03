@@ -44,8 +44,8 @@
 #' dimcov <- listcovariates[[1]]$dim
 #' covrangex <- listcovariates[[1]]$xrange
 #' covrangey <- listcovariates[[1]]$yrange
-#' A<-splitcell2(
-#'   X=X,
+#' A <- splitcell2(
+#'   X = X,
 #'   valpts = valpts,
 #'   vecval = vecval,
 #'   usecovariates = usecovariates,
@@ -143,18 +143,20 @@ splitcell2 <- function(X,
     )
 
     subvalpts <- (valpts[[split_var]] < split_val)
-    nsub <- sum(subvalpts, na.rm=T)
-    nsup <- sum(!subvalpts, na.rm=T)
-    
-    valptssub <- lapply(valpts, FUN = function(j){
-      ifelse(subvalpts, 
-             j, NA)
+    nsub <- sum(subvalpts, na.rm = T)
+    nsup <- sum(!subvalpts, na.rm = T)
+
+    valptssub <- lapply(valpts, FUN = function(j) {
+      ifelse(subvalpts,
+        j, NA
+      )
     })
-    valptssup <- lapply(valpts, FUN = function(j){
-      ifelse(!subvalpts, 
-             j, NA)
+    valptssup <- lapply(valpts, FUN = function(j) {
+      ifelse(!subvalpts,
+        j, NA
+      )
     })
-    
+
     # nsub <- spatstat.geom::npoints(X[imsublvl])
     # nsup <- spatstat.geom::npoints(X[!imsublvl])
 
@@ -171,7 +173,7 @@ splitcell2 <- function(X,
     nodeChilds <- list(
       split_var = split_var,
       split_val = split_val,
-      valptssub = valptssub, 
+      valptssub = valptssub,
       valptssup = valptssup,
       sublevels = sublevels,
       nsub = nsub,
@@ -190,19 +192,30 @@ splitcell2 <- function(X,
 #' @param X The observed data point pattern.
 #' @param listcovariates A list with all the covariates used for the tree. The
 #' covariates must be given as im object from the package spatstat.
-#' @param minpts A positive integer. 
+#' @param minpts A positive integer.
 #' The minimum number of points allowed to try to split a cell.
 #' @param mtry Probability of choosing a covariable.
 #' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
 #' @param threshold Minimum threshold to allow to split cell.
-#' @param inforest Logical. Indicates if the function is run in a forest or not. 
+#' @param inforest Logical. Indicates if the function is run in a forest or not.
 #'
 #' @return An object of class \code{sptree}.
 #' @export
 #'
 #' @examples
+#' vecval0 <- lapply(beisoilres, FUN = function(i) {
+#'   c(as.matrix.im(i))
+#' })
+#' dimcov <- listcovariates[[1]]$dim
+#' covrangex <- listcovariates[[1]]$xrange
+#' covrangey <- listcovariates[[1]]$yrange
 #' mytree <- intensitytree(
 #'   X = spatstat.data::bei,
+#'   vecval = vecval0,
+#'   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#'   dimcov = beisoilres[[1]]$dim,
+#'   covrangex = beisoilres[[1]]$xrange,
+#'   covrangey = beisoilres[[1]]$yrange,
 #'   listcovariates = beisoilres,
 #'   mtry = 1,
 #'   minpts = 500
@@ -220,13 +233,12 @@ intensitytree <- function(X,
                           score = "lcv",
                           threshold = spatstat.geom::area(X) / 1e4,
                           inforest = F) {
-  
   valpts <- lapply(listcovariates,
-                   FUN = function(i) {
-                     i[X]
-                   }
+    FUN = function(i) {
+      i[X]
+    }
   )
-  
+
   root <- list(
     nodeID = 1,
     nodeCov = vecval,
@@ -396,7 +408,7 @@ intensitytree <- function(X,
     intensity_tree[[i]]$nodeCov <- NULL
     intensity_tree[[i]]$nodeValpts <- NULL
   }
-  
+
   if (inforest) {
     output <- list(
       tree = intensity_tree,

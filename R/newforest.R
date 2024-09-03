@@ -115,7 +115,7 @@ RforestPP2 <- function(X,
   dimcov <- listcovariates[[1]]$dim
   covrangex <- listcovariates[[1]]$xrange
   covrangey <- listcovariates[[1]]$yrange
-  
+
   # Compute the forest's trees
   treeinforest <- parallel::mclapply(1:Ntree, FUN = function(i) {
     # Determine points in and out

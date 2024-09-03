@@ -1,6 +1,6 @@
 #' Random Intensity Forest
 #'
-#' Compute a random intensity forest from an observed point pattern 
+#' Compute a random intensity forest from an observed point pattern
 #' and a list of covariates.
 #' @param X A spatial point process as a
 #' \code{\link[spatstat.geom]{ppp.object}} object from spatstat.
@@ -26,54 +26,54 @@
 #'
 #' @details
 #' This function compute a random intensity forest using the covariates given
-#' in \code{listcovariates}. 
-#'  First the points of \code{X} are thinned with probability \code{p} if 
+#' in \code{listcovariates}.
+#'  First the points of \code{X} are thinned with probability \code{p} if
 #' \eqn{p>0} or bootstrapped if \eqn{p=0}.
-#' Then the function call \code{\link{treerec}} to compute 
+#' Then the function call \code{\link{treerec}} to compute
 #' an intensity tree estimate. This is repeated \code{Ntree} times.
 #' The result returns in an \code{\link{spforest}} object.
 #'
-#' When computing a random intensity, one need a stopping criterion after 
-#' which we do not try to split the domain of observation any more. 
-#' Two stopping criterion are implemented: based on the minimal area of the 
-#' window and on the minimal number of points. 
-#' When there is less than \code{minpts} in a cell, 
-#' we do not try to split the cell any more. 
-#' When a cell has an area below \code{threshold} we do not attempt to split. 
+#' When computing a random intensity, one need a stopping criterion after
+#' which we do not try to split the domain of observation any more.
+#' Two stopping criterion are implemented: based on the minimal area of the
+#' window and on the minimal number of points.
+#' When there is less than \code{minpts} in a cell,
+#' we do not try to split the cell any more.
+#' When a cell has an area below \code{threshold} we do not attempt to split.
 #' In principle, this criterion can be used jointly but we have empirically
-#' found that it was more convenient and similar in term of performances 
-#' to consider only \code{minpts} and by default, \code{threshold} 
-#' is the smallest area of a pixel in the covariates in \code{listcovariates}. 
-#' Note that it does not make sense 
+#' found that it was more convenient and similar in term of performances
+#' to consider only \code{minpts} and by default, \code{threshold}
+#' is the smallest area of a pixel in the covariates in \code{listcovariates}.
+#' Note that it does not make sense
 #' to have \code{threshold} smaller than the smallest pixel area in the covariates.
-#' 
-#' To increase the diversity between trees in random forest, 
-#' a common practice is to consider different covariates at each split. 
-#' This is controlled by \code{mtry} 
+#'
+#' To increase the diversity between trees in random forest,
+#' a common practice is to consider different covariates at each split.
+#' This is controlled by \code{mtry}
 #' which is the probability that a covariate, independently of the others,
 #' is used at each split.
-#' 
-#' We let \eqn{n_1} and \eqn{n_2} be the number of points in the regions \eqn{W1}, 
+#'
+#' We let \eqn{n_1} and \eqn{n_2} be the number of points in the regions \eqn{W1},
 #' \eqn{W2}, respectively. We let |W| be the area of a region W.
 #' Currently, several scores implemented to compute the performance of a split:
 #' \itemize{
-#' \item "lcv", \eqn{\frac{n_1 \log{n_1-1}}{|W_1|}\mathbf{1}_{n_1>1} + 
+#' \item "lcv", \eqn{\frac{n_1 \log{n_1-1}}{|W_1|}\mathbf{1}_{n_1>1} +
 #' \frac{n_2\log{n_2-1}}{|W_2|} \mathbf{1}_{n_2>1}}
-#' \item "lcv2", \eqn{\frac{n_1\log{n_1-1}}{|W_1|} + 
+#' \item "lcv2", \eqn{\frac{n_1\log{n_1-1}}{|W_1|} +
 #' \frac{n_2\log{n_2-1}}{|W_2|} + \infty \mathbf{1}_{n_1=1} + \infty \mathbf{1}_{n_2=1}}
-#' \item "ent", \eqn{\frac{n_1\log{n_1}}{|W_1|}\mathbf{1}_{n_1>1} + 
+#' \item "ent", \eqn{\frac{n_1\log{n_1}}{|W_1|}\mathbf{1}_{n_1>1} +
 #' \frac{n_2\log{n_2}}{|W_2|} \mathbf{1}_{n_2>1}}
 #' \item "star", \eqn{|\frac{n_1}{n_1+n_2} - \frac{|W_1|}{(|W_1| + |W_2|)}|}
 #' \item "ise", \eqn{-\frac{n_1^2}{|W_1|} - \frac{n_2^2}{|W_2|}}
 #' \item "isecv", \eqn{-\frac{n_1^2-2n_1}{|W_1|} - \frac{n_2^2-2n_2}{|W_2|}}
 #' }
-#' Empirically, there has been no score outputting better 
+#' Empirically, there has been no score outputting better
 #' integrated mean squares error than others.
-#' 
-#' The arguments \code{tol}, \code{minsplitq} and \code{maxsplitq} 
-#' are relics from the research development of the method and will most likely be dropped 
-#' in future versions.  
-#' 
+#'
+#' The arguments \code{tol}, \code{minsplitq} and \code{maxsplitq}
+#' are relics from the research development of the method and will most likely be dropped
+#' in future versions.
+#'
 #' @return An object of class \code{spforest}.
 #' @export
 #'
@@ -217,13 +217,13 @@ as.im.spforest <- function(X, ...) {
   list_im <- lapply(X$trees, FUN = function(i) {
     i$im
   })
-  
+
   if (X$p == 0) {
     output <- Reduce("+", list_im) / length(X$trees)
   } else {
     output <- Reduce("+", list_im) / length(X$trees) / X$p
   }
-  
+
   return(output)
 }
 
@@ -236,9 +236,9 @@ as.im.spforest <- function(X, ...) {
 #' @param main A title for the plot.
 #'
 #' @details
-#' This function first convert an \code{\link{spforest}} 
-#' as an \code{\link[spatstat.geom]{im}} object and then plot it with 
-#' \code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to 
+#' This function first convert an \code{\link{spforest}}
+#' as an \code{\link[spatstat.geom]{im}} object and then plot it with
+#' \code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to
 #' \code{\link[spatstat.geom]{plot.im}}.
 #' @return Same as \code{\link[spatstat.geom]{plot.im}}.
 #' @export

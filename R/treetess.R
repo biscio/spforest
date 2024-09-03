@@ -28,14 +28,6 @@ tesstree <- function(X,
       yrange = enclose.rect$yrange + c(-tol, tol)
     )
   )
-  # tess.points <- spatstat.geom::runifrect(
-  #   lambda,
-  #   spatstat.geom::dilation(
-  #     enclose.rect,
-  #     tol
-  #   )
-  # )
-  # simulate the dummy points
 
   del <- spatstat.geom::dirichlet(tess.points) # associated tesselation
   tmp <- spatstat.geom::intersect.tess(del, wind) # intersected with the windows

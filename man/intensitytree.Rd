@@ -6,6 +6,11 @@
 \usage{
 intensitytree(
   X,
+  vecval,
+  areapixel,
+  dimcov,
+  covrangex,
+  covrangey,
   listcovariates,
   minpts = 500,
   mtry = 1,
@@ -16,6 +21,20 @@ intensitytree(
 }
 \arguments{
 \item{X}{The observed data point pattern.}
+
+\item{vecval}{A list. The i-th element is the values of a i-th covariate in
+\code{listcovariates} at the points of \code{X}.}
+
+\item{areapixel}{The pixel area used for all covariate.}
+
+\item{dimcov}{The element \code{dim} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
+
+\item{covrangex}{The element \code{xrange} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
+
+\item{covrangey}{The element \code{yrange} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
 
 \item{listcovariates}{A list with all the covariates used for the tree. The
 covariates must be given as im object from the package spatstat.}
@@ -38,8 +57,16 @@ An object of class \code{sptree}.
 Spatial Intensity tree function (improved)
 }
 \examples{
+vecval0 <- lapply(beisoilres, FUN = function(i) {
+  c(as.matrix.im(i))
+})
 mytree <- intensitytree(
   X = spatstat.data::bei,
+  vecval = vecval0,
+  areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+  dimcov = beisoilres[[1]]$dim,
+  covrangex = beisoilres[[1]]$xrange,
+  covrangey = beisoilres[[1]]$yrange,
   listcovariates = beisoilres,
   mtry = 1,
   minpts = 500

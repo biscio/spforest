@@ -74,8 +74,8 @@ score <- "lcv"
 dimcov <- listcovariates[[1]]$dim
 covrangex <- listcovariates[[1]]$xrange
 covrangey <- listcovariates[[1]]$yrange
-A<-splitcell2(
-  X=X,
+A <- splitcell2(
+  X = X,
   valpts = valpts,
   vecval = vecval,
   usecovariates = usecovariates,

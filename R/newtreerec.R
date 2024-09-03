@@ -190,6 +190,15 @@ splitcell2 <- function(X,
 #' Spatial Intensity tree function (improved)
 #'
 #' @param X The observed data point pattern.
+#' @param vecval A list. The i-th element is the values of a i-th covariate in 
+#' \code{listcovariates} at the points of \code{X}.
+#' @param areapixel The pixel area used for all covariate.
+#' @param dimcov The element \code{dim} of the covariates which are
+#' \code{\link[spatstat.geom]{im}}.
+#' @param covrangex The element \code{xrange} of the covariates which are
+#' \code{\link[spatstat.geom]{im}}.
+#' @param covrangey The element \code{yrange} of the covariates which are
+#' \code{\link[spatstat.geom]{im}}.
 #' @param listcovariates A list with all the covariates used for the tree. The
 #' covariates must be given as im object from the package spatstat.
 #' @param minpts A positive integer.
@@ -206,9 +215,6 @@ splitcell2 <- function(X,
 #' vecval0 <- lapply(beisoilres, FUN = function(i) {
 #'   c(as.matrix.im(i))
 #' })
-#' dimcov <- listcovariates[[1]]$dim
-#' covrangex <- listcovariates[[1]]$xrange
-#' covrangey <- listcovariates[[1]]$yrange
 #' mytree <- intensitytree(
 #'   X = spatstat.data::bei,
 #'   vecval = vecval0,

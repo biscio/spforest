@@ -93,11 +93,11 @@ We let \eqn{n_1} and \eqn{n_2} be the number of points in the regions \eqn{W1},
 \eqn{W2}, respectively. We let |W| be the area of a region W.
 Currently, several scores implemented to compute the performance of a split:
 \itemize{
-\item "lcv", \eqn{\frac{n_1 \log{n_1-1}}{|W_1|}\mathbf{1}_{n_1>1} + 
+\item "lcv", \eqn{\frac{n_1 \log{n_1-1}}{|W_1|}\mathbf{1}_{n_1>1} +
 \frac{n_2\log{n_2-1}}{|W_2|} \mathbf{1}_{n_2>1}}
-\item "lcv2", \eqn{\frac{n_1\log{n_1-1}}{|W_1|} + 
+\item "lcv2", \eqn{\frac{n_1\log{n_1-1}}{|W_1|} +
 \frac{n_2\log{n_2-1}}{|W_2|} + \infty \mathbf{1}_{n_1=1} + \infty \mathbf{1}_{n_2=1}}
-\item "ent", \eqn{\frac{n_1\log{n_1}}{|W_1|}\mathbf{1}_{n_1>1} + 
+\item "ent", \eqn{\frac{n_1\log{n_1}}{|W_1|}\mathbf{1}_{n_1>1} +
 \frac{n_2\log{n_2}}{|W_2|} \mathbf{1}_{n_2>1}}
 \item "star", \eqn{|\frac{n_1}{n_1+n_2} - \frac{|W_1|}{(|W_1| + |W_2|)}|}
 \item "ise", \eqn{-\frac{n_1^2}{|W_1|} - \frac{n_2^2}{|W_2|}}

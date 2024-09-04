@@ -1,4 +1,4 @@
-#' Intensity tesselation tree
+#' Intensity tessellation tree
 #'
 #' @param X ppp
 #' @param lambda intensity
@@ -136,7 +136,7 @@ tesstree <- function(X,
 }
 
 
-#' Intensity tesselation tree high definition
+#' Intensity tessellation tree high definition
 #'
 #' @param X a ppp
 #' @param lambda intensity
@@ -282,7 +282,7 @@ tesstree_precision <- function(X,
 
 
 
-#' Intensity tesselation forest
+#' Intensity tessellation forest
 #'
 #' @param X ppp
 #' @param lambda intensity

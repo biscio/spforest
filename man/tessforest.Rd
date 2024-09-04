@@ -2,7 +2,7 @@
 % Please edit documentation in R/treetess.R
 \name{tessforest}
 \alias{tessforest}
-\title{Intensity tesselation forest}
+\title{Intensity tessellation forest}
 \usage{
 tessforest(
   X,
@@ -30,7 +30,7 @@ tessforest(
 The estimated intensity as an \code{\link[spatstat.geom]{im}}.
 }
 \description{
-Intensity tesselation forest
+Intensity tessellation forest
 }
 \examples{
 tessforest(X = bei, lambda = 100, Ntree = 5, test.connected = FALSE)

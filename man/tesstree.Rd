@@ -2,7 +2,7 @@
 % Please edit documentation in R/treetess.R
 \name{tesstree}
 \alias{tesstree}
-\title{Intensity tesselation tree}
+\title{Intensity tessellation tree}
 \usage{
 tesstree(X, lambda, target.points, test.connected = TRUE)
 }
@@ -19,7 +19,7 @@ tesstree(X, lambda, target.points, test.connected = TRUE)
 estimated intensity
 }
 \description{
-Intensity tesselation tree
+Intensity tessellation tree
 }
 \examples{
 tesstree(rpoispp(10), lambda = 50, target.points = rpoispp(10))

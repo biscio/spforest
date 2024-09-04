@@ -2,7 +2,7 @@
 % Please edit documentation in R/treetess.R
 \name{tesstree_precision}
 \alias{tesstree_precision}
-\title{Intensity tesselation tree high definition}
+\title{Intensity tessellation tree high definition}
 \usage{
 tesstree_precision(X, lambda, target.points, test.connected = TRUE)
 }
@@ -19,7 +19,7 @@ tesstree_precision(X, lambda, target.points, test.connected = TRUE)
 image of the intensity ? To check
 }
 \description{
-Intensity tesselation tree high definition
+Intensity tessellation tree high definition
 }
 \examples{
 tesstree_precision(rpoispp(10), lambda = 50, target.points = rpoispp(10))

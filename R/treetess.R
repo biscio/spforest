@@ -301,7 +301,7 @@ tessforest <- function(X,
                        Ntrees = 100,
                        at = NULL,
                        mc.cores = 1,
-                       test.connected = TRUE) {
+                       test.connected = FALSE) {
   # at : a ppp where the intensity is estimated (by default on a 128x128 image)
   if (is.null(at)) {
     wind <- spatstat.geom::Window(X)

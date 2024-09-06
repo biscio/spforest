@@ -1,3 +1,44 @@
+# https://cp-algorithms.com/geometry/point-in-convex-polygon.html
+dd <- dirichlet(cells)
+
+po <- dd$tiles[[4]]$bdry[[1]]
+po$x
+po$y
+plot(po$x,po$y, col=c(1,2,3,4), pch=16)
+
+
+reorder_po <- function(po){
+id <- which(po$x == min(po$x, na.rm = TRUE) & po$y == min(po$y, na.rm = TRUE))
+px <- c(po$x[id:length(po$x)], c(po$x[1:(id-1)]))
+py <- c(po$y[id:length(po$y)], c(po$y[1:(id-1)]))
+return(list(x=px, y=py))
+}
+
+
+# Update so that p0 = c(x,y) and l should the the lengths.
+areatri <- function(p0, p1, p2){
+  l1 <- p1 - p0
+  l2 <- p2 - p0
+  l3 <- p2 - p1
+  s <- 0.5 * (l1 + l2 + l3)
+  return(sqrt(s * (s - l1) * (s - l2) * (s - l3)))
+}
+
+reorder_po(po)
+
+p0 <- c(po$x[1], po$y[1])
+p1 <- c(po$x[2], po$y[2])
+p2 <- c(po$x[3], po$y[3])
+
+
+plot(po$x,po$y)
+points(0.10,0.70)
+segments(po$x[1], po$y[1], po$x[2], po$y[2])
+segments(po$x[2], po$y[2], po$x[3], po$y[3])
+
+
+areatri(po$x)
+
 
 # OLD ----  
 # insideconvex <- function(p, polyg) {

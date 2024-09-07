@@ -111,7 +111,7 @@ tesstree3 <- function(X,
   delarea <- spatstat.geom::tile.areas(tmp) # collect the areas
   
   # mX <- marks(cut(X, tmp)) ## the alternative is very slightly quicker
-  mX <- g(X$x, X$y, tmp)
+  mX <- mytileid(X$x, X$y, tmp)
   
   ptintess <- c()
   if (test.connected) {
@@ -124,4 +124,41 @@ tesstree3 <- function(X,
     }
   }
   return(as.im(tmp, values = ptintess / delarea, dimyx = dimyx))
+}
+
+
+tessforest3 <- function(X,
+                        Ntree = 1,
+                        lambda = 100,
+                        dimyx = c(50, 50),
+                        test.connected = FALSE,
+                        cores = 1) {
+  if (is.null(lambda)) {
+    lambda <- floor(mean(c(
+      grDevices::nclass.FD(X$x),
+      grDevices::nclass.FD(X$y)
+    ))^2)
+  }
+  
+  if (cores > 1) {
+    listtree <- parallel::mclapply(1:Ntree, FUN = function(i) {
+      tesstree3(
+        X = X,
+        lambda = lambda,
+        dimyx = dimyx,
+        test.connected = test.connected
+      )
+    }, mc.cores = cores)
+  } else {
+    listtree <- lapply(1:Ntree, FUN = function(i) {
+      tesstree2(
+        X = X,
+        lambda = lambda,
+        dimyx = dimyx,
+        test.connected = test.connected
+      )
+    })
+  }
+  
+  return(Reduce("+", listtree) / length(listtree))
 }

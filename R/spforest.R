@@ -1,3 +1,40 @@
+spforest <- function(X,
+                     listcovariates = NULL,
+                     Ntree = 10,
+                     minpts = spatstat.geom::npoints(X) / 10,
+                     mtry = 1 / 3,
+                     p = 0,
+                     score = "lcv",
+                     threshold = smallest_pixelarea(listcovariates),
+                     lambda = 100,
+                     dimyx = c(50, 50),
+                     test.connected = FALSE,
+                     cores = 1) {
+  if (is.null(listcovariates)) {
+    output <- tessforest(X,
+      Ntree = Ntree,
+      lambda = lambda,
+      dimyx = dimyx,
+      test.connected = test.connected,
+      cores = cores
+    )
+  } else {
+    output <- tesscovforest(X,
+      listcovariates = listcovariates,
+      Ntree = Ntree,
+      minpts = minpts,
+      mtry = mtry,
+      p = p,
+      cores = cores,
+      score = score,
+      threshold = threshold
+    )
+  }
+
+  return(output)
+}
+
+
 #' spforest.object
 #'
 #' S3 class used to define random forest intensity
@@ -26,19 +63,19 @@ NULL
 #' print(forest)
 print.spforest <- function(x, ...) {
   cat(paste(
-    "Spatial intensity forest with", x$ntrees, 
+    "Spatial intensity forest with", x$ntrees,
     "trees, of a point pattern with",
     x$X$n, "points.\n\n"
   ))
 
-  
+
   if (is.null(x$listcov)) {
     cat("No covariable has been given: each tree has been generated with a random tesselation.\n")
   } else {
     ncov <- length(x$listcov)
     a <- paste0(names(x$listcov), collapse = "", sep = ", ")
     namecov <- paste0(substr(a, 1, nchar(a) - 2), ".")
-    
+
     cat(paste(ncov, "covariables used: "))
     cat(namecov, "\n")
   }
@@ -119,9 +156,9 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
   # if (missing(main)) {
   #   main <- "Spatial Intensity Forest"
   # }
-  
+
   output <- spatstat.geom::plot.im(as.im.spforest(x), main = main, ...)
-  
+
   return(invisible(output))
 }
 
@@ -150,13 +187,13 @@ as.im.spforest <- function(X, ...) {
   # list_im <- lapply(X$trees, FUN = function(i) {
   #   i$im
   # })
-  # 
+  #
   # if (X$p == 0) {
   #   output <- Reduce("+", list_im) / length(X$trees)
   # } else {
   #   output <- Reduce("+", list_im) / length(X$trees) / X$p
   # }
-  
+
   return(X$imforest)
 }
 

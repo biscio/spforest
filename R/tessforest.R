@@ -1,4 +1,74 @@
-#' Random Intensity Forest (improved)
+#' Intensity tessellation forest without covariate
+#'
+#' @inheritParams tesstree
+#' @param Ntree A positive integer.
+#' The number of trees in the random intensity forest.
+#' @param cores A positive integer.
+#' The number of cores used to computes the intensity trees.
+#'
+#' @return A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
+#' @export
+#'
+#' @examples
+#' Z <- tessforest(
+#'   X = bei,
+#'   lambda = 100,
+#'   dimyx = c(101, 201),
+#'   test.connected = FALSE,
+#'   Ntree = 5,
+#'   cores = 1
+#' )
+#' plot(Z)
+tessforest <- function(X,
+                        Ntree = 1,
+                        lambda = 100,
+                        dimyx = c(50, 50),
+                        test.connected = FALSE,
+                        cores = 1) {
+  if (is.null(lambda)) {
+    lambda <- floor(mean(c(
+      grDevices::nclass.FD(X$x),
+      grDevices::nclass.FD(X$y)
+    ))^2)
+  }
+  
+  if (cores > 1) {
+    listtree <- parallel::mclapply(1:Ntree, FUN = function(i) {
+      tesstree2(
+        X = X,
+        lambda = lambda,
+        dimyx = dimyx,
+        test.connected = test.connected
+      )
+    }, mc.cores = cores)
+  } else {
+    listtree <- lapply(1:Ntree, FUN = function(i) {
+      tesstree2(
+        X = X,
+        lambda = lambda,
+        dimyx = dimyx,
+        test.connected = test.connected
+      )
+    })
+  }
+  
+  output <- list(
+    imforest = Reduce("+", listtree) / length(listtree),
+    trees = NULL,
+    ntrees = length(listtree),
+    pt_intree = rep(1, X$n),
+    X = X,
+    listcov = NULL,
+    p = NULL,
+    mtry = NULL
+  )
+  class(output) <- "spforest"
+  
+  return(output)
+}
+
+
+#' Intensity tessellation forest with covariates
 #'
 #' Compute a random intensity forest from an observed point pattern
 #' and a list of covariates.
@@ -15,7 +85,7 @@
 #' @param p A number in \eqn{[0,1)}.
 #' Control the thinning process applied to the original point pattern __X__ before
 #' fitting a tree intensity estimator.
-#' @param cores_trees A positive integer.
+#' @param cores A positive integer.
 #' The number of cores used to computes the intensity trees.
 #' @param score String specifying the score used to choose among splits, see details.
 #' @param threshold A positive number.
@@ -74,27 +144,27 @@
 #' @references \url{Article arxiv version}
 #'
 #' @examples
-#' forest <- RforestPP2(
+#' forest <- tesscovforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
 #'   minpts = 100,
 #'   mtry = 1 / 3,
 #'   p = 0,
-#'   cores_trees = 1
+#'   cores = 1
 #' )
-RforestPP2 <- function(X,
+tesscovforest <- function(X,
                        listcovariates = NULL,
                        Ntree = 10,
                        minpts = spatstat.geom::npoints(X) / 10,
                        mtry = 1 / 3,
                        p = 0,
-                       cores_trees = 1,
+                       cores = 1,
                        score = "lcv",
                        threshold = smallest_pixelarea(listcovariates)) {
   nbcov <- length(listcovariates)
   namescov <- names(listcovariates)
-
+  
   if (!do.call(spatstat.geom::compatible.im, unname(listcovariates))) {
     listcovariates <- do.call(
       spatstat.geom::harmonise.im,
@@ -103,7 +173,7 @@ RforestPP2 <- function(X,
     warning("The im objects in listcovariates have been
     harmonised with the function harmonise.im.")
   }
-
+  
   # Used in all trees
   areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
   vecval <- lapply(listcovariates, FUN = function(i) {
@@ -115,15 +185,15 @@ RforestPP2 <- function(X,
   dimcov <- listcovariates[[1]]$dim
   covrangex <- listcovariates[[1]]$xrange
   covrangey <- listcovariates[[1]]$yrange
-
+  
   # Compute the forest's trees
   treeinforest <- parallel::mclapply(1:Ntree, FUN = function(i) {
     # Determine points in and out
-
+    
     #########################
     # TODO: ALLOW FOR NO POINTS in the random selection OR NOT !!!!!! ??????
     ##################################
-
+    
     if (p == 0) { # bootstrap case, with replacement
       ptintree <- sample.int(n = X$n, size = X$n, replace = T)
       Xintree <- X[ptintree]
@@ -139,11 +209,11 @@ RforestPP2 <- function(X,
       }
       Xintree <- X[ptintree == 1]
       # ptintree <- stats::rbinom(n = X$n, size = 1, prob = p)
-
+      
       # Xintree <- X[ptintree == 1]
       # Xout <- X[ptintree != 1]
     }
-
+    
     tree <- intensitytree(
       X = Xintree,
       vecval = vecval,
@@ -158,19 +228,19 @@ RforestPP2 <- function(X,
       threshold = threshold,
       inforest = T
     )
-
+    
     # TODO: change printing methods to take tree from a forest into account
     # To save a lot of space in memory
     # emptylist <- vector("list", nbcov)
     # names(emptylist) <- namescov
     # tree$listcov <- emptylist
-
+    
     return(list(
       sptree = tree,
       pt_intree = ptintree
     ))
-  }, mc.cores = cores_trees)
-
+  }, mc.cores = cores)
+  
   # Computation of the image 
   list_im <- lapply(treeinforest, FUN = function(i) {
     i$sptree$im
@@ -184,23 +254,24 @@ RforestPP2 <- function(X,
   output <- list(
     imforest = imforest,
     trees = lapply(treeinforest,
-      FUN = function(i) {
-        i$sptree
-      }
+                   FUN = function(i) {
+                     i$sptree
+                   }
     ),
     ntrees = length(list_im),
     pt_intree = lapply(treeinforest,
-      FUN = function(i) {
-        i$pt_intree
-      }
+                       FUN = function(i) {
+                         i$pt_intree
+                       }
     ),
     X = X,
     listcov = listcovariates,
     p = p,
     mtry = mtry
   )
-
+  
   class(output) <- "spforest"
-
+  
   return(output)
 }
+

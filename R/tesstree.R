@@ -1,196 +1,74 @@
-#' Splitting cell
+#' Spatial Intensity tree function without covariate
 #'
-#' @param X The observed data point pattern.
-#' @param valpts A list. Values of each covariates at the points of \code{X}.
-#' @param vecval A list. Values of the covariates at each pixel.
-#' @param usecovariates  Vector of 0 and 1 values indicating which covariates
-#' to choose
-#' @param areapixel The pixel area used in each covariates.
-#' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
-#' @param threshold Minimum threshold to allow to split cell.
-#' @param dimcov The element \code{dim} of the covariates which are
-#' \code{\link[spatstat.geom]{im}}.
-#' @param covrangex The element \code{xrange} of the covariates which are
-#' \code{\link[spatstat.geom]{im}}.
-#' @param covrangey The element \code{yrange} of the covariates which are
-#' \code{\link[spatstat.geom]{im}}.
+#' @param X The observed data point pattern,
+#' as a \code{\link[spatstat.geom]{ppp}} object .
+#' @param lambda An integer. The number of points used for random tessellation.
+#' @param dimyx A vector of two integers. The dimensions of the output image passed
+#' to \code{\link[spatstat.geom]{as.im}}.
+#' @param test.connected Logical. If \code{TRUE},
+#' \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
+#' in different connected components. It is only useful if the windows of
+#' observation od \code{X} is not convex.
 #'
-#' @return A list with  split_var = split_var,
-#' split_val = split_val,
-#' sublevels = sublevels,
-#' nsub = nsub,
-#' suplevels = suplevels,
-#' nsup = nsup,
-#' whystop = NULL
+#' @return A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 #' @export
 #'
 #' @examples
-#' listcovariates <- Rsandbox::beisoilres
-#' X <- bei
-#' valpts <- lapply(listcovariates,
-#'   FUN = function(i) {
-#'     i[X]
-#'   }
+#' Z <- tesstree2(
+#'   X = bei,
+#'   lambda = 100,
+#'   dimyx = c(101, 201),
+#'   test.connected = FALSE
 #' )
-#' vecval <- lapply(Rsandbox::beisoilres, FUN = function(i) {
-#'   if (!spatstat.geom::is.im(i)) {
-#'     stop("Elements of listcovar must be an im object")
-#'   }
-#'   c(as.matrix.im(i))
-#' })
-#' usecovariates <- rep(1, 15)
-#' areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
-#' score <- "lcv"
-#' dimcov <- listcovariates[[1]]$dim
-#' covrangex <- listcovariates[[1]]$xrange
-#' covrangey <- listcovariates[[1]]$yrange
-#' A <- splitcell2(
-#'   X = X,
-#'   valpts = valpts,
-#'   vecval = vecval,
-#'   usecovariates = usecovariates,
-#'   dimcov = dimcov,
-#'   covrangex = covrangex,
-#'   covrangey = covrangey,
-#'   areapixel = areapixel,
-#'   threshold = 100
-#' )
-splitcell2 <- function(X,
-                       valpts,
-                       vecval,
-                       usecovariates,
-                       areapixel,
-                       score = "lcv",
-                       threshold = spatstat.geom::area(X) / 1e4,
-                       dimcov,
-                       covrangex,
-                       covrangey) {
-  whynot <- NULL
-  vecvalused <- vecval[usecovariates == 1]
-  # listcovar <- listcovariates[usecovariates == 1]
-
-  mediancov <- lapply(vecvalused, FUN = function(j) {
-    stats::median(j, na.rm = TRUE)
-  })
-
-  sublvl <- lapply(1:length(mediancov),
-    FUN = function(j) {
-      vecvalused[[j]] < mediancov[[j]]
-    }
+#' plot(Z)
+tesstree <- function(X,
+                      lambda = 100,
+                      dimyx = c(128, 128),
+                      test.connected = FALSE) {
+  # lambda is the nb of points (not the intensity)
+  wind <- Window(X)
+  enclose.rect <- spatstat.geom::owin(wind$xrange, wind$yrange)
+  
+  tol <- 2 / sqrt(lambda) # in order to add points outside the window
+  # Alternative to avoid a polygonal windows.
+  tess.points <- spatstat.geom::runifrect(
+    lambda,
+    owin(
+      xrange = enclose.rect$xrange + c(-tol, tol),
+      yrange = enclose.rect$yrange + c(-tol, tol)
+    )
   )
-
-  # Determination of level sets for all covariables
-  scr_cov <- NULL
-  for (i in 1:sum(usecovariates)) {
-    Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
-    Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
-
-    # Test if they are too small and computation of the score if not
-    if (Wsub <= threshold | Wsup <= threshold) {
-      scr_cov[i] <- -Inf
-    } else {
-      n1 <- sum(valpts[[i]] < mediancov[[i]], na.rm = T)
-      n2 <- sum(valpts[[i]] >= mediancov[[i]], na.rm = T)
-      # tempsublvl <- im(
-      #   matrix(sublvl[[i]],
-      #     nrow = dimcov[1],
-      #     ncol = dimcov[2], byrow = F
-      #   ),
-      #   xrange = covrangex, yrange = covrangey
-      # )
-      # tempsuplvl <- im(
-      #   matrix(!sublvl[[i]],
-      #          nrow = dimcov[1],
-      #          ncol = dimcov[2], byrow = F
-      #   ),
-      #   xrange = covrangex, yrange = covrangey
-      # )
-      # n1 <- npoints(X[tempsublvl])
-      # n2 <- npoints(X[tempsuplvl])
-      scr_cov[i] <- score.split(
-        n1 = n1,
-        n2 = n2,
-        W1area = Wsub,
-        W2area = Wsup,
-        score = score
-      )
+  
+  del <- spatstat.geom::dirichlet(tess.points) # associated tessellation
+  tmp <- spatstat.geom::intersect.tess(del, wind) # intersected with the windows
+  if (test.connected) {
+    tmp <- spatstat.geom::connected(tmp)
+  }
+  
+  delarea <- spatstat.geom::tile.areas(tmp) # collect the areas
+  
+  # mX <- marks(cut(X, tmp)) ## the alternative is very slightly quicker
+  mX <- tileindex(X$x, X$y, tmp)
+  
+  ptintess <- c()
+  if (test.connected) {
+    for (i in levels(tmp$image)) {
+      ptintess <- c(ptintess, sum(mX == i, na.rm = TRUE))
+    }
+  } else {
+    for (i in names(tmp$tiles)) {
+      ptintess <- c(ptintess, sum(mX == i, na.rm = TRUE))
     }
   }
-
-  ## Go out if all the score are -Inf
-  if (all(is.infinite(scr_cov))) {
-    whynot <- c("All split scores are -Inf, cell too small")
-  }
-
-  id_best_scr <- sort(scr_cov,
-    index.return = T,
-    decreasing = T
-  )$ix[1]
-
-  if (!is.null(whynot)) {
-    return(whynot)
-  } else {
-    split_var <- which(usecovariates == 1)[id_best_scr]
-    split_val <- mediancov[[id_best_scr]]
-    splitsub <- (vecval[[split_var]] < split_val)
-
-    imsublvl <- im(
-      matrix(splitsub,
-        nrow = dimcov[1],
-        ncol = dimcov[2], byrow = F
-      ),
-      xrange = covrangex, yrange = covrangey
-    )
-
-    subvalpts <- (valpts[[split_var]] < split_val)
-    nsub <- sum(subvalpts, na.rm = T)
-    nsup <- sum(!subvalpts, na.rm = T)
-
-    valptssub <- lapply(valpts, FUN = function(j) {
-      ifelse(subvalpts,
-        j, NA
-      )
-    })
-    valptssup <- lapply(valpts, FUN = function(j) {
-      ifelse(!subvalpts,
-        j, NA
-      )
-    })
-
-    # nsub <- spatstat.geom::npoints(X[imsublvl])
-    # nsup <- spatstat.geom::npoints(X[!imsublvl])
-
-    splitsup <- !splitsub
-    splitsub[!splitsub] <- NA
-    splitsup[!splitsup] <- NA
-    sublevels <- lapply(vecval, FUN = function(j) {
-      return(j * splitsub)
-    })
-    suplevels <- lapply(vecval, FUN = function(j) {
-      return(j * splitsup)
-    })
-
-    nodeChilds <- list(
-      split_var = split_var,
-      split_val = split_val,
-      valptssub = valptssub,
-      valptssup = valptssup,
-      sublevels = sublevels,
-      nsub = nsub,
-      suplevels = suplevels,
-      nsup = nsup,
-      whystop = NULL
-    )
-  }
+  return(as.im(tmp, values = ptintess / delarea, dimyx = dimyx))
 }
 
 
 
-
-#' Spatial Intensity tree function (improved)
+#' Spatial Intensity tree function with covariates
 #'
 #' @param X The observed data point pattern.
-#' @param vecval A list. The i-th element is the values of a i-th covariate in 
+#' @param vecval A list. The i-th element is the values of a i-th covariate in
 #' \code{listcovariates} at the points of \code{X}.
 #' @param areapixel The pixel area used for all covariate.
 #' @param dimcov The element \code{dim} of the covariates which are
@@ -227,18 +105,18 @@ splitcell2 <- function(X,
 #'   minpts = 500
 #' )
 #' plot(mytree)
-intensitytree <- function(X,
-                          vecval,
-                          areapixel,
-                          dimcov,
-                          covrangex,
-                          covrangey,
-                          listcovariates,
-                          minpts = 500,
-                          mtry = 1,
-                          score = "lcv",
-                          threshold = spatstat.geom::area(X) / 1e4,
-                          inforest = F) {
+tesscovtree <- function(X,
+                        vecval,
+                        areapixel,
+                        dimcov,
+                        covrangex,
+                        covrangey,
+                        listcovariates,
+                        minpts = 500,
+                        mtry = 1,
+                        score = "lcv",
+                        threshold = spatstat.geom::area(X) / 1e4,
+                        inforest = F) {
   valpts <- lapply(listcovariates,
     FUN = function(i) {
       i[X]
@@ -440,8 +318,6 @@ intensitytree <- function(X,
 
   # return(spatstat.geom::as.im(Reduce("+", patchworks), W = X$window))
 }
-
-
 # plot(spatstat.geom::as.im(Reduce("+", A), W = X$window))
 #
 # f <- function() {
@@ -483,3 +359,7 @@ intensitytree <- function(X,
 #                ncol = dimcov[2], byrow = F),
 #         xrange = covrangex, yrange = covrangey) )
 #
+
+
+
+

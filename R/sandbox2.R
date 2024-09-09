@@ -1,3 +1,24 @@
+# Z <- spforest(
+#   X = bei,
+#   lambda = 100,
+#   dimyx = c(101, 201),
+#   test.connected = FALSE,
+#   Ntree = 5,
+#   cores = 1
+# )
+# 
+# Z2 <- spforest(
+#   X = spatstat.data::bei,
+#   listcovariates = spatstat.data::bei.extra,
+#   Ntree = 3,
+#   minpts = 100,
+#   mtry = 1 / 3,
+#   p = 0,
+#   cores = 1
+# )
+# 
+# plot(Z2)
+
 # library(microbenchmark)
 # 
 # fnew <- function() {

@@ -22,13 +22,13 @@
 #' )
 #' plot(Z)
 tesstree <- function(X,
-                      lambda = 100,
-                      dimyx = c(128, 128),
-                      test.connected = FALSE) {
+                     lambda = 100,
+                     dimyx = c(128, 128),
+                     test.connected = FALSE) {
   # lambda is the nb of points (not the intensity)
   wind <- Window(X)
   enclose.rect <- spatstat.geom::owin(wind$xrange, wind$yrange)
-  
+
   tol <- 2 / sqrt(lambda) # in order to add points outside the window
   # Alternative to avoid a polygonal windows.
   tess.points <- spatstat.geom::runifrect(
@@ -38,18 +38,18 @@ tesstree <- function(X,
       yrange = enclose.rect$yrange + c(-tol, tol)
     )
   )
-  
+
   del <- spatstat.geom::dirichlet(tess.points) # associated tessellation
   tmp <- spatstat.geom::intersect.tess(del, wind) # intersected with the windows
   if (test.connected) {
     tmp <- spatstat.geom::connected(tmp)
   }
-  
+
   delarea <- spatstat.geom::tile.areas(tmp) # collect the areas
-  
+
   # mX <- marks(cut(X, tmp)) ## the alternative is very slightly quicker
   mX <- tileindex(X$x, X$y, tmp)
-  
+
   ptintess <- c()
   if (test.connected) {
     for (i in levels(tmp$image)) {
@@ -198,7 +198,7 @@ tesscovtree <- function(X,
         res.split <- "Not enough points to attempt to split"
       } else {
         # Split the cell, if the split is valid under the chosen parameters
-        res.split <- splitcell2(
+        res.split <- splitcell(
           X = X,
           valpts = intensity_tree[[i]]$nodeValpts,
           vecval = intensity_tree[[i]]$nodeCov,
@@ -359,7 +359,3 @@ tesscovtree <- function(X,
 #                ncol = dimcov[2], byrow = F),
 #         xrange = covrangex, yrange = covrangey) )
 #
-
-
-
-

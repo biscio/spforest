@@ -6,7 +6,7 @@
 #   Ntree = 5,
 #   cores = 1
 # )
-# 
+#
 # Z2 <- spforest(
 #   X = spatstat.data::bei,
 #   listcovariates = spatstat.data::bei.extra,
@@ -16,11 +16,11 @@
 #   p = 0,
 #   cores = 1
 # )
-# 
+#
 # plot(Z2)
 
 # library(microbenchmark)
-# 
+#
 # fnew <- function() {
 #   tessforest3(
 #     X = bei,
@@ -31,7 +31,7 @@
 #     cores = 1
 #   )
 # }
-# 
+#
 # fold <- function() {
 #   tessforest(
 #     X = bei,
@@ -40,9 +40,9 @@
 #     test.connected = FALSE
 #   )
 # }
-# 
+#
 # microbenchmark(fnew(), fold(), times = 2)
-# 
+#
 # profvis::profvis(tessforest2(
 #   X = bei,
 #   lambda = 100,
@@ -51,8 +51,8 @@
 #   Ntree = 5,
 #   cores = 1
 # ))
-# 
-# 
+#
+#
 # myinsideowin <- function(x, y, w) {
 #   if ((missing(y) || is.null(y)) && all(c("x", "y") %in% names(x))) {
 #     y <- x$y
@@ -118,7 +118,7 @@
 #     stop("unrecognised window type", w$type)
 #   )
 # }
-# 
+#
 # mytileid <- function(x, y, Z) {
 #   stopifnot(is.tess(Z))
 #   if ((missing(y) || is.null(y)) && all(c("x", "y") %in% names(x))) {
@@ -184,12 +184,12 @@
 #   )
 #   return(m)
 # }
-# 
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
+#
 # # # https://cp-algorithms.com/geometry/point-in-convex-polygon.html
 # #
 # # ## TODO: handle edges and vertices cases.

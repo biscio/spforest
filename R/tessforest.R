@@ -20,18 +20,18 @@
 #' )
 #' plot(Z)
 tessforest <- function(X,
-                        Ntree = 1,
-                        lambda = 100,
-                        dimyx = c(50, 50),
-                        test.connected = FALSE,
-                        cores = 1) {
+                       Ntree = 1,
+                       lambda = 100,
+                       dimyx = c(50, 50),
+                       test.connected = FALSE,
+                       cores = 1) {
   if (is.null(lambda)) {
     lambda <- floor(mean(c(
       grDevices::nclass.FD(X$x),
       grDevices::nclass.FD(X$y)
     ))^2)
   }
-  
+
   if (cores > 1) {
     listtree <- parallel::mclapply(1:Ntree, FUN = function(i) {
       tesstree2(
@@ -51,7 +51,7 @@ tessforest <- function(X,
       )
     })
   }
-  
+
   output <- list(
     imforest = Reduce("+", listtree) / length(listtree),
     trees = NULL,
@@ -63,7 +63,7 @@ tessforest <- function(X,
     mtry = NULL
   )
   class(output) <- "spforest"
-  
+
   return(output)
 }
 
@@ -154,17 +154,17 @@ tessforest <- function(X,
 #'   cores = 1
 #' )
 tesscovforest <- function(X,
-                       listcovariates = NULL,
-                       Ntree = 10,
-                       minpts = spatstat.geom::npoints(X) / 10,
-                       mtry = 1 / 3,
-                       p = 0,
-                       cores = 1,
-                       score = "lcv",
-                       threshold = smallest_pixelarea(listcovariates)) {
+                          listcovariates = NULL,
+                          Ntree = 10,
+                          minpts = spatstat.geom::npoints(X) / 10,
+                          mtry = 1 / 3,
+                          p = 0,
+                          cores = 1,
+                          score = "lcv",
+                          threshold = smallest_pixelarea(listcovariates)) {
   nbcov <- length(listcovariates)
   namescov <- names(listcovariates)
-  
+
   if (!do.call(spatstat.geom::compatible.im, unname(listcovariates))) {
     listcovariates <- do.call(
       spatstat.geom::harmonise.im,
@@ -173,7 +173,7 @@ tesscovforest <- function(X,
     warning("The im objects in listcovariates have been
     harmonised with the function harmonise.im.")
   }
-  
+
   # Used in all trees
   areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
   vecval <- lapply(listcovariates, FUN = function(i) {
@@ -185,15 +185,15 @@ tesscovforest <- function(X,
   dimcov <- listcovariates[[1]]$dim
   covrangex <- listcovariates[[1]]$xrange
   covrangey <- listcovariates[[1]]$yrange
-  
+
   # Compute the forest's trees
   treeinforest <- parallel::mclapply(1:Ntree, FUN = function(i) {
     # Determine points in and out
-    
+
     #########################
     # TODO: ALLOW FOR NO POINTS in the random selection OR NOT !!!!!! ??????
     ##################################
-    
+
     if (p == 0) { # bootstrap case, with replacement
       ptintree <- sample.int(n = X$n, size = X$n, replace = T)
       Xintree <- X[ptintree]
@@ -209,12 +209,12 @@ tesscovforest <- function(X,
       }
       Xintree <- X[ptintree == 1]
       # ptintree <- stats::rbinom(n = X$n, size = 1, prob = p)
-      
+
       # Xintree <- X[ptintree == 1]
       # Xout <- X[ptintree != 1]
     }
-    
-    tree <- intensitytree(
+
+    tree <- tesscovtree(
       X = Xintree,
       vecval = vecval,
       areapixel = areapixel,
@@ -228,20 +228,20 @@ tesscovforest <- function(X,
       threshold = threshold,
       inforest = T
     )
-    
+
     # TODO: change printing methods to take tree from a forest into account
     # To save a lot of space in memory
     # emptylist <- vector("list", nbcov)
     # names(emptylist) <- namescov
     # tree$listcov <- emptylist
-    
+
     return(list(
       sptree = tree,
       pt_intree = ptintree
     ))
   }, mc.cores = cores)
-  
-  # Computation of the image 
+
+  # Computation of the image
   list_im <- lapply(treeinforest, FUN = function(i) {
     i$sptree$im
   })
@@ -250,28 +250,27 @@ tesscovforest <- function(X,
   } else {
     imforest <- Reduce("+", list_im) / length(treeinforest) / p
   }
-  
+
   output <- list(
     imforest = imforest,
     trees = lapply(treeinforest,
-                   FUN = function(i) {
-                     i$sptree
-                   }
+      FUN = function(i) {
+        i$sptree
+      }
     ),
     ntrees = length(list_im),
     pt_intree = lapply(treeinforest,
-                       FUN = function(i) {
-                         i$pt_intree
-                       }
+      FUN = function(i) {
+        i$pt_intree
+      }
     ),
     X = X,
     listcov = listcovariates,
     p = p,
     mtry = mtry
   )
-  
+
   class(output) <- "spforest"
-  
+
   return(output)
 }
-

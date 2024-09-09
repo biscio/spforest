@@ -44,7 +44,7 @@
 #' dimcov <- listcovariates[[1]]$dim
 #' covrangex <- listcovariates[[1]]$xrange
 #' covrangey <- listcovariates[[1]]$yrange
-#' A <- splitcell2(
+#' A <- splitcell(
 #'   X = X,
 #'   valpts = valpts,
 #'   vecval = vecval,
@@ -55,36 +55,36 @@
 #'   areapixel = areapixel,
 #'   threshold = 100
 #' )
-splitcell2 <- function(X,
-                       valpts,
-                       vecval,
-                       usecovariates,
-                       areapixel,
-                       score = "lcv",
-                       threshold = spatstat.geom::area(X) / 1e4,
-                       dimcov,
-                       covrangex,
-                       covrangey) {
+splitcell <- function(X,
+                      valpts,
+                      vecval,
+                      usecovariates,
+                      areapixel,
+                      score = "lcv",
+                      threshold = spatstat.geom::area(X) / 1e4,
+                      dimcov,
+                      covrangex,
+                      covrangey) {
   whynot <- NULL
   vecvalused <- vecval[usecovariates == 1]
   # listcovar <- listcovariates[usecovariates == 1]
-  
+
   mediancov <- lapply(vecvalused, FUN = function(j) {
     stats::median(j, na.rm = TRUE)
   })
-  
+
   sublvl <- lapply(1:length(mediancov),
-                   FUN = function(j) {
-                     vecvalused[[j]] < mediancov[[j]]
-                   }
+    FUN = function(j) {
+      vecvalused[[j]] < mediancov[[j]]
+    }
   )
-  
+
   # Determination of level sets for all covariables
   scr_cov <- NULL
   for (i in 1:sum(usecovariates)) {
     Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
     Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
-    
+
     # Test if they are too small and computation of the score if not
     if (Wsub <= threshold | Wsup <= threshold) {
       scr_cov[i] <- -Inf
@@ -116,50 +116,50 @@ splitcell2 <- function(X,
       )
     }
   }
-  
+
   ## Go out if all the score are -Inf
   if (all(is.infinite(scr_cov))) {
     whynot <- c("All split scores are -Inf, cell too small")
   }
-  
+
   id_best_scr <- sort(scr_cov,
-                      index.return = T,
-                      decreasing = T
+    index.return = T,
+    decreasing = T
   )$ix[1]
-  
+
   if (!is.null(whynot)) {
     return(whynot)
   } else {
     split_var <- which(usecovariates == 1)[id_best_scr]
     split_val <- mediancov[[id_best_scr]]
     splitsub <- (vecval[[split_var]] < split_val)
-    
+
     imsublvl <- im(
       matrix(splitsub,
-             nrow = dimcov[1],
-             ncol = dimcov[2], byrow = F
+        nrow = dimcov[1],
+        ncol = dimcov[2], byrow = F
       ),
       xrange = covrangex, yrange = covrangey
     )
-    
+
     subvalpts <- (valpts[[split_var]] < split_val)
     nsub <- sum(subvalpts, na.rm = T)
     nsup <- sum(!subvalpts, na.rm = T)
-    
+
     valptssub <- lapply(valpts, FUN = function(j) {
       ifelse(subvalpts,
-             j, NA
+        j, NA
       )
     })
     valptssup <- lapply(valpts, FUN = function(j) {
       ifelse(!subvalpts,
-             j, NA
+        j, NA
       )
     })
-    
+
     # nsub <- spatstat.geom::npoints(X[imsublvl])
     # nsup <- spatstat.geom::npoints(X[!imsublvl])
-    
+
     splitsup <- !splitsub
     splitsub[!splitsub] <- NA
     splitsup[!splitsup] <- NA
@@ -169,7 +169,7 @@ splitcell2 <- function(X,
     suplevels <- lapply(vecval, FUN = function(j) {
       return(j * splitsup)
     })
-    
+
     nodeChilds <- list(
       split_var = split_var,
       split_val = split_val,

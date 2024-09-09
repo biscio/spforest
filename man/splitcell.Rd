@@ -6,64 +6,83 @@
 \usage{
 splitcell(
   X,
+  valpts,
+  vecval,
+  usecovariates,
+  areapixel,
   score = "lcv",
-  listcovariates = NULL,
-  usecovariates = rep(1, length(listcovariates)),
-  thres.cell = 100,
-  minpts = 0,
-  tol = Inf,
-  imp = NULL,
-  minsplitq = 0.2,
-  maxsplitq = 0.8
+  threshold = spatstat.geom::area(X)/10000,
+  dimcov,
+  covrangex,
+  covrangey
 )
 }
 \arguments{
 \item{X}{The observed data point pattern.}
 
+\item{valpts}{A list. Values of each covariates at the points of \code{X}.}
+
+\item{vecval}{A list. Values of the covariates at each pixel.}
+
+\item{usecovariates}{Vector of 0 and 1 values indicating which covariates
+to choose}
+
+\item{areapixel}{The pixel area used in each covariates.}
+
 \item{score}{A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".}
 
-\item{listcovariates}{A list with all the covariates used for the tree. The
-covariates must be given as im object from the package spatstat.}
+\item{threshold}{Minimum threshold to allow to split cell.}
 
-\item{usecovariates}{Vector of 0,1 with covariate to choose}
+\item{dimcov}{The element \code{dim} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
 
-\item{thres.cell}{Minimum size of a cell}
+\item{covrangex}{The element \code{xrange} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
 
-\item{minpts}{A positive integer. The minimum number of points allowed to try to split a cell.}
-
-\item{tol}{A positive integer.
-Look at the tol last gen to see if it was improved}
-
-\item{imp}{A positive integer.
-History of the improvement up to now. Used in random forest algorithm.}
-
-\item{minsplitq}{A number in $(0,1)$. Determine the minimal allowed splitting value
-of a covariable.}
-
-\item{maxsplitq}{A number in $(0,1)$. Determine the maximal allowed splitting value
-of a covariable.}
+\item{covrangey}{The element \code{yrange} of the covariates which are
+\code{\link[spatstat.geom]{im}}.}
 }
 \value{
-A list with PPleft, PPright, split_var, split_val,
-improvement, scr_parent.
+A list with  split_var = split_var,
+split_val = split_val,
+sublevels = sublevels,
+nsub = nsub,
+suplevels = suplevels,
+nsup = nsup,
+whystop = NULL
 }
 \description{
 Splitting cell
 }
 \examples{
-splitcell(
-  X = spatstat.data::bei,
-  score = "lcv",
-  listcovariates = list(
-    grad = spatstat.data::bei.extra$grad,
-    elev = spatstat.data::bei.extra$elev
-  ),
-  usecovariates = c(1, 1),
-  thres.cell = 100,
-  minpts = 10,
-  tol = Inf,
-  imp = NULL,
-  minsplitq = 0.5,
-  maxsplitq = 0.5
+listcovariates <- Rsandbox::beisoilres
+X <- bei
+valpts <- lapply(listcovariates,
+  FUN = function(i) {
+    i[X]
+  }
+)
+vecval <- lapply(Rsandbox::beisoilres, FUN = function(i) {
+  if (!spatstat.geom::is.im(i)) {
+    stop("Elements of listcovar must be an im object")
+  }
+  c(as.matrix.im(i))
+})
+usecovariates <- rep(1, 15)
+areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
+score <- "lcv"
+dimcov <- listcovariates[[1]]$dim
+covrangex <- listcovariates[[1]]$xrange
+covrangey <- listcovariates[[1]]$yrange
+A <- splitcell(
+  X = X,
+  valpts = valpts,
+  vecval = vecval,
+  usecovariates = usecovariates,
+  dimcov = dimcov,
+  covrangex = covrangex,
+  covrangey = covrangey,
+  areapixel = areapixel,
+  threshold = 100
 )
 }

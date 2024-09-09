@@ -7,7 +7,7 @@
 \method{print}{spforest}(x, ...)
 }
 \arguments{
-\item{x}{A spatial intensity forst return by RforestPP function}
+\item{x}{A spatial intensity forest return by RforestPP function}
 
 \item{...}{Additional arguments}
 }

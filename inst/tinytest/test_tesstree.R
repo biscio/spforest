@@ -1,3 +1,56 @@
+# Test for testcovtreee ----
+
+## Part I ----
+vecval0 <- lapply(spatstat.data::bei.extra, FUN = function(i) {
+  c(as.matrix.im(i))
+})
+
+expect_silent(
+  arbre <- tesscovtree(
+    X = spatstat.data::bei,
+    vecval = vecval0,
+    areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+    dimcov = beisoilres[[1]]$dim,
+    covrangex = beisoilres[[1]]$xrange,
+    covrangey = beisoilres[[1]]$yrange,
+    listcovariates = bei.extra,
+    mtry = 1,
+    minpts = 1000
+  )
+)
+
+# 2 is length(listcovariates) in the example above
+expect_length(arbre$namecov, 2)
+
+expect_length(arbre$tree, 9)
+
+expect_true(spatstat.geom::is.im(arbre$im))
+
+expect_true(spatstat.geom::is.ppp(arbre$X))
+
+expect_true(sum(rand_covar(
+  listcovariates = list(1, 1, 1, 1, 1),
+  mtry = 1 / 2
+)) > 0)
+
+expect_equal(arbre$tree[[8]]$nodeID, 8)
+
+expect_equal(arbre$tree[[3]]$left_daughter, 6)
+
+expect_equal(arbre$tree[[2]]$right_daughter, 5)
+
+expect_equal(arbre$tree[[2]]$split_var, 2)
+
+expect_equal(arbre$tree[[3]]$split_val, 141.62)
+
+expect_equal(arbre$tree[[8]]$status, 0)
+
+expect_equal(arbre$tree[[8]]$intensity_pred, 0.009661151,
+             tolerance = 1e-5
+)
+
+## Part II ----
+
 areapixel0 <- beisoilres[[1]]$xstep * beisoilres[[1]]$ystep
 vecval0 <- lapply(beisoilres, FUN = function(i) {
   c(spatstat.geom::as.matrix.im(i))
@@ -6,7 +59,7 @@ dimcov0 <- beisoilres[[1]]$dim
 covrangex0 <- beisoilres[[1]]$xrange
 covrangey0 <- beisoilres[[1]]$yrange
 
-expect_silent(arbre <- intensitytree(
+expect_silent(arbre <- tesscovtree(
   X = spatstat.data::bei,
   vecval = vecval0,
   areapixel = areapixel0,
@@ -49,7 +102,7 @@ expect_equal(arbre$tree[[4]]$intensity_pred, 0.00862606,
 )
 
 
-A <- intensitytree(
+A <- tesscovtree(
   X = spatstat.data::bei,
   listcovariates = beisoilres,
   vecval = vecval0,
@@ -63,26 +116,8 @@ A <- intensitytree(
 B <- format(object.size(A), units = "Mb")
 expect_true(as.numeric(gsub(" Mb", "",B)) < 4)
 
-# 
-# ftree <- function() {
-#   treerec(
-#     X = spatstat.data::bei,
-#     listcovariates = beisoilres,
-#     mtry = 2 / 3,
-#     minpts = 20
-#   )
-# }
-# 
-# gtree <- function() {
-#   intensitytree(
-#     X = spatstat.data::bei,
-#     listcovariates = beisoilres,
-#     mtry = 1,
-#     minpts = 100
-#   )
-# }
-# 
-# 
-# 
-# library(microbenchmark)
-# microbenchmark(ftree(), gtree(), times = 10)
+
+
+# Test for tesstree ---- 
+
+# TODO 

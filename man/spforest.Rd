@@ -4,5 +4,5 @@
 \alias{spforest}
 \title{spforest.object}
 \description{
-S3 class use to define random forest intensity
+S3 class used to define random forest intensity
 }

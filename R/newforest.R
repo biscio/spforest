@@ -171,13 +171,24 @@ RforestPP2 <- function(X,
     ))
   }, mc.cores = cores_trees)
 
-
+  # Computation of the image 
+  list_im <- lapply(treeinforest, FUN = function(i) {
+    i$sptree$im
+  })
+  if (p == 0) {
+    imforest <- Reduce("+", list_im) / length(treeinforest)
+  } else {
+    imforest <- Reduce("+", list_im) / length(treeinforest) / p
+  }
+  
   output <- list(
+    imforest = imforest,
     trees = lapply(treeinforest,
       FUN = function(i) {
         i$sptree
       }
     ),
+    ntrees = length(list_im),
     pt_intree = lapply(treeinforest,
       FUN = function(i) {
         i$pt_intree

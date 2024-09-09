@@ -119,5 +119,17 @@ tessforest2 <- function(X,
     })
   }
 
-  return(Reduce("+", listtree) / length(listtree))
+  output <- list(
+    imforest = Reduce("+", listtree) / length(listtree),
+    trees = NULL,
+    ntrees = length(listtree),
+    pt_intree = rep(1, X$n),
+    X = X,
+    listcov = NULL,
+    p = NULL,
+    mtry = NULL
+  )
+  class(output) <- "spforest"
+  
+  return(output)
 }

@@ -26,15 +26,14 @@ NULL
 #' print(forest)
 print.spforest <- function(x, ...) {
   cat(paste(
-    "Spatial intensity forest of", length(x$trees), 
+    "Spatial intensity forest with", x$ntrees, 
     "trees, of a point pattern with",
     x$X$n, "points.\n\n"
   ))
 
   
   if (is.null(x$listcov)) {
-    cat("Since no covariable has been giben, each tree of the intensity forest has 
-    been generated based on random tesselation.\n")
+    cat("No covariable has been given: each tree has been generated with a random tesselation.\n")
   } else {
     ncov <- length(x$listcov)
     a <- paste0(names(x$listcov), collapse = "", sep = ", ")
@@ -89,6 +88,76 @@ predict.spforest <- function(object, newdata, ...) {
   }
 
   return(as.im(object)[X])
+}
+
+
+#' Plot spatial intensity forest
+#'
+#' @param x A spatial intensity tree return by RforestPP function
+#' @param ... additional arguments
+#' @param main A title for the plot.
+#'
+#' @details
+#' This function first convert an \code{\link{spforest}}
+#' as an \code{\link[spatstat.geom]{im}} object and then plot it with
+#' \code{\link[spatstat.geom]{plot.im}}. All arguments in \code{...} are passed to
+#' \code{\link[spatstat.geom]{plot.im}}.
+#' @return Same as \code{\link[spatstat.geom]{plot.im}}.
+#' @export
+#'
+#' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' plot(forest)
+plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
+  # Handling case if no main title is given for the plot
+  # if (missing(main)) {
+  #   main <- "Spatial Intensity Forest"
+  # }
+  
+  output <- spatstat.geom::plot.im(as.im.spforest(x), main = main, ...)
+  
+  return(invisible(output))
+}
+
+
+#' Convert to Pixel Image
+#'
+#' @param X A spforest object
+#' @param ...  ignored
+#'
+#' @return A pixel image \code{\link[spatstat.geom]{im.object}}.
+#' @import spatstat.geom
+#' @import spatstat.model
+#' @import spatstat.random
+#' @export
+#'
+#' @examples
+#' forest <- RforestPP(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' as.im(forest)
+as.im.spforest <- function(X, ...) {
+  # list_im <- lapply(X$trees, FUN = function(i) {
+  #   i$im
+  # })
+  # 
+  # if (X$p == 0) {
+  #   output <- Reduce("+", list_im) / length(X$trees)
+  # } else {
+  #   output <- Reduce("+", list_im) / length(X$trees) / X$p
+  # }
+  
+  return(X$imforest)
 }
 
 

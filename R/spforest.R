@@ -1,6 +1,6 @@
 #' spforest.object
 #'
-#' S3 class use to define random forest intensity
+#' S3 class used to define random forest intensity
 #'
 #' @name spforest
 #' @rdname spforest
@@ -8,7 +8,7 @@ NULL
 
 #' Printing spatial intensity forest
 #'
-#' @param x A spatial intensity forst return by RforestPP function
+#' @param x A spatial intensity forest return by RforestPP function
 #' @param ... Additional arguments
 #'
 #' @return A description of the random intensity forest with

@@ -25,21 +25,24 @@ NULL
 #' )
 #' print(forest)
 print.spforest <- function(x, ...) {
-  ncov <- length(x$listcov)
-  a <- paste0(names(x$listcov), collapse = "", sep = ", ")
-  namecov <- paste0(substr(a, 1, nchar(a) - 2), ".")
-
   cat(paste(
-    "Intensity forest estimate of point patterns with",
+    "Spatial intensity forest of", length(x$trees), 
+    "trees, of a point pattern with",
     x$X$n, "points.\n\n"
   ))
 
-  cat(paste(ncov, "covariables used, with names: "))
-  cat(namecov, "\n")
-
-  cat(
-    "Spatial intensity forest with", length(x$trees), "trees."
-  )
+  
+  if (is.null(x$listcov)) {
+    cat("Since no covariable has been giben, each tree of the intensity forest has 
+    been generated based on random tesselation.\n")
+  } else {
+    ncov <- length(x$listcov)
+    a <- paste0(names(x$listcov), collapse = "", sep = ", ")
+    namecov <- paste0(substr(a, 1, nchar(a) - 2), ".")
+    
+    cat(paste(ncov, "covariables used: "))
+    cat(namecov, "\n")
+  }
 }
 
 #' Forest prediction

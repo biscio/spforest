@@ -77,13 +77,13 @@ The function \texttt{RforestPP} is the core function of \pkg{Rsandbox} and
 generate random forest intensity estimates. 
 
 <<first example Rforest>>=
-forest <- RforestPP2(
+forest <- spforest(
   X = bei,
   listcovariates = beismall,
   Ntree = 3,
   mtry = 1 / 3,
   minpts = 500,
-  cores_trees = 1
+  cores = 1
 )
 @
 
@@ -179,11 +179,11 @@ We will use the \texttt{mapply} function.
 <<Computing all forests toy example>>=
 extrarg <- list(
   Ntree = 5,
-  cores_tree = 1,
+  cores = 1,
   X = bei,
   listcovariates = beismall
 )
-allforesttoy <- mapply(RforestPP,
+allforesttoy <- mapply(spforest,
   mtry = allargs$mtry,
   minpts = allargs$minpts,
   MoreArgs = extrarg,
@@ -204,11 +204,11 @@ Then, we run again \texttt{RforestPP} for this
 combination of parameter but with \texttt{Ntree} larger. 
 
 <<Computing chosen forest toy example>>=
-chosenforesttoy <- RforestPP2(
+chosenforesttoy <- spforest(
   mtry = allargs[which.max(allscore), 1],
   minpts = allargs[which.max(allscore), 2],
   Ntree = 50,
-  cores_tree = 1,
+  cores = 1,
   X = bei,
   listcovariates = beismall
 )
@@ -268,11 +268,11 @@ beismall <- lapply(beisoilres, as.im, dimyx = c(10, 20))
 
 extrarg <- list(
   Ntree = 5,
-  cores_tree = 1,
+  cores = 1,
   X = bei,
   listcovariates = beismall
 )
-allforestbei <- mapply(RforestPP2,
+allforestbei <- mapply(spforest,
   mtry = allargs$mtry,
   minpts = allargs$minpts,
   MoreArgs = extrarg,
@@ -290,11 +290,11 @@ allargs[which.max(allscore), ]
 Finally, we run again \texttt{RforestPP} with \texttt{Ntree} larger. 
 
 <<Computing chosen forest bei example>>=
-chosenforestbei <- RforestPP2(
+chosenforestbei <- spforest(
   mtry = allargs[which.max(allscore), 1],
   minpts = allargs[which.max(allscore), 2],
   Ntree = 50,
-  cores_tree = 1,
+  cores = 1,
   X = bei,
   listcovariates = beismall
 )
@@ -323,7 +323,7 @@ vipplot(chosenforestbei, sorted = T)
 
 The VIP plot indicates that the five most important covariates 
 are that grad, P, Zn, Cu, elev. 
-Up to the covariates Cu, these results are ín agreement with 
+Up to the covariates Cu, these results are in agreement with 
 those of \cite{coeurjolly:18} that studied the same data. 
 
 Moreover, we have run the same analysis 

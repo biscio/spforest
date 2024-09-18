@@ -21,7 +21,7 @@
 #' @param cores A positive integer.
 #' The number of cores used to compute each intensity tree.
 #'
-#' @details TODI
+#' @details TODO
 #'
 #' @return An object of class \code{\link{spforest}}.
 #' @export

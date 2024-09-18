@@ -34,7 +34,7 @@ tessforest <- function(X,
 
   if (cores > 1) {
     listtree <- parallel::mclapply(1:Ntree, FUN = function(i) {
-      tesstree2(
+      tesstree(
         X = X,
         lambda = lambda,
         dimyx = dimyx,
@@ -43,7 +43,7 @@ tessforest <- function(X,
     }, mc.cores = cores)
   } else {
     listtree <- lapply(1:Ntree, FUN = function(i) {
-      tesstree2(
+      tesstree(
         X = X,
         lambda = lambda,
         dimyx = dimyx,

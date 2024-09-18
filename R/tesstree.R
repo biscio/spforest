@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-#' Z <- tesstree2(
+#' Z <- tesstree(
 #'   X = bei,
 #'   lambda = 100,
 #'   dimyx = c(101, 201),

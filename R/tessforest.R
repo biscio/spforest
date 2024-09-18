@@ -96,7 +96,7 @@ tessforest <- function(X,
 #' in \code{listcovariates}.
 #'  First the points of \code{X} are thinned with probability \code{p} if
 #' \eqn{p>0} or bootstrapped if \eqn{p=0}.
-#' Then the function call \code{\link{treerec}} to compute
+#' Then the function call \code{\link{tesscovtree}} to compute
 #' an intensity tree estimate. This is repeated \code{Ntree} times.
 #' The result returns in an \code{\link{spforest}} object.
 #'

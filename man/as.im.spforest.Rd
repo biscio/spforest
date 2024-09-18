@@ -18,7 +18,7 @@ A pixel image \code{\link[spatstat.geom]{im.object}}.
 Convert to Pixel Image
 }
 \examples{
-forest <- RforestPP(
+forest <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

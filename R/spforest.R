@@ -1,7 +1,7 @@
 #' Random intensity forest
 #'
 #' @param X A spatial point process as a \code{\link[spatstat.geom]{ppp}} object.
-#' @param listcovariates A list of covariates as \code{\link[spatstat.model]{im}} objects.
+#' @param listcovariates A list of covariates as \code{\link[spatstat.geom]{im}} objects.
 #' @param Ntree Number of trees in the forest.
 #' @param minpts A positive integer.
 #' The minimum number of points allowed to try to split a cell.
@@ -93,7 +93,7 @@ NULL
 
 #' Printing spatial intensity forest
 #'
-#' @param x A spatial intensity forest return by RforestPP function
+#' @param x A spatial intensity forest return by spforest function
 #' @param ... Additional arguments
 #'
 #' @return A description of the random intensity forest with
@@ -101,7 +101,7 @@ NULL
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -131,7 +131,7 @@ print.spforest <- function(x, ...) {
 
 #' Forest prediction
 #'
-#' @param object A spatial intensity forest return by RforestPP function
+#' @param object A spatial intensity forest return by spforest function
 #' @param newdata a xy vector or a ppp object
 #' @param ... Additional argument
 #'
@@ -139,7 +139,7 @@ print.spforest <- function(x, ...) {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -178,7 +178,7 @@ predict.spforest <- function(object, newdata, ...) {
 
 #' Plot spatial intensity forest
 #'
-#' @param x A spatial intensity tree return by RforestPP function
+#' @param x A spatial intensity tree return by spforest function
 #' @param ... additional arguments
 #' @param main A title for the plot.
 #'
@@ -191,7 +191,7 @@ predict.spforest <- function(object, newdata, ...) {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -223,7 +223,7 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -257,7 +257,7 @@ as.im.spforest <- function(X, ...) {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -294,7 +294,7 @@ boxplot.spforest <- function(x, cores = 1, ...) {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -376,14 +376,14 @@ vipplot <- function(x, sorted = FALSE, cores = 1, ...) {
 #' @export
 #'
 #' @examples
-#' forest1 <- RforestPP(
+#' forest1 <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
 #'   minpts = 300,
 #'   mtry = 1
 #' )
-#' forest2 <- RforestPP(
+#' forest2 <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -455,7 +455,7 @@ merge.spforest <- function(x, y, ...) {
 #' #' @export
 #' #'
 #' #' @examples
-#' #' forest <- RforestPP(
+#' #' forest <- spforest(
 #' #'   X = spatstat.data::bei,
 #' #'   listcovariates = spatstat.data::bei.extra,
 #' #'   Ntree = 3,

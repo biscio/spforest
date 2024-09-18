@@ -60,7 +60,7 @@ Spatial Intensity tree function with covariates
 vecval0 <- lapply(beisoilres, FUN = function(i) {
   c(as.matrix.im(i))
 })
-mytree <- intensitytree(
+mytree <- tesscovtree(
   X = spatstat.data::bei,
   vecval = vecval0,
   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,

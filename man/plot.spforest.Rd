@@ -7,7 +7,7 @@
 \method{plot}{spforest}(x, ..., main = "Spatial Intensity Forest")
 }
 \arguments{
-\item{x}{A spatial intensity tree return by RforestPP function}
+\item{x}{A spatial intensity tree return by spforest function}
 
 \item{...}{additional arguments}
 
@@ -26,7 +26,7 @@ as an \code{\link[spatstat.geom]{im}} object and then plot it with
 \code{\link[spatstat.geom]{plot.im}}.
 }
 \examples{
-forest <- RforestPP(
+forest <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

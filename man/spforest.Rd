@@ -22,7 +22,7 @@ spforest(
 \arguments{
 \item{X}{A spatial point process as a \code{\link[spatstat.geom]{ppp}} object.}
 
-\item{listcovariates}{A list of covariates as \code{\link[spatstat.model]{im}} objects.}
+\item{listcovariates}{A list of covariates as \code{\link[spatstat.geom]{im}} objects.}
 
 \item{Ntree}{Number of trees in the forest.}
 
@@ -59,7 +59,7 @@ An object of class \code{\link{spforest}}.
 S3 class used to define random forest intensity
 }
 \details{
-TODI
+TODO
 }
 \examples{
 forestwithcov <- spforest(

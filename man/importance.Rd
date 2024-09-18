@@ -21,7 +21,7 @@ in the list of covariates of \code{forest}, for each tree.
 Importance of one covariable
 }
 \examples{
-forest <- RforestPP(
+forest <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

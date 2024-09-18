@@ -20,7 +20,7 @@ A number
 OOB ppm
 }
 \examples{
-forest <- RforestPP(
+forest <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

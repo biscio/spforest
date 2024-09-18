@@ -7,7 +7,8 @@
 \method{predict}{sptree}(object, newdata, ...)
 }
 \arguments{
-\item{object}{A spatial intensity tree return by treerec function}
+\item{object}{A spatial intensity tree returned
+by tesscovtree of tesstree functions}
 
 \item{newdata}{a xy vector or a ppp object}
 
@@ -20,15 +21,19 @@ A number .....
 Tree prediction
 }
 \examples{
-arbre <- treerec(
+vecval0 <- lapply(beisoilres, FUN = function(i) {
+  c(as.matrix.im(i))
+})
+arbre <- tesscovtree(
   X = spatstat.data::bei,
-  listcovariates = spatstat.data::bei.extra,
+  vecval = vecval0,
+  areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+  dimcov = beisoilres[[1]]$dim,
+  covrangex = beisoilres[[1]]$xrange,
+  covrangey = beisoilres[[1]]$yrange,
+  listcovariates = beisoilres,
   mtry = 1,
-  minpts = 300
-)
-arbre$listcov <- list(
-  grad = spatstat.data::bei.extra$grad,
-  elev = spatstat.data::bei.extra$elev
+  minpts = 500
 )
 predict(object = arbre, newdata = c(100, 100))
 }

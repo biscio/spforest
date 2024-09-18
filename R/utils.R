@@ -61,7 +61,7 @@ rand_covar <- function(listcovariates, mtry = 1) {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -132,7 +132,7 @@ importance <- function(forest, id_cov, cores = 1) {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
@@ -206,7 +206,7 @@ OOBscr <- function(forest, cores = 1) {
 #' @export
 #'
 #' @examples
-#' forest <- RforestPP(
+#' forest <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,

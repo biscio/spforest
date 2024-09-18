@@ -7,7 +7,7 @@
 \method{print}{sptree}(x, ...)
 }
 \arguments{
-\item{x}{A spatial intensity tree return by treerec function}
+\item{x}{A spatial intensity tree return by tesstree function}
 
 \item{...}{Additional arguments}
 }
@@ -19,11 +19,19 @@ the number of points and covariates used.
 Printing spatial intensity tree
 }
 \examples{
-arbre <- treerec(
+vecval0 <- lapply(beisoilres, FUN = function(i) {
+  c(as.matrix.im(i))
+})
+arbre <- tesscovtree(
   X = spatstat.data::bei,
-  listcovariates = spatstat.data::bei.extra,
-  minpts = 300,
-  mtry = 1
+  vecval = vecval0,
+  areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+  dimcov = beisoilres[[1]]$dim,
+  covrangex = beisoilres[[1]]$xrange,
+  covrangey = beisoilres[[1]]$yrange,
+  listcovariates = beisoilres,
+  mtry = 1,
+  minpts = 500
 )
 print(arbre)
 }

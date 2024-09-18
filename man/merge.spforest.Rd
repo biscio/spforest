@@ -21,14 +21,14 @@ the intensity trees from both forest.
 Merge two forests with same parameters
 }
 \examples{
-forest1 <- RforestPP(
+forest1 <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,
   minpts = 300,
   mtry = 1
 )
-forest2 <- RforestPP(
+forest2 <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

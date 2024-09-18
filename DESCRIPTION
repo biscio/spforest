@@ -17,8 +17,6 @@ Imports:
     graphics,
     parallel,
     spatstat.geom,
-    sp,
-    sf,
     spatstat.random
 Suggests: 
     knitr,

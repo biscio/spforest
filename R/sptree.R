@@ -1,6 +1,6 @@
 #' Printing spatial intensity tree
 #'
-#' @param x A spatial intensity tree return by treerec function
+#' @param x A spatial intensity tree return by tesstree function
 #' @param ... Additional arguments
 #'
 #' @return A description of the random intensity tree with
@@ -8,11 +8,19 @@
 #' @export
 #'
 #' @examples
-#' arbre <- treerec(
+#' vecval0 <- lapply(beisoilres, FUN = function(i) {
+#'   c(as.matrix.im(i))
+#' })
+#' arbre <- tesscovtree(
 #'   X = spatstat.data::bei,
-#'   listcovariates = spatstat.data::bei.extra,
-#'   minpts = 300,
-#'   mtry = 1
+#'   vecval = vecval0,
+#'   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#'   dimcov = beisoilres[[1]]$dim,
+#'   covrangex = beisoilres[[1]]$xrange,
+#'   covrangey = beisoilres[[1]]$yrange,
+#'   listcovariates = beisoilres,
+#'   mtry = 1,
+#'   minpts = 500
 #' )
 #' print(arbre)
 print.sptree <- function(x, ...) {
@@ -38,7 +46,7 @@ print.sptree <- function(x, ...) {
 
 #' Summary of a spatial intensity tree
 #'
-#' @param object A spatial intensity tree return by treerec function
+#' @param object A spatial intensity tree return by tesstree function
 #' @param fulltree Should we print all the column of the matrix?
 #' @param ... Additional arguments
 #'
@@ -46,11 +54,19 @@ print.sptree <- function(x, ...) {
 #' @export
 #'
 #' @examples
-#' arbre <- treerec(
+#' vecval0 <- lapply(beisoilres, FUN = function(i) {
+#'   c(as.matrix.im(i))
+#' })
+#' arbre <- tesscovtree(
 #'   X = spatstat.data::bei,
-#'   listcovariates = spatstat.data::bei.extra,
-#'   minpts = 300,
-#'   mtry = 1
+#'   vecval = vecval0,
+#'   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#'   dimcov = beisoilres[[1]]$dim,
+#'   covrangex = beisoilres[[1]]$xrange,
+#'   covrangey = beisoilres[[1]]$yrange,
+#'   listcovariates = beisoilres,
+#'   mtry = 1,
+#'   minpts = 500
 #' )
 #' summary(arbre)
 summary.sptree <- function(object, fulltree = F, ...) {
@@ -69,7 +85,7 @@ summary.sptree <- function(object, fulltree = F, ...) {
 
 #' Plot spatial intensity tree
 #'
-#' @param x A spatial intensity tree return by treerec function
+#' @param x A spatial intensity tree return by tesstree function
 #' @param ... additional arguments
 #' @param main Title of the plot.
 #'
@@ -78,11 +94,19 @@ summary.sptree <- function(object, fulltree = F, ...) {
 #' @export
 #'
 #' @examples
-#' arbre <- treerec(
+#' vecval0 <- lapply(beisoilres, FUN = function(i) {
+#'   c(as.matrix.im(i))
+#' })
+#' arbre <- tesscovtree(
 #'   X = spatstat.data::bei,
-#'   listcovariates = spatstat.data::bei.extra,
-#'   minpts = 300,
-#'   mtry = 1
+#'   vecval = vecval0,
+#'   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#'   dimcov = beisoilres[[1]]$dim,
+#'   covrangex = beisoilres[[1]]$xrange,
+#'   covrangey = beisoilres[[1]]$yrange,
+#'   listcovariates = beisoilres,
+#'   mtry = 1,
+#'   minpts = 500
 #' )
 #' plot(arbre)
 plot.sptree <- function(x, ..., main = "Spatial Intensity Tree") {
@@ -99,7 +123,8 @@ plot.sptree <- function(x, ..., main = "Spatial Intensity Tree") {
 
 #' Tree prediction
 #'
-#' @param object A spatial intensity tree return by treerec function
+#' @param object A spatial intensity tree returned 
+#' by tesscovtree of tesstree functions
 #' @param newdata a xy vector or a ppp object
 #' @param ... Additional argument
 #'
@@ -107,15 +132,19 @@ plot.sptree <- function(x, ..., main = "Spatial Intensity Tree") {
 #' @export
 #'
 #' @examples
-#' arbre <- treerec(
+#' vecval0 <- lapply(beisoilres, FUN = function(i) {
+#'   c(as.matrix.im(i))
+#' })
+#' arbre <- tesscovtree(
 #'   X = spatstat.data::bei,
-#'   listcovariates = spatstat.data::bei.extra,
+#'   vecval = vecval0,
+#'   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#'   dimcov = beisoilres[[1]]$dim,
+#'   covrangex = beisoilres[[1]]$xrange,
+#'   covrangey = beisoilres[[1]]$yrange,
+#'   listcovariates = beisoilres,
 #'   mtry = 1,
-#'   minpts = 300
-#' )
-#' arbre$listcov <- list(
-#'   grad = spatstat.data::bei.extra$grad,
-#'   elev = spatstat.data::bei.extra$elev
+#'   minpts = 500
 #' )
 #' predict(object = arbre, newdata = c(100, 100))
 predict.sptree <- function(object, newdata, ...) {
@@ -182,72 +211,4 @@ predict.sptree <- function(object, newdata, ...) {
   )
 
   return(unlist(output))
-}
-
-
-
-
-#' Tree prediction (Save when attempting another version)
-#'
-#' @param object A spatial intensity tree return by treerec function
-#' @param newdata a xy vector or a ppp object
-#' @param ... Additional argument
-#'
-#' @return A number .....
-#' @export
-#'
-#' @examples
-#' arbre <- treerec(
-#'   X = spatstat.data::bei,
-#'   listcovariates = spatstat.data::bei.extra,
-#'   mtry = 1,
-#'   minpts = 300
-#' )
-#' arbre$listcov <- list(
-#'   grad = spatstat.data::bei.extra$grad,
-#'   elev = spatstat.data::bei.extra$elev
-#' )
-#' predict(object = arbre, newdata = c(100, 100))
-predict.sptree_save <- function(object, newdata, ...) {
-  if (missing(newdata) || is.null(newdata)) {
-    X <- object$X
-  } else if (!spatstat.geom::is.ppp(newdata)) {
-    X <- spatstat.geom::ppp(x = newdata[1], y = newdata[2], window = object$X$window)
-  } else if (spatstat.geom::is.ppp(newdata)) {
-    if (newdata$n == 0) {
-      return(NULL)
-    }
-    X <- newdata
-  }
-
-
-  Zfun <- lapply(object$listcov, spatstat.geom::as.function.im)
-  ptxy <- cbind(X$x, X$y)
-  valsplits <- lapply(Zfun, FUN = function(j) {
-    j(X)
-  })
-
-  output <- sapply(1:nrow(ptxy),
-    FUN = function(i, ...) {
-      node <- object$tree[[1]]
-
-      while (node$status == 1) {
-        # child <- ifelse(Zfun[[node$split_var]](ptxy[i, 1], ptxy[i, 2]) < node$split_val,
-        #                 node$left_daughter,
-        #                 node$right_daughter
-        # )
-
-        child <- ifelse(valsplits[[node$split_var]][i] < node$split_val,
-          node$left_daughter,
-          node$right_daughter
-        )
-
-        node <- object$tree[[child]]
-      }
-
-      return(node$intensity_pred)
-    }
-  )
-
-  return(output)
 }

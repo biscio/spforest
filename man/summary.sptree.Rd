@@ -7,7 +7,7 @@
 \method{summary}{sptree}(object, fulltree = F, ...)
 }
 \arguments{
-\item{object}{A spatial intensity tree return by treerec function}
+\item{object}{A spatial intensity tree return by tesstree function}
 
 \item{fulltree}{Should we print all the column of the matrix?}
 
@@ -20,11 +20,19 @@ A dataframe representing each node and spit of the intensity tree.
 Summary of a spatial intensity tree
 }
 \examples{
-arbre <- treerec(
+vecval0 <- lapply(beisoilres, FUN = function(i) {
+  c(as.matrix.im(i))
+})
+arbre <- tesscovtree(
   X = spatstat.data::bei,
-  listcovariates = spatstat.data::bei.extra,
-  minpts = 300,
-  mtry = 1
+  vecval = vecval0,
+  areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+  dimcov = beisoilres[[1]]$dim,
+  covrangex = beisoilres[[1]]$xrange,
+  covrangey = beisoilres[[1]]$yrange,
+  listcovariates = beisoilres,
+  mtry = 1,
+  minpts = 500
 )
 summary(arbre)
 }

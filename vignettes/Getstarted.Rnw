@@ -73,7 +73,7 @@ To run the code faster in this vignette, we will downscale these data.
 beismall <- lapply(bei.extra, as.im, dimyx = c(10, 20))
 @
 
-The function \texttt{RforestPP} is the core function of \pkg{Rsandbox} and 
+The function \texttt{spforest} is the core function of \pkg{Rsandbox} and 
 generate random forest intensity estimates. 
 
 <<first example Rforest>>=
@@ -200,7 +200,7 @@ allscore <- lapply(allforesttoy, FUN = function(i) {
 allargs[which.max(allscore), ]
 @
 
-Then, we run again \texttt{RforestPP} for this 
+Then, we run again \texttt{spforest} for this 
 combination of parameter but with \texttt{Ntree} larger. 
 
 <<Computing chosen forest toy example>>=
@@ -287,7 +287,7 @@ allscore <- lapply(allforestbei, FUN = function(i) {
 allargs[which.max(allscore), ]
 @
 
-Finally, we run again \texttt{RforestPP} with \texttt{Ntree} larger. 
+Finally, we run again \texttt{spforest} with \texttt{Ntree} larger. 
 
 <<Computing chosen forest bei example>>=
 chosenforestbei <- spforest(
@@ -321,22 +321,18 @@ most impact on the intensity of the point process.
 vipplot(chosenforestbei, sorted = T)
 @
 
-The VIP plot indicates that the five most important covariates 
-are that grad, P, Zn, Cu, elev. 
-Up to the covariates Cu, these results are in agreement with 
-those of \cite{coeurjolly:18} that studied the same data. 
+The VIP plot indicates that the five most important covariates.
 
-Moreover, we have run the same analysis 
-with all the combination of hyperparameters between $\texttt{mtry} = 0.1,0.2,\ldots 1$ and
+Running the same analysis with all the combination of hyperparameters between $\texttt{mtry} = 0.1,0.2,\ldots 1$ and
 $\texttt{minpts} = 10,20,\ldots,1000$ and 
-$\texttt{Ntree} = 500$. 
-The combination maximising the OOB score was 
+$\texttt{Ntree} = 500$. The combination maximising the OOB score will be 
 $\texttt{mtry} = 1$ and $\texttt{minpts} = 10$ and the corresponding VIP plots 
-showed the same five most important covariates. 
+will show the same five most important covariates as in \cite{coeurjolly:18} 
+which studied the same data.
  
 \section{More advanced uses}
 
-The function \texttt{RforestPP} has more arguments that can be modified to train 
+The function \texttt{spforest} has more arguments that can be modified to train 
 a random intensity forest. 
 However, from our observations, they had a low or no impact on the mean integrated squared error and VIP. Consequently, we chose to not include them in the standard workflow.
 These arguments are:

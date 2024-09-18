@@ -93,7 +93,7 @@ tesstree <- function(X,
 #' vecval0 <- lapply(beisoilres, FUN = function(i) {
 #'   c(as.matrix.im(i))
 #' })
-#' mytree <- intensitytree(
+#' mytree <- tesscovtree(
 #'   X = spatstat.data::bei,
 #'   vecval = vecval0,
 #'   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
@@ -318,44 +318,3 @@ tesscovtree <- function(X,
 
   # return(spatstat.geom::as.im(Reduce("+", patchworks), W = X$window))
 }
-# plot(spatstat.geom::as.im(Reduce("+", A), W = X$window))
-#
-# f <- function() {
-#   treerec(
-#     X = spatstat.data::bei,
-#     threshold = 1000,
-#     listcovariates = beisoilres,
-#     mtry = 1,
-#     minpts = 100
-#   )
-# }
-#
-# g <- function() {
-#   intensitytree(
-#     X = spatstat.data::bei,
-#     listcovariates = beisoilres,
-#     mtry = 1,
-#     minpts = 100,
-#     threshold = 1000
-#   )
-# }
-#
-# A <- f()
-# B <- g()
-# plot(A)
-# plot(B)
-
-#
-# library(microbenchmark)
-# microbenchmark(f(), g())
-#
-# library(profvis)
-# profvis(f())
-# profvis(g())
-
-#
-# plot(im(matrix(intensity_tree[idterm == 0][[1]]$nodeCov[[1]],
-#                nrow = dimcov[1],
-#                ncol = dimcov[2], byrow = F),
-#         xrange = covrangex, yrange = covrangey) )
-#

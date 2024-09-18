@@ -7,7 +7,7 @@
 \method{print}{spforest}(x, ...)
 }
 \arguments{
-\item{x}{A spatial intensity forest return by RforestPP function}
+\item{x}{A spatial intensity forest return by spforest function}
 
 \item{...}{Additional arguments}
 }
@@ -19,7 +19,7 @@ the number of points, number of covariates, and number of trees used.
 Printing spatial intensity forest
 }
 \examples{
-forest <- RforestPP(
+forest <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

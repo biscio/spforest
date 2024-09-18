@@ -7,7 +7,7 @@
 \method{predict}{spforest}(object, newdata, ...)
 }
 \arguments{
-\item{object}{A spatial intensity forest return by RforestPP function}
+\item{object}{A spatial intensity forest return by spforest function}
 
 \item{newdata}{a xy vector or a ppp object}
 
@@ -20,7 +20,7 @@ A vector of predicted intensity
 Forest prediction
 }
 \examples{
-forest <- RforestPP(
+forest <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,

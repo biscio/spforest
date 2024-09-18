@@ -27,7 +27,7 @@ A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 Spatial Intensity tree function without covariate
 }
 \examples{
-Z <- tesstree2(
+Z <- tesstree(
   X = bei,
   lambda = 100,
   dimyx = c(101, 201),

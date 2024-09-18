@@ -1,3 +1,51 @@
+#' Random intensity forest
+#'
+#' @param X A spatial point process as a \code{\link[spatstat.geom]{ppp}} object.
+#' @param listcovariates A list of covariates as \code{\link[spatstat.model]{im}} objects.
+#' @param Ntree Number of trees in the forest.
+#' @param minpts A positive integer.
+#' The minimum number of points allowed to try to split a cell.
+#' @param mtry Probability of choosing a covariable.
+#' @param p A number in \eqn{[0,1)}.
+#' Control the thinning process applied to the original point pattern __X__ before
+#' fitting a tree intensity estimator.
+#' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
+#' @param threshold Minimum threshold to allow to split cell.
+#' @param lambda An integer. The number of points used for random tessellation.
+#' @param dimyx A vector of two integers. The dimensions of the output image passed
+#' to \code{\link[spatstat.geom]{as.im}}.
+#' @param test.connected Logical. If \code{TRUE},
+#' \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
+#' in different connected components. It is only useful if the windows of
+#' observation od \code{X} is not convex.
+#' @param cores A positive integer.
+#' The number of cores used to compute each intensity tree.
+#'
+#' @details TODI
+#'
+#' @return An object of class \code{\link{spforest}}.
+#' @export
+#'
+#' @examples
+#' forestwithcov <- spforest(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 200,
+#'   mtry = 1 / 3,
+#'   p = 0,
+#'   cores = 1
+#' )
+#' plot(forestwithcov)
+#' forestwithtoutcov <- tessforest(
+#'   X = bei,
+#'   lambda = 50,
+#'   dimyx = c(101, 201),
+#'   test.connected = FALSE,
+#'   Ntree = 5,
+#'   cores = 1
+#' )
+#' plot(forestwithtoutcov)
 spforest <- function(X,
                      listcovariates = NULL,
                      Ntree = 10,

@@ -2,7 +2,83 @@
 % Please edit documentation in R/spforest.R
 \name{spforest}
 \alias{spforest}
-\title{spforest.object}
+\title{Random intensity forest}
+\usage{
+spforest(
+  X,
+  listcovariates = NULL,
+  Ntree = 10,
+  minpts = spatstat.geom::npoints(X)/10,
+  mtry = 1/3,
+  p = 0,
+  score = "lcv",
+  threshold = smallest_pixelarea(listcovariates),
+  lambda = 100,
+  dimyx = c(50, 50),
+  test.connected = FALSE,
+  cores = 1
+)
+}
+\arguments{
+\item{X}{A spatial point process as a \code{\link[spatstat.geom]{ppp}} object.}
+
+\item{listcovariates}{A list of covariates as \code{\link[spatstat.model]{im}} objects.}
+
+\item{Ntree}{Number of trees in the forest.}
+
+\item{minpts}{A positive integer.
+The minimum number of points allowed to try to split a cell.}
+
+\item{mtry}{Probability of choosing a covariable.}
+
+\item{p}{A number in \eqn{[0,1)}.
+Control the thinning process applied to the original point pattern \strong{X} before
+fitting a tree intensity estimator.}
+
+\item{score}{A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".}
+
+\item{threshold}{Minimum threshold to allow to split cell.}
+
+\item{lambda}{An integer. The number of points used for random tessellation.}
+
+\item{dimyx}{A vector of two integers. The dimensions of the output image passed
+to \code{\link[spatstat.geom]{as.im}}.}
+
+\item{test.connected}{Logical. If \code{TRUE},
+\code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
+in different connected components. It is only useful if the windows of
+observation od \code{X} is not convex.}
+
+\item{cores}{A positive integer.
+The number of cores used to compute each intensity tree.}
+}
+\value{
+An object of class \code{\link{spforest}}.
+}
 \description{
 S3 class used to define random forest intensity
+}
+\details{
+TODI
+}
+\examples{
+forestwithcov <- spforest(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra,
+  Ntree = 3,
+  minpts = 200,
+  mtry = 1 / 3,
+  p = 0,
+  cores = 1
+)
+plot(forestwithcov)
+forestwithtoutcov <- tessforest(
+  X = bei,
+  lambda = 50,
+  dimyx = c(101, 201),
+  test.connected = FALSE,
+  Ntree = 5,
+  cores = 1
+)
+plot(forestwithtoutcov)
 }

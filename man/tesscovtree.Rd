@@ -42,7 +42,7 @@ covariates must be given as im object from the package spatstat.}
 \item{minpts}{A positive integer.
 The minimum number of points allowed to try to split a cell.}
 
-\item{mtry}{Probability of choosing a covariable.}
+\item{mtry}{Probability of choosing a covariate.}
 
 \item{score}{A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".}
 

@@ -8,23 +8,44 @@ tesstree(X, lambda = 100, dimyx = c(128, 128), test.connected = FALSE)
 }
 \arguments{
 \item{X}{The observed data point pattern,
-as a \code{\link[spatstat.geom]{ppp}} object .}
+as a \code{\link[spatstat.geom]{ppp.object}}.}
 
-\item{lambda}{An integer. The number of points used for random tessellation.}
+\item{lambda}{An integer. The number of points used to generate random tessellation.}
 
-\item{dimyx}{A vector of two integers. The dimensions of the output image passed
+\item{dimyx}{A vector of two integers representing the dimensions of the output image passed
 to \code{\link[spatstat.geom]{as.im}}.}
 
 \item{test.connected}{Logical. If \code{TRUE},
 \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 in different connected components. It is only useful if the windows of
-observation od \code{X} is not convex.}
+observation of \code{X} is not convex.}
 }
 \value{
 A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 }
 \description{
 Spatial Intensity tree function without covariate
+}
+\details{
+If the point pattern \code{X} is on a rectangular window,
+the algorithm generates a Voronoi tessellation from
+\code{lambda} points
+uniformly sampled on the window of \code{X}, fattened by
+\eqn{2 / \sqrt{\lambda}} to avoid border effect.
+The intensity tree at coordinates \eqn{(x, y)}
+is the number of points of \code{X} in the tile
+of the tessellation containing \eqn{(x, y)}
+divided by the area of the tile.
+
+If the point pattern \code{X} is on a non-rectangular window,
+the algorithm generates a Voronoi tessellation
+on the enclosing rectangle of the window of \code{X},
+fattened by \eqn{2 / \sqrt{\lambda}}.
+The tessellation is then intersected
+with the window of \code{X} and,
+if \code{test.connected = TRUE},
+the function \code{\link[spatstat.geom]{connected}} is used
+to split non-connected cells.
 }
 \examples{
 Z <- tesstree(

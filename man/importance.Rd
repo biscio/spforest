@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{importance}
 \alias{importance}
-\title{Importance of one covariable}
+\title{Importance of one covariate}
 \usage{
 importance(forest, id_cov, cores = 1)
 }
@@ -14,11 +14,11 @@ importance(forest, id_cov, cores = 1)
 \item{cores}{How many cores to use to speed up computation}
 }
 \value{
-A vector of the importance of the covariable \code{id_cov}
+A vector of the importance of the covariate \code{id_cov}
 in the list of covariates of \code{forest}, for each tree.
 }
 \description{
-Importance of one covariable
+Importance of one covariate
 }
 \examples{
 forest <- spforest(

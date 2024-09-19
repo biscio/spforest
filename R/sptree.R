@@ -34,7 +34,7 @@ print.sptree <- function(x, ...) {
     x$X$n, "points.\n\n"
   ))
 
-  cat(paste(length(namecov), "covariables used, with names: "))
+  cat(paste(length(namecov), "covariates used, with names: "))
   cat(namecov, "\n")
 
   cat(
@@ -154,7 +154,7 @@ predict.sptree <- function(object, newdata, ...) {
     spatstat.geom::is.im
   ))
   if (!all(whichcovim)) {
-    stop("It appears that in predict.sptree, the covariables of the
+    stop("It appears that in predict.sptree, the covariates of the
              tree are not spatstat im objects")
   }
 

@@ -79,7 +79,7 @@ splitcell <- function(X,
     }
   )
 
-  # Determination of level sets for all covariables
+  # Determination of level sets for all covariates
   scr_cov <- NULL
   for (i in 1:sum(usecovariates)) {
     Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)

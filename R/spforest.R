@@ -5,7 +5,7 @@
 #' @param Ntree Number of trees in the forest.
 #' @param minpts A positive integer.
 #' The minimum number of points allowed to try to split a cell.
-#' @param mtry Probability of choosing a covariable.
+#' @param mtry Probability of choosing a covariate.
 #' @param p A number in \eqn{[0,1)}.
 #' Control the thinning process applied to the original point pattern __X__ before
 #' fitting a tree intensity estimator.
@@ -118,13 +118,13 @@ print.spforest <- function(x, ...) {
 
 
   if (is.null(x$listcov)) {
-    cat("No covariable has been given: each tree has been generated with a random tesselation.\n")
+    cat("No covariate has been given: each tree has been generated with a random tesselation.\n")
   } else {
     ncov <- length(x$listcov)
     a <- paste0(names(x$listcov), collapse = "", sep = ", ")
     namecov <- paste0(substr(a, 1, nchar(a) - 2), ".")
 
-    cat(paste(ncov, "covariables used: "))
+    cat(paste(ncov, "covariates used: "))
     cat(namecov, "\n")
   }
 }

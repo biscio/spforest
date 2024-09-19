@@ -50,13 +50,13 @@ rand_covar <- function(listcovariates, mtry = 1) {
 
 
 
-#' Importance of one covariable
+#' Importance of one covariate
 #'
 #' @param forest A spforest object
 #' @param id_cov The position in the list of covariates of \code{forest}.
 #' @param cores How many cores to use to speed up computation
 #'
-#' @return A vector of the importance of the covariable \code{id_cov}
+#' @return A vector of the importance of the covariate \code{id_cov}
 #' in the list of covariates of \code{forest}, for each tree.
 #' @export
 #'
@@ -95,7 +95,7 @@ importance <- function(forest, id_cov, cores = 1) {
     treepert <- forest$trees[[i]]
     treepert$listcov <- listZ_shuf
 
-    ### OOB prediction for shuffled covariable
+    ### OOB prediction for shuffled covariate
     pts_pred_OOB_pert <- predict.sptree(
       object = treepert,
       newdata = Xout

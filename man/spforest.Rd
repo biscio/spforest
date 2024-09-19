@@ -29,7 +29,7 @@ spforest(
 \item{minpts}{A positive integer.
 The minimum number of points allowed to try to split a cell.}
 
-\item{mtry}{Probability of choosing a covariable.}
+\item{mtry}{Probability of choosing a covariate.}
 
 \item{p}{A number in \eqn{[0,1)}.
 Control the thinning process applied to the original point pattern \strong{X} before

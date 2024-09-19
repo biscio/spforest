@@ -1,14 +1,38 @@
 #' Spatial Intensity tree function without covariate
 #'
 #' @param X The observed data point pattern,
-#' as a \code{\link[spatstat.geom]{ppp}} object .
-#' @param lambda An integer. The number of points used for random tessellation.
-#' @param dimyx A vector of two integers. The dimensions of the output image passed
+#' as a \code{\link[spatstat.geom]{ppp.object}}.
+#' @param lambda An integer. The number of points used to generate random tessellation.
+#' @param dimyx A vector of two integers representing the dimensions of the output image passed
 #' to \code{\link[spatstat.geom]{as.im}}.
 #' @param test.connected Logical. If \code{TRUE},
 #' \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 #' in different connected components. It is only useful if the windows of
-#' observation od \code{X} is not convex.
+#' observation of \code{X} is not convex.
+#'
+#' @details
+#' The function generates a spatial intensity 
+#' tree from a point pattern \code{X} using an independently 
+#' generated Voronoi tessellation.
+#' If the point pattern \code{X} is on a rectangular window,
+#' the algorithm generates a Voronoi tessellation from
+#' \code{lambda} points
+#' uniformly sampled on the window of \code{X}, fattened by
+#' \eqn{2 / \sqrt{\lambda}} to avoid border effect.
+#' The intensity tree at coordinates \eqn{(x, y)}
+#' is the number of points of \code{X} in the tile
+#' of the tessellation containing \eqn{(x, y)}
+#' divided by the area of the tile.
+#'
+#' If the point pattern \code{X} is on a non-rectangular window,
+#' the algorithm generates a Voronoi tessellation
+#' on the enclosing rectangle of the window of \code{X},
+#' fattened by \eqn{2 / \sqrt{\lambda}}.
+#' The tessellation is then intersected 
+#' with the window of \code{X} and,
+#' if \code{test.connected = TRUE},
+#' the function \code{\link[spatstat.geom]{connected}} is used
+#' to split non-connected cells.
 #'
 #' @return A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 #' @export
@@ -68,8 +92,8 @@ tesstree <- function(X,
 #' Spatial Intensity tree function with covariates
 #'
 #' @param X The observed data point pattern.
-#' @param vecval A list. The i-th element is the values of a i-th covariate in
-#' \code{listcovariates} at the points of \code{X}.
+#' @param vecval A list. The i-th element is the values of 
+#' a i-th covariate in \code{listcovariates} at the points of \code{X}.
 #' @param areapixel The pixel area used for all covariate.
 #' @param dimcov The element \code{dim} of the covariates which are
 #' \code{\link[spatstat.geom]{im}}.
@@ -81,10 +105,30 @@ tesstree <- function(X,
 #' covariates must be given as im object from the package spatstat.
 #' @param minpts A positive integer.
 #' The minimum number of points allowed to try to split a cell.
-#' @param mtry Probability of choosing a covariable.
+#' @param mtry Probability of choosing a covariate.
 #' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
 #' @param threshold Minimum threshold to allow to split cell.
 #' @param inforest Logical. Indicates if the function is run in a forest or not.
+#'
+#' @details
+#' The function generates a spatial intensity 
+#' tree from a point pattern \code{X} using a tessellation 
+#' build from covariates. The covariates needs to be 
+#' input in a vectorised form in \code{vecval}. 
+#' 
+#' The tessellation is build iteratively, starting from 
+#' full window of \code{X} as the first cell, until there is less 
+#' than \ocde{minpts} points in a cell or 
+#' the area of the cell is less that \code{threshold}.
+#' 
+#' At each step, we look to split the cell 
+#' according to the sub and sup level sets of 
+#' a vectorise covariate in \code{vecval}.
+#' We choose among them the split that 
+#' gives the maximal score, given by \code{score}.
+#' 
+#' The arguments \code{dimcov}, \code{covrangex} and \code{covrangey}, 
+#' are used to XXXX TODO XXXX
 #'
 #' @return An object of class \code{sptree}.
 #' @export

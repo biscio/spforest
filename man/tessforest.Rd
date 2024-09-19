@@ -15,20 +15,20 @@ tessforest(
 }
 \arguments{
 \item{X}{The observed data point pattern,
-as a \code{\link[spatstat.geom]{ppp}} object .}
+as a \code{\link[spatstat.geom]{ppp.object}}.}
 
 \item{Ntree}{A positive integer.
 The number of trees in the random intensity forest.}
 
-\item{lambda}{An integer. The number of points used for random tessellation.}
+\item{lambda}{An integer. The number of points used to generate random tessellation.}
 
-\item{dimyx}{A vector of two integers. The dimensions of the output image passed
+\item{dimyx}{A vector of two integers representing the dimensions of the output image passed
 to \code{\link[spatstat.geom]{as.im}}.}
 
 \item{test.connected}{Logical. If \code{TRUE},
 \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 in different connected components. It is only useful if the windows of
-observation od \code{X} is not convex.}
+observation of \code{X} is not convex.}
 
 \item{cores}{A positive integer.
 The number of cores used to computes the intensity trees.}

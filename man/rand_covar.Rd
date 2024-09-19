@@ -7,9 +7,9 @@
 rand_covar(listcovariates, mtry = 1)
 }
 \arguments{
-\item{listcovariates}{list of covariatesd used}
+\item{listcovariates}{list of covariates used}
 
-\item{mtry}{selecting proba}
+\item{mtry}{Probability of choosing a covariate.}
 }
 \value{
 a vector of 0 and 1

@@ -39,6 +39,18 @@ A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 \description{
 Intensity tessellation forest without covariate
 }
+\details{
+This function compute a random intensity forest
+using \code{Ntree} independent spatial Intensity tree
+computed with the function \code{\link{tesstree}}.
+
+The arguments \code{X}, \code{lambda}, \code{dimyx},
+and \code{test.connected} are passed to \code{\link{tesstree}}.
+If the argument \code{cores} is strictly greater than \eqn{1},
+it is to the argument \code{mc.cores} of the function
+\code{\link[parallel]{mclapply}} to
+assign each spatial intensity tree computation to a core.
+}
 \examples{
 Z <- tessforest(
   X = bei,

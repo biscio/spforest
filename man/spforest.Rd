@@ -47,7 +47,7 @@ to \code{\link[spatstat.geom]{as.im}}.}
 \item{test.connected}{Logical. If \code{TRUE},
 \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 in different connected components. It is only useful if the windows of
-observation od \code{X} is not convex.}
+observation of \code{X} is not convex.}
 
 \item{cores}{A positive integer.
 The number of cores used to compute each intensity tree.}
@@ -56,10 +56,16 @@ The number of cores used to compute each intensity tree.}
 An object of class \code{\link{spforest}}.
 }
 \description{
-S3 class used to define random forest intensity
+Random intensity forest
 }
 \details{
-TODO
+This function is a wrapper around \code{\link{tesscovforest}}
+and \code{\link{tessforest}} to compute random intensity forest
+in the presence of covariates,
+or based on independent random tesselæation, respectively.
+If \code{listcovariates} is \code{NULL},
+the function will call \code{\link{tessforest}}. Otherwise, it will call
+\code{\link{tesscovforest}}.
 }
 \examples{
 forestwithcov <- spforest(

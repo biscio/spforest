@@ -22,8 +22,8 @@ tesscovtree(
 \arguments{
 \item{X}{The observed data point pattern.}
 
-\item{vecval}{A list. The i-th element is the values of a i-th covariate in
-\code{listcovariates} at the points of \code{X}.}
+\item{vecval}{A list. The i-th element is the values of
+a i-th covariate in \code{listcovariates} at the points of \code{X}.}
 
 \item{areapixel}{The pixel area used for all covariate.}
 
@@ -51,10 +51,43 @@ The minimum number of points allowed to try to split a cell.}
 \item{inforest}{Logical. Indicates if the function is run in a forest or not.}
 }
 \value{
-An object of class \code{sptree}.
+A pixel image as
+\code{\link[spatstat.geom]{im.object}}.
 }
 \description{
 Spatial Intensity tree function with covariates
+}
+\details{
+The function generates a spatial intensity
+tree from a point pattern \code{X} using a tessellation
+build from covariates. The covariates needs to be
+input in a vectorised form in \code{vecval}.
+
+The tessellation is build iteratively, starting from
+full window of \code{X} as the first cell, until there is less
+than \code{minpts} points in a cell or
+the area of the cell is less that \code{threshold}.
+
+At each step, we look to split the cell
+according to the sub and sup level sets of
+the vectorised covariate in \code{vecval}.
+We choose among them the split that
+gives the maximal score, given by \code{score}.
+Moreover, at each step, only a randomly subset of
+to covariates, each selected with probability \code{mtry}
+are used.
+
+The arguments \code{dimcov}, \code{covrangex} and \code{covrangey},
+are passed to \code{\link[spatstat.geom]{im}} to return
+a pixel image of the spatial intensity tree.
+
+The function output an object of class  \code{sptree} which
+contains the point pattern \code{X}.
+This is useful for information purposes.
+However, if the function is run
+as part of an intensity tessellation forest,
+it uses a lot of memory to create many copies of \code{X}.
+To avoid this, set \code{inforest=T}.
 }
 \examples{
 vecval0 <- lapply(beisoilres, FUN = function(i) {

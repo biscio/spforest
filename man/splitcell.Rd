@@ -11,10 +11,7 @@ splitcell(
   usecovariates,
   areapixel,
   score = "lcv",
-  threshold = spatstat.geom::area(X)/10000,
-  dimcov,
-  covrangex,
-  covrangey
+  threshold = spatstat.geom::area(X)/10000
 )
 }
 \arguments{
@@ -31,15 +28,7 @@ to choose}
 
 \item{score}{A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".}
 
-\item{threshold}{Minimum threshold to allow to split cell.}
-
-\item{dimcov}{The element \code{dim} of the covariates which are
-\code{\link[spatstat.geom]{im}}.}
-
-\item{covrangex}{The element \code{xrange} of the covariates which are
-\code{\link[spatstat.geom]{im}}.}
-
-\item{covrangey}{The element \code{yrange} of the covariates which are
+\item{threshold}{Minimum threshold to allow to split cell.
 \code{\link[spatstat.geom]{im}}.}
 }
 \value{
@@ -71,17 +60,11 @@ vecval <- lapply(Rsandbox::beisoilres, FUN = function(i) {
 usecovariates <- rep(1, 15)
 areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
 score <- "lcv"
-dimcov <- listcovariates[[1]]$dim
-covrangex <- listcovariates[[1]]$xrange
-covrangey <- listcovariates[[1]]$yrange
 A <- splitcell(
   X = X,
   valpts = valpts,
   vecval = vecval,
   usecovariates = usecovariates,
-  dimcov = dimcov,
-  covrangex = covrangex,
-  covrangey = covrangey,
   areapixel = areapixel,
   threshold = 100
 )

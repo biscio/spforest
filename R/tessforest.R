@@ -6,6 +6,18 @@
 #' @param cores A positive integer.
 #' The number of cores used to computes the intensity trees.
 #'
+#' @details
+#' This function compute a random intensity forest
+#' using \code{Ntree} independent spatial Intensity tree
+#' computed with the function \code{\link{tesstree}}.
+#'
+#' The arguments \code{X}, \code{lambda}, \code{dimyx},
+#' and \code{test.connected} are passed to \code{\link{tesstree}}.
+#' If the argument \code{cores} is strictly greater than \eqn{1},
+#' it is to the argument \code{mc.cores} of the function
+#' \code{\link[parallel]{mclapply}} to
+#' assign each spatial intensity tree computation to a core.
+#'
 #' @return A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 #' @export
 #'
@@ -94,8 +106,8 @@ tessforest <- function(X,
 #' @details
 #' This function compute a random intensity forest using the covariates given
 #' in \code{listcovariates}.
-#'  First the points of \code{X} are thinned with probability \code{p} if
-#' \eqn{p>0} or bootstrapped if \eqn{p=0}.
+#' First the points of \code{X} are thinned with probability
+#' \code{p} if \eqn{p>0}, or bootstrapped if \eqn{p=0}.
 #' Then the function call \code{\link{tesscovtree}} to compute
 #' an intensity tree estimate. This is repeated \code{Ntree} times.
 #' The result returns in an \code{\link{spforest}} object.

@@ -23,8 +23,8 @@ smallest_pixelarea <- function(x) {
 
 #' Randomise input for tree
 #'
-#' @param listcovariates list of covariatesd used
-#' @param mtry selecting proba
+#' @param listcovariates list of covariates used
+#' @param mtry Probability of choosing a covariate.
 #'
 #' @return a vector of 0 and 1
 #' @export

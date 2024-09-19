@@ -27,6 +27,9 @@ A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 Spatial Intensity tree function without covariate
 }
 \details{
+The function generates a spatial intensity
+tree from a point pattern \code{X} using an independently
+generated Voronoi tessellation.
 If the point pattern \code{X} is on a rectangular window,
 the algorithm generates a Voronoi tessellation from
 \code{lambda} points

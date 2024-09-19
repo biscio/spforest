@@ -54,8 +54,8 @@ and a list of covariates.
 \details{
 This function compute a random intensity forest using the covariates given
 in \code{listcovariates}.
-First the points of \code{X} are thinned with probability \code{p} if
-\eqn{p>0} or bootstrapped if \eqn{p=0}.
+First the points of \code{X} are thinned with probability
+\code{p} if \eqn{p>0}, or bootstrapped if \eqn{p=0}.
 Then the function call \code{\link{tesscovtree}} to compute
 an intensity tree estimate. This is repeated \code{Ntree} times.
 The result returns in an \code{\link{spforest}} object.

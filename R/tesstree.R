@@ -118,19 +118,32 @@ tesstree <- function(X,
 #' 
 #' The tessellation is build iteratively, starting from 
 #' full window of \code{X} as the first cell, until there is less 
-#' than \ocde{minpts} points in a cell or 
+#' than \code{minpts} points in a cell or 
 #' the area of the cell is less that \code{threshold}.
 #' 
 #' At each step, we look to split the cell 
 #' according to the sub and sup level sets of 
-#' a vectorise covariate in \code{vecval}.
+#' the vectorised covariate in \code{vecval}.
 #' We choose among them the split that 
 #' gives the maximal score, given by \code{score}.
+#' Moreover, at each step, only a randomly subset of 
+#' to covariates, each selected with probability \code{mtry} 
+#' are used.
 #' 
 #' The arguments \code{dimcov}, \code{covrangex} and \code{covrangey}, 
-#' are used to XXXX TODO XXXX
+#' are passed to \code{\link[spatstat.geom]{im}} to return 
+#' a pixel image of the spatial intensity tree. 
+#' 
+#' The function output an object of class  \code{sptree} which 
+#' contains the point pattern \code{X}. 
+#' This is useful for information purposes. 
+#' However, if the function is run 
+#' as part of an intensity tessellation forest, 
+#' it uses a lot of memory to create many copies of \code{X}. 
+#' To avoid this, set \code{inforest=T}.
 #'
-#' @return An object of class \code{sptree}.
+#' @return A pixel image as 
+#' \code{\link[spatstat.geom]{im.object}}.
 #' @export
 #'
 #' @examples
@@ -356,6 +369,4 @@ tesscovtree <- function(X,
   class(output) <- "sptree" # For when I will define class
 
   return(output)
-
-  # return(spatstat.geom::as.im(Reduce("+", patchworks), W = X$window))
 }

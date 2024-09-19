@@ -249,10 +249,7 @@ tesscovtree <- function(X,
           usecovariates = usedcov,
           areapixel = areapixel,
           score = score,
-          threshold = threshold,
-          dimcov = dimcov,
-          covrangex = covrangex,
-          covrangey = covrangey
+          threshold = threshold
         )
       }
 

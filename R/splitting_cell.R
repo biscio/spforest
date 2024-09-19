@@ -8,11 +8,6 @@
 #' @param areapixel The pixel area used in each covariates.
 #' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
 #' @param threshold Minimum threshold to allow to split cell.
-#' @param dimcov The element \code{dim} of the covariates which are
-#' \code{\link[spatstat.geom]{im}}.
-#' @param covrangex The element \code{xrange} of the covariates which are
-#' \code{\link[spatstat.geom]{im}}.
-#' @param covrangey The element \code{yrange} of the covariates which are
 #' \code{\link[spatstat.geom]{im}}.
 #'
 #' @return A list with  split_var = split_var,
@@ -41,17 +36,11 @@
 #' usecovariates <- rep(1, 15)
 #' areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
 #' score <- "lcv"
-#' dimcov <- listcovariates[[1]]$dim
-#' covrangex <- listcovariates[[1]]$xrange
-#' covrangey <- listcovariates[[1]]$yrange
 #' A <- splitcell(
 #'   X = X,
 #'   valpts = valpts,
 #'   vecval = vecval,
 #'   usecovariates = usecovariates,
-#'   dimcov = dimcov,
-#'   covrangex = covrangex,
-#'   covrangey = covrangey,
 #'   areapixel = areapixel,
 #'   threshold = 100
 #' )
@@ -61,10 +50,8 @@ splitcell <- function(X,
                       usecovariates,
                       areapixel,
                       score = "lcv",
-                      threshold = spatstat.geom::area(X) / 1e4,
-                      dimcov,
-                      covrangex,
-                      covrangey) {
+                      threshold = spatstat.geom::area(X) / 1e4
+                      ) {
   whynot <- NULL
   vecvalused <- vecval[usecovariates == 1]
   # listcovar <- listcovariates[usecovariates == 1]
@@ -91,22 +78,7 @@ splitcell <- function(X,
     } else {
       n1 <- sum(valpts[[i]] < mediancov[[i]], na.rm = T)
       n2 <- sum(valpts[[i]] >= mediancov[[i]], na.rm = T)
-      # tempsublvl <- im(
-      #   matrix(sublvl[[i]],
-      #     nrow = dimcov[1],
-      #     ncol = dimcov[2], byrow = F
-      #   ),
-      #   xrange = covrangex, yrange = covrangey
-      # )
-      # tempsuplvl <- im(
-      #   matrix(!sublvl[[i]],
-      #          nrow = dimcov[1],
-      #          ncol = dimcov[2], byrow = F
-      #   ),
-      #   xrange = covrangex, yrange = covrangey
-      # )
-      # n1 <- npoints(X[tempsublvl])
-      # n2 <- npoints(X[tempsuplvl])
+
       scr_cov[i] <- score.split(
         n1 = n1,
         n2 = n2,
@@ -134,14 +106,6 @@ splitcell <- function(X,
     split_val <- mediancov[[id_best_scr]]
     splitsub <- (vecval[[split_var]] < split_val)
 
-    imsublvl <- im(
-      matrix(splitsub,
-        nrow = dimcov[1],
-        ncol = dimcov[2], byrow = F
-      ),
-      xrange = covrangex, yrange = covrangey
-    )
-
     subvalpts <- (valpts[[split_var]] < split_val)
     nsub <- sum(subvalpts, na.rm = T)
     nsup <- sum(!subvalpts, na.rm = T)
@@ -156,9 +120,6 @@ splitcell <- function(X,
         j, NA
       )
     })
-
-    # nsub <- spatstat.geom::npoints(X[imsublvl])
-    # nsup <- spatstat.geom::npoints(X[!imsublvl])
 
     splitsup <- !splitsub
     splitsub[!splitsub] <- NA

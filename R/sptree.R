@@ -182,7 +182,7 @@ predict.sptree <- function(object, newdata, ...) {
     stop("It appears that in predict.sptree, the covariates of the
              tree are not spatstat im objects")
   }
-
+  
   # Handles the newdata to be in the correct form
   if (missing(newdata) || is.null(newdata)) {
     X <- object$X
@@ -199,41 +199,10 @@ predict.sptree <- function(object, newdata, ...) {
     X <- newdata
   }
 
-  Zfun <- lapply(object$listcov, spatstat.geom::as.function.im)
-  ptxy <- cbind(X$x, X$y)
-  valsplits <- lapply(Zfun, FUN = function(j) {
-    j(X)
-  }) # FIXME What I am doing there ????
-
-  temp <- lapply(object$tree, FUN = function(i) {
-    c(
-      i$status,
-      i$split_var,
-      i$split_val,
-      i$intensity_pred,
-      i$left_daughter,
-      i$right_daughter
-    )
+  valsplits <- lapply(object$listcov, FUN = function(j) {
+    j[X]
   })
-
-  treemat <- do.call(rbind, temp)
-
-  output <- lapply(1:nrow(ptxy),
-    FUN = function(i, ...) {
-      node <- treemat[1, ]
-
-      while (node[1] == 1) {
-        if (valsplits[[node[2]]][i] < node[3]) {
-          child <- node[5]
-        } else {
-          child <- node[6]
-        }
-        node <- treemat[child, ]
-      }
-
-      return(node[4])
-    }
-  )
-
-  return(unlist(output))
+  
+  return(object$im[X])
 }
+

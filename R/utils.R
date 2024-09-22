@@ -50,6 +50,108 @@ rand_covar <- function(listcovariates, mtry = 1) {
 
 
 
+
+#' Tree prediction for importance
+#'
+#' @param object A spatial intensity tree returned 
+#' by tesscovtree of tesstree functions
+#' @param newdata a xy vector or a ppp object
+#' @param ... Additional argument
+#'
+#' @details
+#' To compute the importance, we need to keep the structure 
+#' of a tree and not just the pixel image of the intensity that 
+#' it outputs. 
+#' 
+#' @return A number .....
+#' @export
+#'
+#' @examples
+#' vecval0 <- lapply(beisoilres, FUN = function(i) {
+#'   c(as.matrix.im(i))
+#' })
+#' arbre <- tesscovtree(
+#'   X = spatstat.data::bei,
+#'   vecval = vecval0,
+#'   areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#'   dimcov = beisoilres[[1]]$dim,
+#'   covrangex = beisoilres[[1]]$xrange,
+#'   covrangey = beisoilres[[1]]$yrange,
+#'   listcovariates = beisoilres,
+#'   mtry = 1,
+#'   minpts = 500
+#' )
+#' predicttree(object = arbre, newdata = c(100, 100))
+predicttree <- function(object, newdata, ...) {
+  # Test if the covariates are im object
+  whichcovim <- unlist(lapply(
+    object$listcov,
+    spatstat.geom::is.im
+  ))
+  if (!all(whichcovim)) {
+    stop("It appears that in predict.sptree, the covariates of the
+             tree are not spatstat im objects")
+  }
+  
+  # Handles the newdata to be in the correct form
+  if (missing(newdata) || is.null(newdata)) {
+    X <- object$X
+  } else if (!spatstat.geom::is.ppp(newdata)) {
+    X <- spatstat.geom::ppp(
+      x = newdata[1],
+      y = newdata[2],
+      window = object$X$window
+    )
+  } else if (spatstat.geom::is.ppp(newdata)) {
+    if (newdata$n == 0) {
+      return(NULL)
+    }
+    X <- newdata
+  }
+  
+  # Zfun <- lapply(object$listcov, spatstat.geom::as.function.im)
+  # ptxy <- cbind(X$x, X$y)
+  # valsplits <- lapply(Zfun, FUN = function(j) {
+  #   j(X)
+  # }) 
+  valsplits <- lapply(object$listcov, FUN = function(j) {
+    j[X]
+  })
+  
+  temp <- lapply(object$tree, FUN = function(i) {
+    c(
+      i$status,
+      i$split_var,
+      i$split_val,
+      i$intensity_pred,
+      i$left_daughter,
+      i$right_daughter
+    )
+  })
+  
+  treemat <- do.call(rbind, temp)
+  
+  output <- lapply(1:spatstat.geom::npoints(X),
+                   FUN = function(i, ...) {
+                     node <- treemat[1, ]
+                     
+                     while (node[1] == 1) {
+                       if (valsplits[[node[2]]][i] < node[3]) {
+                         child <- node[5]
+                       } else {
+                         child <- node[6]
+                       }
+                       node <- treemat[child, ]
+                     }
+                     
+                     return(node[4])
+                   }
+  )
+  
+  return(unlist(output))
+}
+
+
 #' Importance of one covariate
 #'
 #' @param forest A spforest object

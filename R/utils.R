@@ -198,7 +198,7 @@ importance <- function(forest, id_cov, cores = 1) {
     treepert$listcov <- listZ_shuf
 
     ### OOB prediction for shuffled covariate
-    pts_pred_OOB_pert <- predict.sptree(
+    pts_pred_OOB_pert <- predicttree(
       object = treepert,
       newdata = Xout
     )

@@ -45,11 +45,9 @@ options(useFancyQuotes = FALSE)
 
 \section{Integration with \Spst}
 
-The package \pkg{Rsandbox} relies on \spst to work.  
-For the user, it means that a point pattern must be input as a \texttt{ppp} object 
-and the covariates as \texttt{im} objects rather than rasters.
-Specifically, \pkg{Rsandbox}  depends on  \pkg{spatstat.model},
-\pkg{spatstat.geom}, \pkg{spatstat.data} and \pkg{spatstat.random}.
+To work, the package \pkg{Rsandbox} relies on \spst.  
+For the user, it means that a point pattern must be input as \texttt{ppp.object} 
+and the covariates as a list of \texttt{im.object} in place of rasters.
 
 <<>>=
 library(Rsandbox)
@@ -57,8 +55,8 @@ library(Rsandbox)
 
 \section{Getting started}
 
-We need a point pattern as a \texttt{ppp} object, 
-together with a list of covariates as list of \texttt{im} objects.
+We need a point pattern as a \texttt{ppp.object}, 
+together with a list of covariates as list of \texttt{im.object}.
 As an example we take the data \texttt{bei} and \texttt{bei.extra} from 
 \spst. 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=2>>=
@@ -97,7 +95,7 @@ The arguments:
   This ensure that we allow regions with no points and 
   to not run the algorithm indefinitely,
   \item \texttt{cores{\textunderscore}trees} is used for parallelisation 
-  where we allocate different intensity tree computation to different cores. 
+  where we allocate different intensity trees computation to different cores. 
 \end{itemize}
 
 Standard \R {} methods have been implemented: 
@@ -111,8 +109,8 @@ plot(forest)
 <<>>=
 predict(object = forest, newdata = runifpoint(n = 5, win = bei$window))
 @
-or a matrix with the $x$-coordinates on the first column and the $y$-coordinates 
-on the second column.
+or a matrix with the $x$ and $y$-coordinates on the 
+first and second columns, respectively.
 <<>>=
 predict(
   object = forest,
@@ -122,8 +120,8 @@ predict(
   )
 )
 @
-Behind the scene this is equivalent to return the estimated intensity 
-as an \texttt{im} object and use \texttt{Extrat.im}. 
+This is actually equivalent to return the estimated intensity 
+as an \texttt{im.object} and use \texttt{Extrat.im}. 
 <<>>=
 newdata <- runifpoint(n = 5, win = bei$window)
 as.im(forest)[newdata]
@@ -131,10 +129,11 @@ as.im(forest)[newdata]
 \end{itemize}
 
 
-\section{A standard workflow}
+\section{A standard workflow when covariates are available}
 \label{s:workflow}
 
-When working with random intensity forest the workflow is a follow: 
+Similarly to random forests, a standard workflow to use random intensity forest 
+is to: 
 \begin{enumerate}
   \item Choose a reasonable number of combinations of hyperparameters: 
   \texttt{minpts},  \texttt{mtry},
@@ -155,12 +154,14 @@ the order of the VIP of each variables and the combination
 of hyperparameters that maximises the OOB score are usually the same 
 as soon as $\texttt{Ntree} \geq 100$.   
 Hence, if computational power is an issue, we suggest to choose 
-$\texttt{Ntree} = 100$ in Step 2, and letting $\texttt{Ntree}$ 
-to be as large as possible in Step 4. 
+$\texttt{Ntree} = 100$ in Step 2, where there is many random intensity forest to
+compute, and letting $\texttt{Ntree}$ 
+to be as large as possible in Step 4, where there is only one 
+random intensity forest to compute. 
 
 To illustrate this workflow on an example, 
 we re-use the \texttt{bei} and \texttt{bei.extra} data. 
-Further, to keep the computational burden low in this document, 
+To keep the computational burden if this document low, 
 we choose a small number of combinations of hyperparameters: 
 $\texttt{minpts} = 100, 125$ 
 and $\texttt{mtry}= 0.5, 0.75$, with $\texttt{Ntree} = 5$. 
@@ -194,9 +195,7 @@ allforesttoy <- mapply(spforest,
 We can now compute the OOB score of all the random intensity forests above 
 and choose the one with the highest score. 
 <<>>=
-allscore <- lapply(allforesttoy, FUN = function(i) {
-  OOBscr(i, cores = 1)
-})
+allscore <- lapply(allforesttoy, FUN = OOBscr)
 allargs[which.max(allscore), ]
 @
 
@@ -221,7 +220,7 @@ Finally, we:
 plot(chosenforesttoy)
 @
 \item Assess the VIP of each variable
-<<width=8,height=4>>=
+<<fig=TRUE,echo=TRUE, width=8,height=4>>=
 vipplot(chosenforesttoy, sorted = T)
 @
 \end{itemize}
@@ -257,7 +256,7 @@ We follow the workflow presented in Section~\ref{s:workflow}.
 Once again, to keep 
 the computational burden light, we only choose
 a small number of combinations of hyperparameters and downscale the 
-resolution. In practice, on should consider many more combination 
+resolution. In practice, on should consider many more combinations 
 of parameters together with the original resolution of the data. 
 
 <<Computing all forest bei example>>=
@@ -281,9 +280,7 @@ allforestbei <- mapply(spforest,
 @
 Then, we find the combination of hyperparameters that maximises the OOB score.
 <<>>=
-allscore <- lapply(allforestbei, FUN = function(i) {
-  OOBscr(i, cores = 1)
-})
+allscore <- lapply(allforestbei, FUN = OOBscr)
 allargs[which.max(allscore), ]
 @
 
@@ -306,22 +303,19 @@ plot(chosenforestbei, main = "Estimated intensity")
 @
 
 There, the points in \texttt{bei} are very irregularly distributed
-which results in the intensity being very high in two locations. 
-Here a plot of the $\log$ of
-the intensity is more revealing. 
+which results in the intensity being very high in some locations: 
+A plot of the $\log$ of the intensity is more revealing. 
 
 <<fig=TRUE,echo=TRUE, results=hide, width=6,height=3>>=
 plot(log(as.im(chosenforestbei)), main = "Logarithm of the estimated intensity")
 @
 
-Interestingly, we can assess the most covariates that had the 
+Interestingly, we can assess the covariates that had the 
 most impact on the intensity of the point process. 
 
 <<>>=
 vipplot(chosenforestbei, sorted = T)
 @
-
-The VIP plot indicates that the five most important covariates.
 
 Running the same analysis with all the combination of hyperparameters between $\texttt{mtry} = 0.1,0.2,\ldots 1$ and
 $\texttt{minpts} = 10,20,\ldots,1000$ and 
@@ -330,11 +324,37 @@ $\texttt{mtry} = 1$ and $\texttt{minpts} = 10$ and the corresponding VIP plots
 will show the same five most important covariates as in \cite{coeurjolly:18} 
 which studied the same data.
  
-\section{More advanced uses}
+\section{Random intensity forest when there is no covariate}
+ 
+<<>>=
+X <- bei 
+forest2 <- spforest(
+  X = X,
+  Ntree = 3,
+  listcovariates = NULL,
+  lambda = 100,
+  dimyx = c(50, 50),
+  test.connected = FALSE,
+  cores = 1
+)
+@
+
+
+<<>>=
+plot(forest2)
+@
+
+<<>>=
+predict(object = forest2, newdata = runifpoint(n = 5, win = bei$window))
+@
+
+ 
+
+\section{Advanced uses}
 
 The function \texttt{spforest} has more arguments that can be modified to train 
 a random intensity forest. 
-However, from our observations, they had a low or no impact on the mean integrated squared error and VIP. Consequently, we chose to not include them in the standard workflow.
+However, from our observations, they had a low or no impact on the mean integrated squared error and VIP. Consequently, we chose to not present them in detail in this vignette.
 These arguments are:
 \begin{itemize}
   \item \texttt{score} which controls the score used to compare different splits. 

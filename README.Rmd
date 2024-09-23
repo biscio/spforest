@@ -1,8 +1,9 @@
 ---
 output: github_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -16,40 +17,66 @@ knitr::opts_chunk$set(
 # spforest
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
-The goal of spforest is to ...
+The goal of \texttt{spforest} is to estimate the intensity of a 2D point
+process with spatial random intensity forest. The package but can be
+considered in its pre-alpha version and is currently under heavy
+development. In particular, its documentation can 
+be considered in its infancy. 
 
 ## Installation
 
-You can install the development version of spforest from [GitHub](https://github.com/) with:
+The package \texttt{spforest} depends on the \texttt{R} package
+[spatstat.](https://github.com/spatstat/spatstat) 
+which you should install first.
+
+Then, you  can install the development version of \texttt{spforest} from
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("pak")
 pak::pak("biscio/spforest")
 ```
 
-## Example
+## Basic example without covariate
 
-This is a basic example which shows you how to solve a common problem:
+By default, the function \texttt{spforest} will work without 
+any covariates. 
+
+```{r}
+library(spforest)
+forestnocov <- spforest(
+  X = spatstat.data::bei,
+  Ntree = 100,
+  listcovariates = NULL,
+  lambda = 100,
+  dimyx = c(50, 50),
+  test.connected = FALSE
+)
+```
+```{r}
+plot(forestnocov)
+```
+
+
+## Basic example with covariates
+
 
 ```{r example}
 library(spforest)
-## basic example code
+forest <- spforest(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra, ,
+  Ntree = 50,
+  mtry = 1,
+  minpts = 200,
+  cores = 1
+)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
+```{r}
+plot(forest)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.

@@ -1,16 +1,21 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # spforest
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of spforest is to …
+The goal of is to estimate the intensity of a 2D point process with
+spatial random intensity forest. The package but can be considered in
+its pre-alpha version and is currently under heavy development. In
+particular, its documentation can be considered in its infancy.
 
 ## Installation
 
-You can install the development version of spforest from
+The package depends on the package
+[spatstat.](https://github.com/spatstat/spatstat) which you should
+install first.
+
+Then, you can install the development version of from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -18,9 +23,9 @@ You can install the development version of spforest from
 pak::pak("biscio/spforest")
 ```
 
-## Example
+## Basic example without covariate
 
-This is a basic example which shows you how to solve a common problem:
+By default, the function will work without any covariates.
 
 ``` r
 library(spforest)
@@ -37,29 +42,38 @@ library(spforest)
 #> spatstat.explore 3.3-2
 #> Loading required package: rpart
 #> spatstat.model 3.3-1
-## basic example code
+forestnocov <- spforest(
+  X = spatstat.data::bei,
+  Ntree = 100,
+  listcovariates = NULL,
+  lambda = 100,
+  dimyx = c(50, 50),
+  test.connected = FALSE
+)
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+plot(forestnocov)
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
-You can also embed plots, for example:
+## Basic example with covariates
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+``` r
+library(spforest)
+forest <- spforest(
+  X = spatstat.data::bei,
+  listcovariates = spatstat.data::bei.extra, ,
+  Ntree = 50,
+  mtry = 1,
+  minpts = 200,
+  cores = 1
+)
+```
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+``` r
+plot(forest)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />

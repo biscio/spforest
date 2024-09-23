@@ -1,6 +1,6 @@
 \documentclass[11pt]{article}
 
-%\VignetteIndexEntry{Getting Started with Rsandbox}
+%\VignetteIndexEntry{Getting Started with spforest}
 %\SweaveUTF8
 \usepackage{graphicx}
 \usepackage{anysize}
@@ -24,14 +24,14 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 \setkeys{Gin}{width=0.8\textwidth}
 
 <<echo=FALSE,results=hide>>=
-library(Rsandbox)
+library(spforest)
 # spatstat.options(image.colfun=function(n) { grey(seq(0,1,length=n)) })
 sdate <- read.dcf(
-  file = system.file("DESCRIPTION", package = "Rsandbox"),
+  file = system.file("DESCRIPTION", package = "spforest"),
   fields = "Date"
 )
 sversion <- read.dcf(
-  file = system.file("DESCRIPTION", package = "Rsandbox"),
+  file = system.file("DESCRIPTION", package = "spforest"),
   fields = "Version"
 )
 options(useFancyQuotes = FALSE)
@@ -39,18 +39,18 @@ options(useFancyQuotes = FALSE)
 
 \title{Getting started with Spatial Random Forests}
 \author{Christophe A.N. Biscio}
-\date{For \pkg{Rsandbox} version \texttt{\Sexpr{sversion}}}
+\date{For \pkg{spforest} version \texttt{\Sexpr{sversion}}}
 \maketitle
 
 
 \section{Integration with \Spst}
 
-To work, the package \pkg{Rsandbox} relies on \spst.  
+To work, the package \pkg{spforest} relies on \spst.  
 For the user, it means that a point pattern must be input as \texttt{ppp.object} 
 and the covariates as a list of \texttt{im.object} in place of rasters.
 
 <<>>=
-library(Rsandbox)
+library(spforest)
 @ 
 
 \section{Getting started}
@@ -71,7 +71,7 @@ To run the code faster in this vignette, we will downscale these data.
 beismall <- lapply(bei.extra, as.im, dimyx = c(10, 20))
 @
 
-The function \texttt{spforest} is the core function of \pkg{Rsandbox} and 
+The function \texttt{spforest} is the core function of \pkg{spforest} and 
 generate random forest intensity estimates. 
 
 <<first example Rforest>>=
@@ -234,7 +234,7 @@ a toy example, and the use of VIP shines when there is more covariates.
 One of the advantage of random intensity forest is the ability 
 to process a large number of covariates. 
 We will re-study the point pattern \texttt{bei} but with a larger list of covariates, 
-made available in \pkg{Rsandbox} in the list \texttt{beisoilres}.
+made available in \pkg{spforest} in the list \texttt{beisoilres}.
 
 <<fig=TRUE,echo=FALSE,results=hide, width=6,height=2>>=
 par(mfrow = c(3, 5), mar = c(0, 1, 0, 0))

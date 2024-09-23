@@ -20,14 +20,14 @@
 #' @export
 #'
 #' @examples
-#' listcovariates <- Rsandbox::beisoilres
+#' listcovariates <- spforest::beisoilres
 #' X <- bei
 #' valpts <- lapply(listcovariates,
 #'   FUN = function(i) {
 #'     i[X]
 #'   }
 #' )
-#' vecval <- lapply(Rsandbox::beisoilres, FUN = function(i) {
+#' vecval <- lapply(spforest::beisoilres, FUN = function(i) {
 #'   if (!spatstat.geom::is.im(i)) {
 #'     stop("Elements of listcovar must be an im object")
 #'   }

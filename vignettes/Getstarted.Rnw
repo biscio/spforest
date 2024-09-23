@@ -94,7 +94,7 @@ The arguments:
   in a split is below \texttt{minpts}, we allow at most one last split. 
   This ensure that we allow regions with no points and 
   to not run the algorithm indefinitely,
-  \item \texttt{cores{\textunderscore}trees} is used for parallelisation 
+  \item \texttt{cores} is used for parallelisation 
   where we allocate different intensity trees computation to different cores. 
 \end{itemize}
 
@@ -319,13 +319,26 @@ vipplot(chosenforestbei, sorted = T)
 
 Running the same analysis with all the combination of hyperparameters between $\texttt{mtry} = 0.1,0.2,\ldots 1$ and
 $\texttt{minpts} = 10,20,\ldots,1000$ and 
-$\texttt{Ntree} = 500$. The combination maximising the OOB score will be 
-$\texttt{mtry} = 1$ and $\texttt{minpts} = 10$ and the corresponding VIP plots 
+$\texttt{Ntree} = 500$, we find that
+the combination maximising the OOB score is 
+$\texttt{mtry} = 1$ and $\texttt{minpts} = 10$. 
+The corresponding VIP plot
 will show the same five most important covariates as in \cite{coeurjolly:18} 
 which studied the same data.
  
 \section{Random intensity forest when there is no covariate}
- 
+
+The presence of covariates is not necessary to 
+compute a random intensity forest. 
+In place of building a partition of the window of observation 
+from sub and sup level sets of the covariates, 
+we build it from Voronoi tessellation of points distributed uniformly and independently. 
+
+
+To compute random intensity forest in this way, 
+the argument \texttt{listcovariates} must be set to \texttt{NULL}, which is the default. 
+As an example, let's estimate the intensity of the data \texttt{bei}. 
+
 <<>>=
 X <- bei 
 forest2 <- spforest(
@@ -334,11 +347,29 @@ forest2 <- spforest(
   listcovariates = NULL,
   lambda = 100,
   dimyx = c(50, 50),
-  test.connected = FALSE,
-  cores = 1
+  test.connected = FALSE
 )
 @
 
+
+The arguments: 
+\begin{itemize}
+  \item \texttt{X} the point pattern from which we estimate the intensity,
+  \item \texttt{Ntree} sets the number of intensity trees in the forest,
+  \item $\lambda$ sets the number of points independently and uniformly 
+  distributed on the enclosed rectangle of the window of \texttt{X}, and 
+  from which we compute the Voronoi tessellation,
+  \item \texttt{dimyx} set the resolution of the output pixel image as 
+  \texttt{im.object},
+  \item \texttt{test.connected} is a boolean that controls if we test 
+  that each Voronoi cells is connected. If set to \texttt{TRUE}, then 
+  non-connected Voronoi cells are split according to their connected 
+  components. This argument is useful only when the window of \texttt{X} 
+  is non-connected. 
+\end{itemize}
+
+The output object is of class \texttt{spforest} from which there 
+is method to plot and predict the intensity at new locations.
 
 <<>>=
 plot(forest2)

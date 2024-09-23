@@ -7,3 +7,4 @@
 ^maps$
 ^LICENSE\.md$
 ^rawdata/$
+^README\.Rmd$

@@ -30,3 +30,7 @@ expect_silent(
 )
 
 expect_equal(class(forest2), "spforest")
+
+expect_silent(
+  extractforest(forest = forest2, whichtrees = c(1,3))
+)

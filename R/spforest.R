@@ -21,12 +21,12 @@
 #' @param cores A positive integer.
 #' The number of cores used to compute each intensity tree.
 #'
-#' @details 
-#' This function is a wrapper around \code{\link{tesscovforest}} 
-#' and \code{\link{tessforest}} to compute random intensity forest 
-#' in the presence of covariates, 
-#' or based on independent random tesselæation, respectively. 
-#' If \code{listcovariates} is \code{NULL}, 
+#' @details
+#' This function is a wrapper around \code{\link{tesscovforest}}
+#' and \code{\link{tessforest}} to compute random intensity forest
+#' in the presence of covariates,
+#' or based on independent random tesselæation, respectively.
+#' If \code{listcovariates} is \code{NULL},
 #' the function will call \code{\link{tessforest}}. Otherwise, it will call
 #' \code{\link{tesscovforest}}.
 #'
@@ -96,25 +96,25 @@ spforest <- function(X,
 #'
 #' @name spforest.object
 #' @rdname spforest.object
-#' 
-#' @details 
+#'
+#' @details
 #' An object of this class represents a spatial intensity forest.
-#' It contains 
+#' It contains
 #' \itemize{
-#' \item \code{imforest}, an pixel image as 
-#' \code{\link[spatstat.geom]{im.object}} object representing the value of 
+#' \item \code{imforest}, an pixel image as
+#' \code{\link[spatstat.geom]{im.object}} object representing the value of
 #' the estimated intensity on the window of \code{X}.
 #' \item \code{trees}, a list of the spatial intensity trees as \code{\link{sptree.object}}.
 #' \item \code{ntrees}, the number of trees in the forest.
-#' \item \code{pt_intree}, a list where the \eqn{i}-th element 
-#' is a vector containing the index of the points of \code{X} used 
+#' \item \code{pt_intree}, a list where the \eqn{i}-th element
+#' is a vector containing the index of the points of \code{X} used
 #' to compute the \eqn{i}-th intensity tree.
 #' \item \code{X}, the original point pattern as a \code{\link[spatstat.geom]{ppp}} object.
 #' \item \code{listcov}, a list of the covariates used to compute the forest
-#' as \code{\link[spatstat.geom]{im}} objects. If \code{NULL}, 
+#' as \code{\link[spatstat.geom]{im}} objects. If \code{NULL},
 #' independently random tessellation have been used.
-#' \item \code{p}, a number in \eqn{[0,1)} 
-#' controlling the thinning process applied to \code{X} 
+#' \item \code{p}, a number in \eqn{[0,1)}
+#' controlling the thinning process applied to \code{X}
 #' before computing a tree intensity estimator.
 #' \item \code{mtry}, probability that a covariate is used at each a split.
 #' }
@@ -449,6 +449,51 @@ merge.spforest <- function(x, y, ...) {
 
   return(structure(output, class = "spforest"))
 }
+
+
+#' Extract a smaller forest
+#'
+#' @param forest An object of class \code{\link{spforest}}.
+#' @param whichtrees A vector indicating which trees to use in the
+#' new forest
+#'
+#' @return An object of class \code{\link{spforest}}.
+#' @export
+#'
+#' @examples
+#' bigforest <- spforest(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' smallforest <- extractforest(
+#'   forest = bigforest,
+#'   whichtrees = c(2, 5)
+#' )
+extractforest <- function(forest, whichtrees) {
+  trees1 <- forest$trees[whichtrees]
+
+  imsubtrees <- lapply(trees1, FUN = function(i) {
+    i$im
+  })
+
+  imforest1 <- Reduce("+", imsubtrees) / ntree1
+
+  output <- list(
+    imforest = imforest1,
+    trees = trees1,
+    ntrees = length(whichtrees),
+    pt_intree = forest$pt_intree[whichtrees],
+    X = forest$X,
+    listcov = forest$listcov,
+    p = forest$p,
+    mtry = forest$mtry
+  )
+  return(structure(output, class = "spforest"))
+}
+
 
 
 

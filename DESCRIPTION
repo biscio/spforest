@@ -16,7 +16,7 @@ Depends:
 Imports: 
     graphics,
     parallel,
-    spatstat.geom,
+    spatstat.geom (>= 3.3-2),
     spatstat.random
 Suggests: 
     knitr,

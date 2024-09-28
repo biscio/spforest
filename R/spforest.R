@@ -479,7 +479,7 @@ extractforest <- function(forest, whichtrees) {
     i$im
   })
 
-  imforest1 <- Reduce("+", imsubtrees) / ntree1
+  imforest1 <- Reduce("+", imsubtrees) / length(whichtrees)
 
   output <- list(
     imforest = imforest1,

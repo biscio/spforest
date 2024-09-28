@@ -173,16 +173,6 @@ plot.sptree <- function(x, ..., main = "Spatial Intensity Tree") {
 #' )
 #' predict(object = arbre, newdata = c(100, 100))
 predict.sptree <- function(object, newdata, ...) {
-  # Test if the covariates are im object
-  whichcovim <- unlist(lapply(
-    object$listcov,
-    spatstat.geom::is.im
-  ))
-  if (!all(whichcovim)) {
-    stop("It appears that in predict.sptree, the covariates of the
-             tree are not spatstat im objects")
-  }
-  
   # Handles the newdata to be in the correct form
   if (missing(newdata) || is.null(newdata)) {
     X <- object$X
@@ -199,10 +189,6 @@ predict.sptree <- function(object, newdata, ...) {
     X <- newdata
   }
 
-  valsplits <- lapply(object$listcov, FUN = function(j) {
-    j[X]
-  })
-  
   return(object$im[X])
 }
 

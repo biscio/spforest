@@ -53,16 +53,16 @@ rand_covar <- function(listcovariates, mtry = 1) {
 
 #' Tree prediction for importance
 #'
-#' @param object A spatial intensity tree returned 
+#' @param object A spatial intensity tree returned
 #' by tesscovtree of tesstree functions
 #' @param newdata a xy vector or a ppp object
 #' @param ... Additional argument
 #'
 #' @details
-#' To compute the importance, we need to keep the structure 
-#' of a tree and not just the pixel image of the intensity that 
-#' it outputs. 
-#' 
+#' To compute the importance, we need to keep the structure
+#' of a tree and not just the pixel image of the intensity that
+#' it outputs.
+#'
 #' @return A number .....
 #' @export
 #'
@@ -92,7 +92,7 @@ predicttree <- function(object, newdata, ...) {
     stop("It appears that in predict.sptree, the covariates of the
              tree are not spatstat im objects")
   }
-  
+
   # Handles the newdata to be in the correct form
   if (missing(newdata) || is.null(newdata)) {
     X <- object$X
@@ -108,16 +108,16 @@ predicttree <- function(object, newdata, ...) {
     }
     X <- newdata
   }
-  
+
   # Zfun <- lapply(object$listcov, spatstat.geom::as.function.im)
   # ptxy <- cbind(X$x, X$y)
   # valsplits <- lapply(Zfun, FUN = function(j) {
   #   j(X)
-  # }) 
+  # })
   valsplits <- lapply(object$listcov, FUN = function(j) {
     j[X]
   })
-  
+
   temp <- lapply(object$tree, FUN = function(i) {
     c(
       i$status,
@@ -128,26 +128,26 @@ predicttree <- function(object, newdata, ...) {
       i$right_daughter
     )
   })
-  
+
   treemat <- do.call(rbind, temp)
-  
+
   output <- lapply(1:spatstat.geom::npoints(X),
-                   FUN = function(i, ...) {
-                     node <- treemat[1, ]
-                     
-                     while (node[1] == 1) {
-                       if (valsplits[[node[2]]][i] < node[3]) {
-                         child <- node[5]
-                       } else {
-                         child <- node[6]
-                       }
-                       node <- treemat[child, ]
-                     }
-                     
-                     return(node[4])
-                   }
+    FUN = function(i, ...) {
+      node <- treemat[1, ]
+
+      while (node[1] == 1) {
+        if (valsplits[[node[2]]][i] < node[3]) {
+          child <- node[5]
+        } else {
+          child <- node[6]
+        }
+        node <- treemat[child, ]
+      }
+
+      return(node[4])
+    }
   )
-  
+
   return(unlist(output))
 }
 
@@ -245,45 +245,41 @@ importance <- function(forest, id_cov, cores = 1) {
 OOBscr <- function(forest, cores = 1) {
   X <- forest$X # this is always the root
 
-  # Put listcov back in the sptree object, required in predict.sptree
-  for (i in 1:length(forest$trees)) {
-    forest$trees[[i]]$listcov <- forest$listcov
-  }
+  OOBscr <- parallel::mclapply(1:length(forest$trees),
+    FUN = function(i) {
+      OOBval <- rep(NA, X$n)
 
-  OOBscr <- parallel::mclapply(1:length(forest$trees), FUN = function(i) {
-    OOBval <- rep(NA, X$n)
-
-    if (forest$p == 0) {
-      torm <- unique(forest$pt_intree[[i]])
-      if (length(torm) == X$n) { # If all points are drawn in the bootstrap,
-        # then nothing do do.
-        return(OOBval)
+      if (forest$p == 0) {
+        torm <- unique(forest$pt_intree[[i]])
+        if (length(torm) == X$n) { # If all points are drawn in the bootstrap,
+          # then nothing do do.
+          return(OOBval)
+        }
+        OOBpts <- 1:X$n
+        OOBpts <- OOBpts[!(OOBpts %in% torm)]
+      } else {
+        # vector of same length as number of pts in X
+        OOBpts <- (forest$pt_intree[[i]] != 1)
+        if (all(!OOBpts)) { 
+          # If no points in OOBpts, then nothing do do.
+          return(OOBval)
+        }
       }
-      OOBpts <- 1:X$n
-      OOBpts <- OOBpts[!(OOBpts %in% torm)]
-    } else {
-      # vector of same length as number of pts in X
-      OOBpts <- (forest$pt_intree[[i]] != 1)
-      if (all(!OOBpts)) { # If no points in OOBpts, then nothing do do.
-        return(OOBval)
-      }
-    }
 
-    # OOB sample
-    Xout <- X[OOBpts]
+      # OOB sample
+      Xout <- X[OOBpts]
 
-    ### OOB prediction
-    pts_pred_OOB <- predict.sptree(
-      object = forest$trees[[i]],
-      newdata = Xout
-    )
+      ### OOB prediction
+      pts_pred_OOB <- predict.sptree(
+        object = forest$trees[[i]],
+        newdata = Xout
+      )
 
-    OOBval[OOBpts] <- pts_pred_OOB
+      OOBval[OOBpts] <- pts_pred_OOB
 
-
-    # OOB score
-    return(OOBval)
-  }, mc.cores = cores)
+      return(OOBval)
+    }, mc.cores = cores
+  )
 
   logterm <- log(rowMeans(do.call(cbind, OOBscr), na.rm = TRUE))
   if (all(is.na(logterm))) {
@@ -293,7 +289,6 @@ OOBscr <- function(forest, cores = 1) {
   }
   # output <- sum(log(rowMeans(do.call(cbind, OOBscr), na.rm = TRUE)), na.rm = TRUE)
 
-  # Return the average error of all the trees
   return(output)
 }
 

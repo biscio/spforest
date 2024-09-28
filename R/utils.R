@@ -118,7 +118,7 @@ predicttree <- function(object, newdata, ...) {
     j[X]
   })
 
-  temp <- lapply(object$tree, FUN = function(i) {
+  trees <- lapply(object$tree, FUN = function(i) {
     c(
       i$status,
       i$split_var,
@@ -129,11 +129,9 @@ predicttree <- function(object, newdata, ...) {
     )
   })
 
-  treemat <- do.call(rbind, temp)
-
   output <- lapply(1:spatstat.geom::npoints(X),
     FUN = function(i, ...) {
-      node <- treemat[1, ]
+      node <- trees[[1]]
 
       while (node[1] == 1) {
         if (valsplits[[node[2]]][i] < node[3]) {
@@ -141,7 +139,7 @@ predicttree <- function(object, newdata, ...) {
         } else {
           child <- node[6]
         }
-        node <- treemat[child, ]
+        node <- trees[[child]]
       }
 
       return(node[4])

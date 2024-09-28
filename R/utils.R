@@ -109,11 +109,6 @@ predicttree <- function(object, newdata, ...) {
     X <- newdata
   }
 
-  # Zfun <- lapply(object$listcov, spatstat.geom::as.function.im)
-  # ptxy <- cbind(X$x, X$y)
-  # valsplits <- lapply(Zfun, FUN = function(j) {
-  #   j(X)
-  # })
   valsplits <- lapply(object$listcov, FUN = function(j) {
     j[X]
   })
@@ -129,24 +124,22 @@ predicttree <- function(object, newdata, ...) {
     )
   })
 
-  output <- lapply(1:spatstat.geom::npoints(X),
-    FUN = function(i, ...) {
-      node <- trees[[1]]
-
-      while (node[1] == 1) {
-        if (valsplits[[node[2]]][i] < node[3]) {
-          child <- node[5]
-        } else {
-          child <- node[6]
-        }
-        node <- trees[[child]]
+  output <- NULL
+  for (i in 1:spatstat.geom::npoints(X)) {
+    node <- trees[[1]]
+    
+    while (node[1] == 1) {
+      if (valsplits[[node[2]]][i] < node[3]) {
+        child <- node[5]
+      } else {
+        child <- node[6]
       }
-
-      return(node[4])
+      node <- trees[[child]]
     }
-  )
-
-  return(unlist(output))
+    output[i] <- node[4]
+  }
+  
+  return(output)
 }
 
 

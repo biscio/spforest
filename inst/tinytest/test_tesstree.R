@@ -19,6 +19,8 @@ expect_silent(
   )
 )
 
+### Test the object is correct 
+
 # 2 is length(listcovariates) in the example above
 expect_length(arbre$namecov, 2)
 
@@ -49,6 +51,40 @@ expect_equal(arbre$tree[[8]]$intensity_pred, 0.009661151,
              tolerance = 1e-5
 )
 
+### Test methods on sptree
+expect_silent(print(arbre))
+expect_silent(summary(arbre))
+expect_equal(dim(summary(arbre))[2],7)
+expect_equal(dim(summary(arbre, fulltree = T))[2],10)
+
+expect_equal(class(plot(arbre)),"im")
+
+expect_length(predict(arbre), spatstat.geom::npoints(arbre$X))
+expect_true(is.numeric(predict(arbre)))
+expect_length(predict(
+  object = arbre,
+  newdata = spatstat.random::runifpoint(n = 50,
+                                        win = arbre$X$window)), 50)
+expect_true(is.numeric(
+  predict(object = arbre,
+          newdata = spatstat.random::runifpoint(n = 50,
+                                                win = arbre$X$window))))
+expect_null(predict(object = arbre, 
+                    newdata = spatstat.random::runifpoint(n = 0)))
+
+expect_true(is.numeric(predict(arbre, newdata = c(827,319))))
+
+
+expect_true(is.numeric(
+  predicttree(object = arbre,
+          newdata = spatstat.random::runifpoint(n = 50,
+                                                win = arbre$X$window))))
+expect_null(predicttree(arbre, 
+                    newdata = spatstat.random::runifpoint(n = 0)))
+expect_equal(predict(arbre, newdata = c(827,319)),
+             predicttree(arbre,  newdata = c(827,319)))
+
+ 
 ## Part II ----
 
 areapixel0 <- beisoilres[[1]]$xstep * beisoilres[[1]]$ystep

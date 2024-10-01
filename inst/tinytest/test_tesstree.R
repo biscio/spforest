@@ -19,7 +19,7 @@ expect_silent(
   )
 )
 
-### Test the object is correct 
+### Test the object is correct
 
 # 2 is length(listcovariates) in the example above
 expect_length(arbre$namecov, 2)
@@ -48,43 +48,61 @@ expect_equal(arbre$tree[[3]]$split_val, 141.62)
 expect_equal(arbre$tree[[8]]$status, 0)
 
 expect_equal(arbre$tree[[8]]$intensity_pred, 0.009661151,
-             tolerance = 1e-5
+  tolerance = 1e-5
 )
 
 ### Test methods on sptree
 expect_silent(print(arbre))
 expect_silent(summary(arbre))
-expect_equal(dim(summary(arbre))[2],7)
-expect_equal(dim(summary(arbre, fulltree = T))[2],10)
+expect_equal(dim(summary(arbre))[2], 7)
+expect_equal(dim(summary(arbre, fulltree = T))[2], 10)
 
-expect_equal(class(plot(arbre)),"im")
+expect_equal(class(plot(arbre)), "im")
 
 expect_length(predict(arbre), spatstat.geom::npoints(arbre$X))
 expect_true(is.numeric(predict(arbre)))
 expect_length(predict(
   object = arbre,
-  newdata = spatstat.random::runifpoint(n = 50,
-                                        win = arbre$X$window)), 50)
+  newdata = spatstat.random::runifpoint(
+    n = 50,
+    win = arbre$X$window
+  )
+), 50)
 expect_true(is.numeric(
-  predict(object = arbre,
-          newdata = spatstat.random::runifpoint(n = 50,
-                                                win = arbre$X$window))))
-expect_null(predict(object = arbre, 
-                    newdata = spatstat.random::runifpoint(n = 0)))
+  predict(
+    object = arbre,
+    newdata = spatstat.random::runifpoint(
+      n = 50,
+      win = arbre$X$window
+    )
+  )
+))
+expect_null(predict(
+  object = arbre,
+  newdata = spatstat.random::runifpoint(n = 0)
+))
 
-expect_true(is.numeric(predict(arbre, newdata = c(827,319))))
+expect_true(is.numeric(predict(arbre, newdata = c(827, 319))))
 
 
 expect_true(is.numeric(
-  predicttree(object = arbre,
-          newdata = spatstat.random::runifpoint(n = 50,
-                                                win = arbre$X$window))))
-expect_null(predicttree(arbre, 
-                    newdata = spatstat.random::runifpoint(n = 0)))
-expect_equal(predict(arbre, newdata = c(827,319)),
-             predicttree(arbre,  newdata = c(827,319)))
+  predicttree(
+    object = arbre,
+    newdata = spatstat.random::runifpoint(
+      n = 50,
+      win = arbre$X$window
+    )
+  )
+))
+expect_null(predicttree(arbre,
+  newdata = spatstat.random::runifpoint(n = 0)
+))
+expect_equal(
+  predict(arbre, newdata = c(827, 319)),
+  predicttree(arbre, newdata = c(827, 319))
+)
 
- 
+
 ## Part II ----
 
 areapixel0 <- beisoilres[[1]]$xstep * beisoilres[[1]]$ystep
@@ -107,9 +125,13 @@ expect_silent(arbre <- tesscovtree(
   minpts = 500
 ))
 
-expect_equal(names(arbre), 
-             c("tree", "X", "namecov", 
-               "namelist", "listcov", "im"))
+expect_equal(
+  names(arbre),
+  c(
+    "tree", "X", "namecov",
+    "namelist", "listcov", "im"
+  )
+)
 
 expect_length(arbre$namecov, 15)
 
@@ -123,18 +145,19 @@ expect_true(spatstat.geom::is.ppp(arbre$X))
 
 expect_equal(arbre$tree[[4]]$nodeID, 4)
 
-expect_equal(arbre$tree[[4]]$left_daughter, 8) 
-expect_equal(arbre$tree[[4]]$right_daughter, 9)  
+expect_equal(arbre$tree[[4]]$left_daughter, 8)
+expect_equal(arbre$tree[[4]]$right_daughter, 9)
 
 expect_equal(arbre$tree[[4]]$split_var, 15)
 
 expect_equal(arbre$tree[[4]]$split_val, 4.599173,
-             tolerance = 1e-5)
+  tolerance = 1e-5
+)
 
 expect_equal(arbre$tree[[4]]$status, 1)
 
 expect_equal(arbre$tree[[4]]$intensity_pred, 0.00862606,
-             tolerance = 1e-5
+  tolerance = 1e-5
 )
 
 
@@ -150,10 +173,10 @@ A <- tesscovtree(
   minpts = 100
 )
 B <- format(object.size(A), units = "Mb")
-expect_true(as.numeric(gsub(" Mb", "",B)) < 4)
+expect_true(as.numeric(gsub(" Mb", "", B)) < 4)
 
 
 
-# Test for tesstree ---- 
+# Test for tesstree ----
 
-# TODO 
+# TODO

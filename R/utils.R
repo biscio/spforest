@@ -169,10 +169,10 @@ importance <- function(forest, id_cov, cores = 1) {
 
   vip_tree <- NULL
 
-  Zfun <- lapply(
-    forest$listcov,
-    spatstat.geom::as.function.im
-  ) # to remove?
+  # Zfun <- lapply(
+  #   forest$listcov,
+  #   spatstat.geom::as.function.im
+  # ) # to remove?
 
   vip_tree <- parallel::mclapply(1:length(forest$trees),
     FUN = function(i) {

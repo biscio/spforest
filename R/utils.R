@@ -127,7 +127,7 @@ predicttree <- function(object, newdata, ...) {
   output <- NULL
   for (i in 1:spatstat.geom::npoints(X)) {
     node <- trees[[1]]
-    
+
     while (node[1] == 1) {
       if (valsplits[[node[2]]][i] < node[3]) {
         child <- node[5]
@@ -138,7 +138,7 @@ predicttree <- function(object, newdata, ...) {
     }
     output[i] <- node[4]
   }
-  
+
   return(output)
 }
 
@@ -169,44 +169,49 @@ importance <- function(forest, id_cov, cores = 1) {
 
   vip_tree <- NULL
 
-  Zfun <- lapply(forest$listcov, spatstat.geom::as.function.im) # to remove?
+  Zfun <- lapply(
+    forest$listcov,
+    spatstat.geom::as.function.im
+  ) # to remove?
 
-  vip_tree <- parallel::mclapply(1:length(forest$trees), FUN = function(i) {
-    # Shuffle the chosen covariate value
-    dimmat <- Z$dim
-    Z$v <- matrix(Z$v[sample.int(length(Z$v))],
-      ncol = dimmat[2]
-    )
+  vip_tree <- parallel::mclapply(1:length(forest$trees),
+    FUN = function(i) {
+      # Shuffle the chosen covariate value
+      dimmat <- Z$dim
+      Z$v <- matrix(Z$v[sample.int(length(Z$v))],
+        ncol = dimmat[2]
+      )
 
-    # OOB sample
-    Xout <- X[forest$pt_intree[[i]] != 1]
+      # OOB sample
+      Xout <- X[forest$pt_intree[[i]] != 1]
 
-    listZ_shuf <- forest$listcov
-    listZ_shuf[[id_cov]] <- Z
+      listZ_shuf <- forest$listcov
+      listZ_shuf[[id_cov]] <- Z
 
-    # Shuffle the tree
-    treepert <- forest$trees[[i]]
-    treepert$listcov <- listZ_shuf
+      # Shuffle the tree
+      treepert <- forest$trees[[i]]
+      treepert$listcov <- listZ_shuf
 
-    ### OOB prediction for shuffled covariate
-    pts_pred_OOB_pert <- predicttree(
-      object = treepert,
-      newdata = Xout
-    )
+      ### OOB prediction for shuffled covariate
+      pts_pred_OOB_pert <- predicttree(
+        object = treepert,
+        newdata = Xout
+      )
 
-    ### OOB prediction
-    # tree when in a forest do not have listcov. I add it
-    forest$trees[[i]]$listcov <- forest$listcov
-    pts_pred_OOB <- predict.sptree(
-      object = forest$trees[[i]],
-      newdata = Xout
-    )
+      ### OOB prediction
+      # tree when in a forest do not have listcov. I add it
+      forest$trees[[i]]$listcov <- forest$listcov
+      pts_pred_OOB <- predict.sptree(
+        object = forest$trees[[i]],
+        newdata = Xout
+      )
 
-    # OOB mean square error of the tree
-    return(sqrt(mean((pts_pred_OOB_pert - pts_pred_OOB)^2,
-      na.rm = TRUE
-    )))
-  }, mc.cores = cores)
+      # OOB mean square error of the tree
+      return(sqrt(mean((pts_pred_OOB_pert - pts_pred_OOB)^2,
+        na.rm = TRUE
+      )))
+    }, mc.cores = cores
+  )
 
 
   # Return the error of all the trees
@@ -251,7 +256,7 @@ OOBscr <- function(forest, cores = 1) {
       } else {
         # vector of same length as number of pts in X
         OOBpts <- (forest$pt_intree[[i]] != 1)
-        if (all(!OOBpts)) { 
+        if (all(!OOBpts)) {
           # If no points in OOBpts, then nothing do do.
           return(OOBval)
         }

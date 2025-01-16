@@ -64,15 +64,20 @@ tessforest <- function(X,
     })
   }
 
+  listim <- lapply(listtree, FUN=function(i) i$intensityim)
+  listtess <- lapply(listtree, FUN=function(i) i$intensitytess)
+  
+  
   output <- list(
-    imforest = Reduce("+", listtree) / length(listtree),
+    imforest = Reduce("+", listim) / length(listim),
     trees = NULL,
-    ntrees = length(listtree),
+    ntrees = length(listim),
     pt_intree = rep(1, X$n),
     X = X,
     listcov = NULL,
     p = NULL,
-    mtry = NULL
+    mtry = NULL,
+    tesselations = listtess
   )
   class(output) <- "spforest"
 

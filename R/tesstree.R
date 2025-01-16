@@ -84,7 +84,8 @@ tesstree <- function(X,
       ptintess <- c(ptintess, sum(mX == i, na.rm = TRUE))
     }
   }
-  return(as.im(tmp, values = ptintess / delarea, dimyx = dimyx))
+  return(list(intensityim = as.im(tmp, values = ptintess / delarea, dimyx = dimyx),
+              intensitytess = tmp))
 }
 
 

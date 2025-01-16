@@ -1,6 +1,6 @@
 Package: spforest
 Title: Spatial Random Forest
-Version: 0.0.0.9105
+Version: 0.0.0.9106
 Authors@R: 
     person("Christophe", "Biscio", , "christophe@math.aau.dk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2218-6825"))

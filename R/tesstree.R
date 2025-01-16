@@ -65,6 +65,7 @@ tesstree <- function(X,
 
   del <- spatstat.geom::dirichlet(tess.points) # associated tessellation
   tmp <- spatstat.geom::intersect.tess(del, wind) # intersected with the windows
+  tmp0 = tmp
   if (test.connected) {
     tmp <- spatstat.geom::connected(tmp)
   }
@@ -85,7 +86,7 @@ tesstree <- function(X,
     }
   }
   return(list(intensityim = as.im(tmp, values = ptintess / delarea, dimyx = dimyx),
-              intensitytess = tmp))
+              intensitytess = tmp0))
 }
 
 

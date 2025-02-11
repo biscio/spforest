@@ -34,15 +34,31 @@ smallest_pixelarea <- function(x) {
 #'   listcovariates = list(1, 1, 1, 1, 1),
 #'   mtry = 1 / 2
 #' )
-rand_covar <- function(listcovariates, mtry = 1) {
+rand_covar <- function(listcovariates, mtry = 1, randmtry = FALSE) {
   nbcov <- 0
 
-  while (nbcov == 0) {
-    usedcov <- sample(c(0, 1),
-      size = length(listcovariates),
-      replace = T, prob = c(1 - mtry, mtry)
-    )
-    nbcov <- sum(usedcov)
+  if (randmtry) {
+    if (mtry>1) {
+      stop("mtry is strictly larger than one. 
+           Decrease it or set randmtry to FALSE")
+    }
+    while (nbcov == 0) {
+      usedcov <- sample(c(0, 1),
+                        size = length(listcovariates),
+                        replace = T, prob = c(1 - mtry, mtry)
+      )
+      nbcov <- sum(usedcov)
+    }
+  } else {
+    if (mtry>length(listcovariates)) {
+      stop("mtry is larger than the number of covariates.")
+    }
+    if (mtry<1) {
+      stop("mtry is strictly smaller than one. Increase it or set randmtry to TRUE")
+    }
+    usedcov <- sample(c(rep(1, mtry), 
+                        rep(0,length(listcovariates)-mtry)), 
+                      replace = FALSE)
   }
 
   return(usedcov)

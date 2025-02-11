@@ -10,6 +10,7 @@ expect_silent(
     threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
     cores = 1,
     mtry = 1 / 3,
+    randmtry = TRUE,
     minpts = 50
   )
 )
@@ -25,6 +26,7 @@ expect_silent(
     threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
     cores = 1,
     mtry = 1 / 3,
+    randmtry = TRUE,
     minpts = 50
   )
 )

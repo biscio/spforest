@@ -15,6 +15,7 @@ expect_silent(
     covrangey = beisoilres[[1]]$yrange,
     listcovariates = bei.extra,
     mtry = 1,
+    randmtry = TRUE,
     minpts = 1000
   )
 )
@@ -32,7 +33,8 @@ expect_true(spatstat.geom::is.ppp(arbre$X))
 
 expect_true(sum(rand_covar(
   listcovariates = list(1, 1, 1, 1, 1),
-  mtry = 1 / 2
+  mtry = 1 / 2,
+  randmtry = TRUE
 )) > 0)
 
 expect_equal(arbre$tree[[8]]$nodeID, 8)
@@ -122,6 +124,7 @@ expect_silent(arbre <- tesscovtree(
   covrangey = covrangey0,
   listcovariates = beisoilres,
   mtry = 1,
+  randmtry = TRUE,
   minpts = 500
 ))
 

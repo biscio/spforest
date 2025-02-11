@@ -10,11 +10,32 @@ expect_silent(
     threshold = 0.01,
     cores = 1,
     mtry = 1 / 3,
+    randmtry = TRUE,
     minpts = 100
   )
 )
 
 expect_equal(class(forest), "spforest")
+
+
+# Test spforest with tesscovforest - other parameters ----
+
+## mtry to choose a fixed number of param each times ---- 
+
+expect_silent(
+  forest <- spforest(
+    X = spatstat.data::bei,
+    listcovariates = beisoilres,
+    score = "lcv",
+    p = 1 / 2,
+    Ntree = 2,
+    threshold = 0.01,
+    cores = 1,
+    mtry = 8,
+    randmtry = FALSE,
+    minpts = 100
+  )
+)
 
 
 # Test spforest call tessforest ----

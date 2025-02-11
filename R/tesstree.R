@@ -173,6 +173,7 @@ tesscovtree <- function(X,
                         listcovariates,
                         minpts = 500,
                         mtry = 1,
+                        randmtry = FALSE, 
                         score = "lcv",
                         threshold = spatstat.geom::area(X) / 1e4,
                         inforest = F) {
@@ -250,7 +251,8 @@ tesscovtree <- function(X,
       ## Select randomly covariates
       usedcov <- rand_covar(
         listcovariates = listcovariates,
-        mtry = mtry
+        mtry = mtry,
+        randmtry = randmtry
       )
 
       if (intensity_tree[[i]]$nX <= minpts) {

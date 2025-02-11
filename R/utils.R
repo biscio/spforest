@@ -38,27 +38,31 @@ rand_covar <- function(listcovariates, mtry = 1, randmtry = FALSE) {
   nbcov <- 0
 
   if (randmtry) {
-    if (mtry>1) {
-      stop("mtry is strictly larger than one. 
+    if (mtry > 1) {
+      stop("mtry is strictly larger than one.
            Decrease it or set randmtry to FALSE")
     }
     while (nbcov == 0) {
       usedcov <- sample(c(0, 1),
-                        size = length(listcovariates),
-                        replace = T, prob = c(1 - mtry, mtry)
+        size = length(listcovariates),
+        replace = T, prob = c(1 - mtry, mtry)
       )
       nbcov <- sum(usedcov)
     }
   } else {
-    if (mtry>length(listcovariates)) {
+    if (mtry > length(listcovariates)) {
       stop("mtry is larger than the number of covariates.")
     }
-    if (mtry<1) {
+    if (mtry < 1) {
       stop("mtry is strictly smaller than one. Increase it or set randmtry to TRUE")
     }
-    usedcov <- sample(c(rep(1, mtry), 
-                        rep(0,length(listcovariates)-mtry)), 
-                      replace = FALSE)
+    usedcov <- sample(
+      c(
+        rep(1, mtry),
+        rep(0, length(listcovariates) - mtry)
+      ),
+      replace = FALSE
+    )
   }
 
   return(usedcov)
@@ -178,9 +182,9 @@ predicttree <- function(object, newdata, ...) {
 #'   mtry = 1
 #' )
 #' importance(forest, id_cov = 1)
-importance <- function(forest, id_cov, cores = 1) {
+importance <- function(forest, id_cov, cores = 1, viptype = 1) {
   # listZ <- forest$listcovsp
-  X <- forest$X # this is alway the root
+  X <- forest$X # this is always the root
   Z <- forest$listcov[[id_cov]] # list of cov
 
   vip_tree <- NULL
@@ -222,10 +226,23 @@ importance <- function(forest, id_cov, cores = 1) {
         newdata = Xout
       )
 
-      # OOB mean square error of the tree
-      return(sqrt(mean((pts_pred_OOB_pert - pts_pred_OOB)^2,
-        na.rm = TRUE
-      )))
+      differr <- pts_pred_OOB_pert - pts_pred_OOB
+
+      if (viptype == 1) {
+        # OOB mean square error of the tree
+        return(sqrt(mean(differr^2, na.rm = TRUE)))
+      }
+
+      if (viptype == 2) {
+        errsd <- sd(differr,
+          na.rm = TRUE
+        )
+        output <- ifelse(errsd == 0,
+          mean(differr, na.rm = TRUE),
+          mean(differr, na.rm = TRUE) / errsd
+        )
+        return(output)
+      }
     }, mc.cores = cores
   )
 

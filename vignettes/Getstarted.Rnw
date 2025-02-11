@@ -80,6 +80,7 @@ forest <- spforest(
   listcovariates = beismall,
   Ntree = 3,
   mtry = 1 / 3,
+  randmtry = TRUE,
   minpts = 500,
   cores = 1
 )
@@ -181,6 +182,7 @@ We will use the \texttt{mapply} function.
 extrarg <- list(
   Ntree = 5,
   cores = 1,
+  randmtry = TRUE,
   X = bei,
   listcovariates = beismall
 )
@@ -205,6 +207,7 @@ combination of parameter but with \texttt{Ntree} larger.
 <<Computing chosen forest toy example>>=
 chosenforesttoy <- spforest(
   mtry = allargs[which.max(allscore), 1],
+  randmtry = TRUE,
   minpts = allargs[which.max(allscore), 2],
   Ntree = 50,
   cores = 1,
@@ -273,6 +276,7 @@ extrarg <- list(
 )
 allforestbei <- mapply(spforest,
   mtry = allargs$mtry,
+  randmtry = TRUE,
   minpts = allargs$minpts,
   MoreArgs = extrarg,
   SIMPLIFY = F
@@ -289,6 +293,7 @@ Finally, we run again \texttt{spforest} with \texttt{Ntree} larger.
 <<Computing chosen forest bei example>>=
 chosenforestbei <- spforest(
   mtry = allargs[which.max(allscore), 1],
+  randmtry = TRUE,
   minpts = allargs[which.max(allscore), 2],
   Ntree = 50,
   cores = 1,

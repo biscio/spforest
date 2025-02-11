@@ -234,6 +234,7 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
       }
 
       if (viptype == 2) {
+        # like the randomForest R package
         errsd <- sd(differr,
           na.rm = TRUE
         )

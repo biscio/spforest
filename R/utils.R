@@ -203,7 +203,11 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
       )
 
       # OOB sample
-      Xout <- X[forest$pt_intree[[i]] != 1] # ERROR
+      if (forest$p == 0) {
+        Xout <- X[sort(unique(forest$pt_intree[[i]]), decreasing = FALSE)]
+      } else {
+        Xout <- X[forest$pt_intree[[i]] != 1] # ERROR
+      }
 
       listZ_shuf <- forest$listcov
       listZ_shuf[[id_cov]] <- Z

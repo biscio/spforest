@@ -204,10 +204,31 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
 
       # OOB sample
       if (forest$p == 0) {
-        Xout <- X[sort(unique(forest$pt_intree[[i]]), decreasing = FALSE)]
+        torm <- unique(forest$pt_intree[[i]])
+        if (length(torm) == X$n) { # If all points are drawn in the bootstrap,
+          # then nothing do do.
+          warning("Some out of bag sample were empty")
+          return(0)
+        }
+        OOBpts <- 1:X$n
+        OOBpts <- OOBpts[!(OOBpts %in% torm)]
       } else {
-        Xout <- X[forest$pt_intree[[i]] != 1] # ERROR
+        # vector of same length as number of pts in X
+        OOBpts <- (forest$pt_intree[[i]] != 1)
+        if (all(!OOBpts)) {
+          # If no points in OOBpts, then nothing do do.
+          warning("Some out of bag sample were empty")
+          return(0)
+        }
       }
+      Xout <- X[OOBpts]
+      
+      # Old code for OOB sample
+      # if (forest$p == 0) {
+      #   Xout <- X[sort(unique(forest$pt_intree[[i]]), decreasing = FALSE)]
+      # } else {
+      #   Xout <- X[forest$pt_intree[[i]] != 1] # ERROR
+      # }
 
       listZ_shuf <- forest$listcov
       listZ_shuf[[id_cov]] <- Z

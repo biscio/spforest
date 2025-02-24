@@ -204,7 +204,8 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
 
         splitval <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
           j$split_val
-        }) |> unlist()
+        }) |> unlist() ## NOT WHAT I WANT AT ALL. this is the val used to split. 
+        # TODO: merge this code, then in the branch, change code to keep track of impurity
 
         return(mean(splitval[splitvar == id_cov], na.rm = TRUE))
       }

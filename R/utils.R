@@ -195,22 +195,21 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
 
   vip_tree <- parallel::mclapply(1:length(forest$trees),
     FUN = function(i) {
-      
       if (viptype == 3) {
         # Impurity like the randomForest R package - page 6 of the help
-        
-        splitvar <- lapply( forest$trees[[i]]$tree, FUN=function(j){
+
+        splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
           j$split_var
         }) |> unlist()
-        
-        splitval <- lapply( forest$trees[[i]]$tree, FUN=function(j){
+
+        splitval <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
           j$split_val
         }) |> unlist()
-        
-        return(mean(splitval[splitvar==id_cov], na.rm = TRUE))
+
+        return(mean(splitval[splitvar == id_cov], na.rm = TRUE))
       }
-      
-      
+
+
       # Shuffle the chosen covariate value
       dimmat <- Z$dim
       Z$v <- matrix(Z$v[sample.int(length(Z$v))],
@@ -237,7 +236,7 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
         }
       }
       Xout <- X[OOBpts]
-      
+
       listZ_shuf <- forest$listcov
       listZ_shuf[[id_cov]] <- Z
 
@@ -277,8 +276,6 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
         )
         return(output)
       }
-      
-      
     }, mc.cores = cores
   )
 

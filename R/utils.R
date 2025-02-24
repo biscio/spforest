@@ -252,13 +252,13 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
       }
 
       if (viptype == 2) {
-        # like the randomForest R package
+        # like the randomForest R package - page 5 of the help
         errsd <- sd(differr,
           na.rm = TRUE
         )
         output <- ifelse(errsd == 0,
-          mean(differr, na.rm = TRUE),
-          mean(differr, na.rm = TRUE) / errsd
+          mean(abs(differr), na.rm = TRUE),
+          mean(abs(differr), na.rm = TRUE) / errsd
         )
         return(output)
       }

@@ -33,7 +33,7 @@
 #'   }
 #'   c(as.matrix.im(i))
 #' })
-#' usecovariates <- rep(1, 15)
+#' usecovariates <- c(rep(1, 5), rep(0, 5), rep(1, 5))
 #' areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
 #' score <- "lcv"
 #' A <- splitcell(
@@ -50,8 +50,7 @@ splitcell <- function(X,
                       usecovariates,
                       areapixel,
                       score = "lcv",
-                      threshold = spatstat.geom::area(X) / 1e4
-                      ) {
+                      threshold = spatstat.geom::area(X) / 1e4) {
   whynot <- NULL
   vecvalused <- vecval[usecovariates == 1]
   # listcovar <- listcovariates[usecovariates == 1]
@@ -66,8 +65,10 @@ splitcell <- function(X,
     }
   )
 
-  # Determination of level sets for all covariates
+  # Determine level sets for all covariates
   scr_cov <- NULL
+  scr_sub <- NULL
+  scr_sup <- NULL
   for (i in 1:sum(usecovariates)) {
     Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
     Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
@@ -76,9 +77,16 @@ splitcell <- function(X,
     if (Wsub <= threshold | Wsup <= threshold) {
       scr_cov[i] <- -Inf
     } else {
+      
       n1 <- sum(valpts[[i]] < mediancov[[i]], na.rm = T)
       n2 <- sum(valpts[[i]] >= mediancov[[i]], na.rm = T)
-
+      
+      if (i==1) {
+        scr_parent <- score.pp(n0 = n1+n2,
+                               W0area = Wsub + Wsup,
+                               score = score)
+      }
+      
       scr_cov[i] <- score.split(
         n1 = n1,
         n2 = n2,
@@ -86,23 +94,36 @@ splitcell <- function(X,
         W2area = Wsup,
         score = score
       )
+      
+      scr_sub[i] <- score.pp(n0 = n1,
+                             W0area = Wsub,
+                             score = score)
+      scr_sup[i] <- score.pp(n0 = n2,
+                             W0area = Wsup,
+                             score = score)
+      
     }
   }
-
+  
   ## Go out if all the score are -Inf
   if (all(is.infinite(scr_cov))) {
     whynot <- c("All split scores are -Inf, cell too small")
   }
 
+  allscr <- rep(NA, length(vecval))
+  allscr[usecovariates == 1] <- scr_cov
+  
   id_best_scr <- sort(scr_cov,
     index.return = T,
     decreasing = T
   )$ix[1]
 
+
   if (!is.null(whynot)) {
     return(whynot)
   } else {
-    split_var <- which(usecovariates == 1)[id_best_scr]
+    # split_var <- which(usecovariates == 1)[id_best_scr]
+    split_var <- which.max(allscr)
     split_val <- mediancov[[id_best_scr]]
     splitsub <- (vecval[[split_var]] < split_val)
 
@@ -140,7 +161,11 @@ splitcell <- function(X,
       nsub = nsub,
       suplevels = suplevels,
       nsup = nsup,
-      whystop = NULL
+      whystop = NULL,
+      scrsplit = scr_cov[id_best_scr],
+      scrdcr =  scr_parent - scr_sub[id_best_scr] - scr_sup[id_best_scr]
     )
+
+    return(nodeChilds)
   }
 }

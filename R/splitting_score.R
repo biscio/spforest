@@ -72,43 +72,27 @@ score.split <- function(n1, n2, W1area, W2area, score = "lcv") {
 
 #' Score parent
 #'
-#' @param X A ppp object for the parent
-#' @param score The score used
+#' @param n0 Number of points in point process
+#' @param W0area Area of the ppp
+#' @param score The score to use
 #'
 #' @return A number
 #' @export
 #'
 #' @examples
-#' score.pp(X = spatstat.random::rpoispp(10))
-score.pp <- function(X, score = "lcv") {
+#' score.split(5, 5)
+score.pp <- function(n0, W0area, score = "lcv") {
   stopifnot(score %in% c("lcv", "lcv2", "ent", "star", "ise", "isecv"))
-  stopifnot(spatstat.geom::is.ppp(X))
 
-  n <- spatstat.geom::npoints(X)
-  W <- spatstat.geom::area(X)
-
+  # Return value depending on the score considered
+  ## likelihood cross validation
   if (score == "lcv") {
-    val <- ifelse(n > 1, n * log((n - 1) / W), -Inf)
+    val <- ifelse(n0 > 1, n0 * log((n0 - 1) / W0area), 0)
+    return(val)
   }
 
   if (score == "lcv2") {
-    val <- ifelse(n > 1, n * log((n - 1) / W), 0)
+    val <- ifelse(n0 > 1, n0 * log((n0 - 1) / W0area), -Inf)
+    return(val)
   }
-
-  ## entropie de Poisson (idem lcv sans le -1)
-  if (score == "ent") {
-    val <- ifelse(n > 1, n * log(n / W), -Inf)
-  }
-
-  ## integrated square errors (for density estimation)
-  ## As I maximise the score in the code, I actually put minus the ISE.
-  if (score == "ise") {
-    val <- -n^2 / W
-  }
-
-  ## CV integrated square errors (for density estimation)
-  if (score == "isecv") {
-    val <- -(n^2 - 2 * n) / W
-  }
-  return(val)
 }

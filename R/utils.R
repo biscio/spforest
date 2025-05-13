@@ -43,10 +43,14 @@ rand_covar <- function(listcovariates, mtry = 1, randmtry = FALSE) {
            Decrease it or set randmtry to FALSE")
     }
     while (nbcov == 0) {
-      usedcov <- sample(c(0, 1),
-        size = length(listcovariates),
-        replace = T, prob = c(1 - mtry, mtry)
-      )
+      usedcov <- rbinom(n = length(listcovariates),
+                        size = 1, 
+                        prob = mtry
+                        )  
+      # usedcov <- sample(c(0, 1),
+      #   size = length(listcovariates),
+      #   replace = T, prob = c(1 - mtry, mtry)
+      # )
       nbcov <- sum(usedcov)
     }
   } else {
@@ -202,12 +206,25 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
           j$split_var
         }) |> unlist()
 
-        splitval <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
-          j$split_val
-        }) |> unlist() ## NOT WHAT I WANT AT ALL. this is the val used to split. 
-        # TODO: merge this code, then in the branch, change code to keep track of impurity
+        splitscr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+          j$scrsplit
+        }) |> unlist() 
 
-        return(mean(splitval[splitvar == id_cov], na.rm = TRUE))
+        return(sum(splitscr[splitvar == id_cov], na.rm = TRUE))
+      }
+      
+      if (viptype == 4) {
+        # Impurity like the randomForest R package - page 6 of the help
+        
+        splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+          j$split_var
+        }) |> unlist()
+        
+        splitdcr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+          j$scrdcr
+        }) |> unlist() 
+        
+        return(sum(splitdcr[splitvar == id_cov], na.rm = TRUE))
       }
 
 

@@ -195,7 +195,9 @@ tesscovtree <- function(X,
     status = 1,
     intensity_pred = spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
     already_split = FALSE,
-    whystop = NULL
+    whystop = NULL,
+    scrsplit = NA,
+    scrdcr = NA
   )
 
   if (spatstat.geom::area.owin(X$window) <= threshold |
@@ -205,7 +207,6 @@ tesscovtree <- function(X,
       tree = list(root),
       X = X,
       namecov = names(listcovariates),
-      namelist = as.character(match.call()[4]),
       im = spatstat.geom::as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
         W = X$window
       )
@@ -222,7 +223,6 @@ tesscovtree <- function(X,
       tree = list(root),
       X = X,
       namecov = names(listcovariates),
-      namelist = as.character(match.call()[4]),
       im = spatstat.geom::as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
         W = X$window
       )
@@ -274,6 +274,7 @@ tesscovtree <- function(X,
         intensity_tree[[i]]$status <- 0
         intensity_tree[[i]]$already_split <- TRUE
         intensity_tree[[i]]$whystop <- res.split
+        intensity_tree[[i]]$scrsplit <- NA 
       } else {
         # Update the parent
         intensity_tree[[i]]$left_daughter <- knew + 1
@@ -281,6 +282,8 @@ tesscovtree <- function(X,
         intensity_tree[[i]]$split_var <- res.split$split_var
         intensity_tree[[i]]$split_val <- res.split$split_val
         intensity_tree[[i]]$already_split <- TRUE
+        intensity_tree[[i]]$scrsplit <- res.split$scrsplit 
+        intensity_tree[[i]]$scrdcr <- res.split$scrdcr
 
         # Define the children
         areasub <- (areapixel * sum(!is.na(res.split$sublevels[[res.split$split_var]])))
@@ -298,7 +301,9 @@ tesscovtree <- function(X,
           status = 1,
           intensity_pred = res.split$nsub / areasub,
           already_split = FALSE,
-          whystop = NULL
+          whystop = NULL,
+          scrsplit = NA,
+          scrdcr = NA
         )
 
         childright <- list(
@@ -313,7 +318,9 @@ tesscovtree <- function(X,
           status = 1,
           intensity_pred = res.split$nsup / areasup,
           already_split = FALSE,
-          whystop = NULL
+          whystop = NULL,
+          scrsplit = NA,
+          scrdcr = NA
         )
         # append the children
         intensity_tree <- append(
@@ -356,7 +363,6 @@ tesscovtree <- function(X,
       tree = intensity_tree,
       X = NULL,
       namecov = names(listcovariates),
-      namelist = as.character(match.call()[4]),
       im = spatstat.geom::as.im(Reduce("+", patchworks), W = X$window)
     )
   } else {
@@ -364,7 +370,6 @@ tesscovtree <- function(X,
       tree = intensity_tree,
       X = X,
       namecov = names(listcovariates),
-      namelist = as.character(match.call()[4]),
       listcov = listcovariates,
       im = spatstat.geom::as.im(Reduce("+", patchworks), W = X$window)
     )

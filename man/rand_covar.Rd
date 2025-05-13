@@ -4,7 +4,7 @@
 \alias{rand_covar}
 \title{Randomise input for tree}
 \usage{
-rand_covar(listcovariates, mtry = 1)
+rand_covar(listcovariates, mtry = 1, randmtry = FALSE)
 }
 \arguments{
 \item{listcovariates}{list of covariates used}

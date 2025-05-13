@@ -15,6 +15,5 @@ expect_silent(score.split(
   score = "lcv2"
 ))
 
-expect_silent(score.pp(
-  X = spatstat.random::rpoispp(10)
-))
+expect_silent(score.pp(5,5))
+

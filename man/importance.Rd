@@ -4,7 +4,7 @@
 \alias{importance}
 \title{Importance of one covariate}
 \usage{
-importance(forest, id_cov, cores = 1)
+importance(forest, id_cov, cores = 1, viptype = 1)
 }
 \arguments{
 \item{forest}{A spforest object}

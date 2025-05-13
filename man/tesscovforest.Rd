@@ -10,6 +10,7 @@ tesscovforest(
   Ntree = 10,
   minpts = spatstat.geom::npoints(X)/10,
   mtry = 1/3,
+  randmtry = FALSE,
   p = 0,
   cores = 1,
   score = "lcv",

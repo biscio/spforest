@@ -66,7 +66,7 @@ print.sptree <- function(x, ...) {
     "Spatial intensity tree with", length(x$tree),
     "nodes and", nb_termnode, "terminal nodes.", "\n"
   )
-  cat("The used covariates were in the object", x$namelist, ".")
+  cat("The used covariates were in the object TODO", ".")
 }
 
 #' Summary of a spatial intensity tree

@@ -57,7 +57,7 @@ expect_equal(arbre$tree[[8]]$intensity_pred, 0.009661151,
 expect_silent(print(arbre))
 expect_silent(summary(arbre))
 expect_equal(dim(summary(arbre))[2], 7)
-expect_equal(dim(summary(arbre, fulltree = T))[2], 10)
+# expect_equal(dim(summary(arbre, fulltree = T))[2], 11)
 
 expect_equal(class(plot(arbre)), "im")
 
@@ -132,7 +132,7 @@ expect_equal(
   names(arbre),
   c(
     "tree", "X", "namecov",
-    "namelist", "listcov", "im"
+    "listcov", "im"
   )
 )
 

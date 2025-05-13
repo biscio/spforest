@@ -14,6 +14,7 @@ tesscovtree(
   listcovariates,
   minpts = 500,
   mtry = 1,
+  randmtry = FALSE,
   score = "lcv",
   threshold = spatstat.geom::area(X)/10000,
   inforest = F

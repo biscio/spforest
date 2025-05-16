@@ -45,9 +45,9 @@ B <- spforest(
 vipval <- rep(NA, 15)
 vipval2 <- rep(NA, 15)
 for (j in 1:15) {
-  vipval[j] <- mean(importance(A, id_cov = j, cores = 1, viptype = 3
+  vipval[j] <- mean(importance(A, id_cov = j, viptype = 3
   ))
-  vipval2[j] <- mean(importance(B, id_cov = j, cores = 1, viptype = 3
+  vipval2[j] <- mean(importance(B, id_cov = j, viptype = 3
   ))
 }
 par(mfrow=c(2,1))
@@ -84,3 +84,18 @@ barplot(colMeans(vipval), names.arg = names(newcov))
 # plot(A)
 #
 # plot(Z)
+
+smoothing(x=valpts[[1]]) |> plot(ylim=c(0.20,0.7))
+for (i in 2:15) {
+  lines(smoothing(x=valpts[[i]]), col=i)
+}
+
+
+
+valpts <- lapply(newcov2,
+                 FUN = function(i) {
+                   i[X]
+                 }
+)
+
+sapply(valpts, mean)

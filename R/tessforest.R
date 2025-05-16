@@ -214,7 +214,7 @@ tesscovforest <- function(X,
 
     if (p == 0) { # bootstrap case, with replacement
       ptintree <- sample.int(n = X$n, size = X$n, replace = T)
-      Xintree <- X[ptintree]
+      Xintree <- X[ptintree] # Should I use unique(X[ptintree]) ??
     } else {
       ptintree <- stats::rbinom(n = X$n, size = 1, prob = p)
       safety <- 1
@@ -247,6 +247,8 @@ tesscovforest <- function(X,
       threshold = threshold,
       inforest = T
     )
+    
+    # summary(tree)[,"split_var"] |> unlist() |> table()
 
     # TODO: change printing methods to take tree from a forest into account
     # To save a lot of space in memory

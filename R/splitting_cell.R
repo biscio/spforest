@@ -95,6 +95,8 @@ splitcell <- function(X,
         score = score
       )
       
+      print(scr_cov[i])
+      
       scr_sub[i] <- score.pp(n0 = n1,
                              W0area = Wsub,
                              score = score)
@@ -162,7 +164,7 @@ splitcell <- function(X,
       suplevels = suplevels,
       nsup = nsup,
       whystop = NULL,
-      scrsplit = scr_cov[id_best_scr],
+      scrsplit = max(allscr),
       scrdcr =  scr_parent - scr_sub[id_best_scr] - scr_sup[id_best_scr]
     )
 

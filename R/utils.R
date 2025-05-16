@@ -186,7 +186,7 @@ predicttree <- function(object, newdata, ...) {
 #'   mtry = 1
 #' )
 #' importance(forest, id_cov = 1)
-importance <- function(forest, id_cov, cores = 1, viptype = 1) {
+importance <- function(forest, id_cov, viptype = 1) {
   # listZ <- forest$listcovsp
   X <- forest$X # this is always the root
   Z <- forest$listcov[[id_cov]] # list of cov
@@ -197,105 +197,108 @@ importance <- function(forest, id_cov, cores = 1, viptype = 1) {
   #   spatstat.geom::as.function.im
   # ) # to remove?
 
-  vip_tree <- parallel::mclapply(1:length(forest$trees),
-    FUN = function(i) {
-      if (viptype == 3) {
-        # Impurity like the randomForest R package - page 6 of the help
-
-        splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
-          j$split_var
-        }) |> unlist()
-
-        splitscr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
-          j$scrsplit
-        }) |> unlist() 
-
-        return(sum(splitscr[splitvar == id_cov], na.rm = TRUE))
-      }
+  vip_tree <- NULL
+  
+  
+  for (i in 1:length(forest$trees)) {
+    
+    if (viptype == 3) {
+      # Impurity like the randomForest R package - page 6 of the help
       
-      if (viptype == 4) {
-        # Impurity like the randomForest R package - page 6 of the help
-        
-        splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
-          j$split_var
-        }) |> unlist()
-        
-        splitdcr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
-          j$scrdcr
-        }) |> unlist() 
-        
-        return(sum(splitdcr[splitvar == id_cov], na.rm = TRUE))
+      splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+        j$split_var
+      }) |> unlist()
+      
+      splitscr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+        j$scrsplit
+      }) |> unlist() 
+      
+      vip_tree[[i]] <- sum(splitscr[splitvar == id_cov], na.rm = TRUE)
+    }
+    
+    if (viptype == 4) {
+      # Impurity like the randomForest R package - page 6 of the help
+      
+      splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+        j$split_var
+      }) |> unlist()
+      
+      splitdcr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+        j$scrdcr
+      }) |> unlist() 
+      
+      vip_tree[[i]] <- sum(splitdcr[splitvar == id_cov], na.rm = TRUE)
+    }
+    
+    
+    # Shuffle the chosen covariate value
+    dimmat <- Z$dim
+    Z$v <- matrix(Z$v[sample.int(length(Z$v))],
+                  ncol = dimmat[2]
+    )
+    
+    # OOB sample
+    if (forest$p == 0) {
+      torm <- unique(forest$pt_intree[[i]])
+      if (length(torm) == X$n) { # If all points are drawn in the bootstrap,
+        # then nothing do do.
+        warning("Some out of bag sample were empty")
+        return(0)
       }
-
-
-      # Shuffle the chosen covariate value
-      dimmat <- Z$dim
-      Z$v <- matrix(Z$v[sample.int(length(Z$v))],
-        ncol = dimmat[2]
+      OOBpts <- 1:X$n
+      OOBpts <- OOBpts[!(OOBpts %in% torm)]
+    } else {
+      # vector of same length as number of pts in X
+      OOBpts <- (forest$pt_intree[[i]] != 1)
+      if (all(!OOBpts)) {
+        # If no points in OOBpts, then nothing do do.
+        warning("Some out of bag sample were empty")
+        return(0)
+      }
+    }
+    Xout <- X[OOBpts]
+    
+    listZ_shuf <- forest$listcov
+    listZ_shuf[[id_cov]] <- Z
+    
+    # Shuffle the tree
+    treepert <- forest$trees[[i]]
+    treepert$listcov <- listZ_shuf
+    
+    ### OOB prediction for shuffled covariate
+    pts_pred_OOB_pert <- predicttree(
+      object = treepert,
+      newdata = Xout
+    )
+    
+    ### OOB prediction
+    # tree when in a forest do not have listcov. I add it
+    forest$trees[[i]]$listcov <- forest$listcov
+    pts_pred_OOB <- predict.sptree(
+      object = forest$trees[[i]],
+      newdata = Xout
+    )
+    
+    differr <- pts_pred_OOB_pert - pts_pred_OOB
+    
+    if (viptype == 1) {
+      # OOB mean square error of the tree
+      vip_tree[[i]] <- sqrt(mean(differr^2, na.rm = TRUE))
+    }
+    
+    if (viptype == 2) {
+      # like the randomForest R package - page 6 of the help
+      errsd <- sd(differr,
+                  na.rm = TRUE
       )
-
-      # OOB sample
-      if (forest$p == 0) {
-        torm <- unique(forest$pt_intree[[i]])
-        if (length(torm) == X$n) { # If all points are drawn in the bootstrap,
-          # then nothing do do.
-          warning("Some out of bag sample were empty")
-          return(0)
-        }
-        OOBpts <- 1:X$n
-        OOBpts <- OOBpts[!(OOBpts %in% torm)]
-      } else {
-        # vector of same length as number of pts in X
-        OOBpts <- (forest$pt_intree[[i]] != 1)
-        if (all(!OOBpts)) {
-          # If no points in OOBpts, then nothing do do.
-          warning("Some out of bag sample were empty")
-          return(0)
-        }
-      }
-      Xout <- X[OOBpts]
-
-      listZ_shuf <- forest$listcov
-      listZ_shuf[[id_cov]] <- Z
-
-      # Shuffle the tree
-      treepert <- forest$trees[[i]]
-      treepert$listcov <- listZ_shuf
-
-      ### OOB prediction for shuffled covariate
-      pts_pred_OOB_pert <- predicttree(
-        object = treepert,
-        newdata = Xout
+      vip_tree[[i]] <- ifelse(errsd == 0,
+                       mean(abs(differr), na.rm = TRUE),
+                       mean(abs(differr), na.rm = TRUE) / errsd
       )
+    }
+  }
+  
 
-      ### OOB prediction
-      # tree when in a forest do not have listcov. I add it
-      forest$trees[[i]]$listcov <- forest$listcov
-      pts_pred_OOB <- predict.sptree(
-        object = forest$trees[[i]],
-        newdata = Xout
-      )
-
-      differr <- pts_pred_OOB_pert - pts_pred_OOB
-
-      if (viptype == 1) {
-        # OOB mean square error of the tree
-        return(sqrt(mean(differr^2, na.rm = TRUE)))
-      }
-
-      if (viptype == 2) {
-        # like the randomForest R package - page 6 of the help
-        errsd <- sd(differr,
-          na.rm = TRUE
-        )
-        output <- ifelse(errsd == 0,
-          mean(abs(differr), na.rm = TRUE),
-          mean(abs(differr), na.rm = TRUE) / errsd
-        )
-        return(output)
-      }
-    }, mc.cores = cores
-  )
 
 
   # Return the error of all the trees

@@ -211,6 +211,7 @@ importance <- function(forest, id_cov, viptype = 1) {
     
     if (viptype == 4) {
       # Impurity like the randomForest R package - page 6 of the help
+      # Look at the decrease of the scores between parent and children
       
       splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
         j$split_var

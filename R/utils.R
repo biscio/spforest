@@ -191,14 +191,7 @@ importance <- function(forest, id_cov, viptype = 1) {
   X <- forest$X # this is always the root
   Z <- forest$listcov[[id_cov]] # list of cov
 
-  # vip_tree <- NULL
-  # Zfun <- lapply(
-  #   forest$listcov,
-  #   spatstat.geom::as.function.im
-  # ) # to remove?
-
   vip_tree <- NULL
-  
   
   for (i in 1:length(forest$trees)) {
     
@@ -223,11 +216,11 @@ importance <- function(forest, id_cov, viptype = 1) {
         j$split_var
       }) |> unlist()
       
-      splitdcr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+      splitscr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
         j$scrdcr
       }) |> unlist() 
       
-      vip_tree[[i]] <- sum(splitdcr[splitvar == id_cov], na.rm = TRUE)
+      vip_tree[[i]] <- sum(splitscr[splitvar == id_cov], na.rm = TRUE)
     }
     
     

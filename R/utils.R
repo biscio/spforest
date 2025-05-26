@@ -216,11 +216,11 @@ importance <- function(forest, id_cov, viptype = 1) {
         j$split_var
       }) |> unlist()
       
-      splitscr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
+      splitdcr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
         j$scrdcr
       }) |> unlist() 
       
-      vip_tree[[i]] <- sum(splitscr[splitvar == id_cov], na.rm = TRUE)
+      vip_tree[[i]] <- sum(splitdcr[splitvar == id_cov], na.rm = TRUE)
     }
     
     

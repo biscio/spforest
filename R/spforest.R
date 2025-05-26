@@ -296,9 +296,9 @@ as.im.spforest <- function(X, ...) {
 #'   mtry = 1
 #' )
 #' boxplot(forest)
-boxplot.spforest <- function(x, cores = 1, ...) {
+boxplot.spforest <- function(x, ...) {
   vipval <- sapply(X = seq_along(x$listcov), FUN = function(i) {
-    importance(x, id_cov = i, cores = cores)
+    importance(x, id_cov = i)
   })
 
   df <- data.frame(
@@ -333,9 +333,9 @@ boxplot.spforest <- function(x, cores = 1, ...) {
 #'   mtry = 1
 #' )
 #' vipplot(forest, sorted = TRUE)
-vipplot <- function(x, sorted = FALSE, cores = 1, ...) {
+vipplot <- function(x, sorted = FALSE, ...) {
   vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
-    importance(x, id_cov = i, cores = cores)
+    importance(x, id_cov = i)
   })
 
   avvip <- unlist(lapply(vipval, mean))

@@ -53,6 +53,7 @@ splitcell <- function(X,
                       threshold = spatstat.geom::area(X) / 1e4) {
   whynot <- NULL
   vecvalused <- vecval[usecovariates == 1]
+  valptsused <- valpts[usecovariates == 1]
   # listcovar <- listcovariates[usecovariates == 1]
 
   mediancov <- lapply(vecvalused, FUN = function(j) {
@@ -78,8 +79,8 @@ splitcell <- function(X,
       scr_cov[i] <- -Inf
     } else {
       
-      n1 <- sum(valpts[[i]] < mediancov[[i]], na.rm = T)
-      n2 <- sum(valpts[[i]] >= mediancov[[i]], na.rm = T)
+      n1 <- sum(valptsused[[i]] < mediancov[[i]], na.rm = T)
+      n2 <- sum(valptsused[[i]] >= mediancov[[i]], na.rm = T)
       
       if (i==1) {
         scr_parent <- score.pp(n0 = n1+n2,
@@ -95,15 +96,12 @@ splitcell <- function(X,
         score = score
       )
       
-      print(scr_cov[i])
-      
       scr_sub[i] <- score.pp(n0 = n1,
                              W0area = Wsub,
                              score = score)
       scr_sup[i] <- score.pp(n0 = n2,
                              W0area = Wsup,
                              score = score)
-      
     }
   }
   

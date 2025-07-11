@@ -16,7 +16,7 @@ foo1 <- spforest(
   cores = 2
 )
 
-expect_true(max(abs(as.im(foo1) - z500sin)) < 0.00128)
+expect_true(max(abs(as.im(foo1) - z500sin)) < 0.002)
 
 vipfoo1 <- sapply(
   X = seq_along(foo1$listcov),

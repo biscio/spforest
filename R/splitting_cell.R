@@ -78,16 +78,17 @@ splitcell <- function(X,
     if (Wsub <= threshold | Wsup <= threshold) {
       scr_cov[i] <- -Inf
     } else {
-      
       n1 <- sum(valptsused[[i]] < mediancov[[i]], na.rm = T)
       n2 <- sum(valptsused[[i]] >= mediancov[[i]], na.rm = T)
-      
-      if (i==1) {
-        scr_parent <- score.pp(n0 = n1+n2,
-                               W0area = Wsub + Wsup,
-                               score = score)
+
+      if (i == 1) {
+        scr_parent <- score.pp(
+          n0 = n1 + n2,
+          W0area = Wsub + Wsup,
+          score = score
+        )
       }
-      
+
       scr_cov[i] <- score.split(
         n1 = n1,
         n2 = n2,
@@ -95,16 +96,20 @@ splitcell <- function(X,
         W2area = Wsup,
         score = score
       )
-      
-      scr_sub[i] <- score.pp(n0 = n1,
-                             W0area = Wsub,
-                             score = score)
-      scr_sup[i] <- score.pp(n0 = n2,
-                             W0area = Wsup,
-                             score = score)
+
+      scr_sub[i] <- score.pp(
+        n0 = n1,
+        W0area = Wsub,
+        score = score
+      )
+      scr_sup[i] <- score.pp(
+        n0 = n2,
+        W0area = Wsup,
+        score = score
+      )
     }
   }
-  
+
   ## Go out if all the score are -Inf
   if (all(is.infinite(scr_cov))) {
     whynot <- c("All split scores are -Inf, cell too small")
@@ -112,7 +117,7 @@ splitcell <- function(X,
 
   allscr <- rep(NA, length(vecval))
   allscr[usecovariates == 1] <- scr_cov
-  
+
   id_best_scr <- sort(scr_cov,
     index.return = T,
     decreasing = T
@@ -131,16 +136,28 @@ splitcell <- function(X,
     nsub <- sum(subvalpts, na.rm = T)
     nsup <- sum(!subvalpts, na.rm = T)
 
+
     valptssub <- lapply(valpts, FUN = function(j) {
-      ifelse(subvalpts,
-        j, NA
-      )
+      A <- rep(NA, length(j))
+      A[which(subvalpts)] <- j[which(subvalpts)]
+      return(A)
     })
     valptssup <- lapply(valpts, FUN = function(j) {
-      ifelse(!subvalpts,
-        j, NA
-      )
+      B <- j
+      B[which(subvalpts)] <- NA
+      return(B)
     })
+
+    # valptssub <- lapply(valpts, FUN = function(j) {
+    #   ifelse(subvalpts,
+    #     j, NA
+    #   )
+    # })
+    # valptssup <- lapply(valpts, FUN = function(j) {
+    #   ifelse(!subvalpts,
+    #     j, NA
+    #   )
+    # })
 
     splitsup <- !splitsub
     splitsub[!splitsub] <- NA
@@ -163,7 +180,7 @@ splitcell <- function(X,
       nsup = nsup,
       whystop = NULL,
       scrsplit = max(allscr, na.rm = TRUE),
-      scrdcr =  scr_parent - scr_sub[id_best_scr] - scr_sup[id_best_scr]
+      scrdcr = scr_parent - scr_sub[id_best_scr] - scr_sup[id_best_scr]
     )
 
     return(nodeChilds)

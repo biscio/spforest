@@ -1,10 +1,10 @@
 Mnsin <- 1 + sin(spforest::beisoilres[[10]] / 50)
 z500sin <- 500 * Mnsin / integral(Mnsin)
-X <- spatstat.random::rpoispp(lambda = z500sin, nsim = 1)
+Xpoi <- spatstat.random::rpoispp(lambda = z500sin, nsim = 1)
 
 
 foo1 <- spforest(
-  X = X,
+  X = Xpoi,
   listcovariates = spforest::beisoilres[sample(15)],
   Ntree = 200,
   mtry = 0.5,

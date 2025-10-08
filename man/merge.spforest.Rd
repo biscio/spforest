@@ -7,18 +7,25 @@
 \method{merge}{spforest}(x, y, ...)
 }
 \arguments{
-\item{x}{First forest}
+\item{x, y}{Two \code{\link{spforest}[spforest.object]} with identical entries
+\code{p}, \code{mtry}, \code{listcov} and \code{X}.}
 
-\item{y}{Second forest}
-
-\item{...}{ignored}
+\item{...}{Ignored}
 }
 \value{
-An \code{\link{spforest}} object
-the intensity trees from both forest.
+An \code{\link[spforest]{spforest.object}}
+combining the information of \code{x} and \code{y}.
 }
 \description{
-Merge two forests with same parameters
+Given two random forest intensity estimates,
+merge them into one \code{\link{spforest}[spforest.object]}.
+}
+\details{
+The function merges two \code{\link{spforest}[spforest.object]} by concatenating
+their entires \code{trees}, \code{pt_intree} and
+averaging their intensity estimates given by their entries \code{imforest}.
+If any of the entries \code{p}, \code{mtry}, \code{listcov} or \code{X} is different,
+the function returns an error.
 }
 \examples{
 forest1 <- spforest(
@@ -31,7 +38,7 @@ forest1 <- spforest(
 forest2 <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
-  Ntree = 3,
+  Ntree = 5,
   minpts = 300,
   mtry = 1
 )

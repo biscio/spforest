@@ -170,8 +170,8 @@ predicttree <- function(object, newdata, ...) {
 #' Importance of one covariate
 #'
 #' @param forest A spforest object
-#' @param id_cov The position in the list of covariates of \code{forest}.
-#' @param cores How many cores to use to speed up computation
+#' @param id_cov The index in the list of covariates used in the argumet 
+#' \code{listcov} passed in \code{\link[spforest]{spforest}}.
 #'
 #' @return A vector of the importance of the covariate \code{id_cov}
 #' in the list of covariates of \code{forest}, for each tree.

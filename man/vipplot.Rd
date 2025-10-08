@@ -4,22 +4,28 @@
 \alias{vipplot}
 \title{Vip barplot of forest}
 \usage{
-vipplot(x, sorted = FALSE, ...)
+vipplot(x, sorted = FALSE, viptype = 4, ...)
 }
 \arguments{
-\item{x}{An spforest object}
+\item{x}{A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.}
 
 \item{sorted}{Logical. If TRUE, the variables are sorted by importance.}
 
-\item{...}{ignoted}
+\item{viptype}{An integer in \{1,2,3,4\} passed to \code{\link[spforest]{importance}}.}
 
-\item{cores}{To compute faster}
+\item{...}{Arguments passed to \code{\link[graphics]{barplot}}.}
 }
 \value{
 Variable importance plot
 }
 \description{
 Vip barplot of forest
+}
+\details{
+First the function \code{\link[spforest]{importance}} is called to
+compute the importance of each covariate in each tree \code{x}.
+Then, a barplot is drawn to visualize the distribution
+of the importance of each covariate, averaged over all the trees.
 }
 \examples{
 forest <- spforest(

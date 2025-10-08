@@ -4,14 +4,13 @@
 \alias{importance}
 \title{Importance of one covariate}
 \usage{
-importance(forest, id_cov, viptype = 1)
+importance(forest, id_cov, viptype = 4)
 }
 \arguments{
 \item{forest}{A spforest object}
 
-\item{id_cov}{The position in the list of covariates of \code{forest}.}
-
-\item{cores}{How many cores to use to speed up computation}
+\item{id_cov}{The index in the list of covariates used in the argumet
+\code{listcov} passed in \code{\link[spforest]{spforest}}.}
 }
 \value{
 A vector of the importance of the covariate \code{id_cov}

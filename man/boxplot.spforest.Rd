@@ -4,19 +4,27 @@
 \alias{boxplot.spforest}
 \title{Boxplot forest}
 \usage{
-\method{boxplot}{spforest}(x, ...)
+\method{boxplot}{spforest}(x, viptype = 4, ...)
 }
 \arguments{
 \item{x}{A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.}
 
-\item{...}{Ignored.}
+\item{viptype}{An integer in \{1,2,3,4\} passed to \code{\link[spforest]{importance}}.}
+
+\item{...}{Arguments passed to \code{\link[graphics]{boxplot}}.}
 }
 \value{
-Boxplot of the variable importances.
+A list returned by the function \code{\link[graphics]{boxplot}}.
 }
 \description{
 Plot the boxplot of the importance of each covariate
 in each tree of the random forest intensity
+}
+\details{
+First the function \code{\link[spforest]{importance}} is called to
+compute the importance of each covariate in each tree \code{x}.
+Then, a boxplot is drawn to visualize the distribution of the
+importance of each covariate.
 }
 \examples{
 forest <- spforest(

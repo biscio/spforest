@@ -320,10 +320,16 @@ as.im.spforest <- function(X, ...) {
 #' in each tree of the random forest intensity
 #'
 #' @param x A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.
-#' @param ... Ignored.
+#' @param viptype An integer in \{1,2,3,4\} passed to \code{\link[spforest]{importance}}.
+#' @param ... Arguments passed to \code{\link[graphics]{boxplot}}.
 #'
-#' @return Boxplot of the variable importances.
-#' @importFrom graphics boxplot
+#' @details
+#' First the function \code{\link[spforest]{importance}} is called to 
+#' compute the importance of each covariate in each tree \code{x}.
+#' Then, a boxplot is drawn to visualize the distribution of the 
+#' importance of each covariate. 
+#' 
+#' @return A list returned by the function \code{\link[graphics]{boxplot}}.
 #' @export
 #'
 #' @examples
@@ -335,9 +341,9 @@ as.im.spforest <- function(X, ...) {
 #'   mtry = 1
 #' )
 #' boxplot(forest)
-boxplot.spforest <- function(x, ...) {
+boxplot.spforest <- function(x, viptype = 4, ...) {
   vipval <- sapply(X = seq_along(x$listcov), FUN = function(i) {
-    importance(x, id_cov = i)
+    importance(x, id_cov = i, viptype = viptype)
   })
 
   df <- data.frame(
@@ -348,18 +354,24 @@ boxplot.spforest <- function(x, ...) {
   graphics::boxplot(vipval ~ var,
     data = df,
     xlab = "Variables",
-    ylab = "Variable Importance"
+    ylab = "Variable Importance",
+    ...
   )
 }
 
 
 #' Vip barplot of forest
 #'
-#' @param x  An spforest object
+#' @param x  A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.
 #' @param sorted Logical. If TRUE, the variables are sorted by importance.
-#' @param cores To compute faster
-#' @param ... ignoted
+#' @param viptype An integer in \{1,2,3,4\} passed to \code{\link[spforest]{importance}}.
+#' @param ... Arguments passed to \code{\link[graphics]{barplot}}.
 #'
+#' @details
+#' First the function \code{\link[spforest]{importance}} is called to 
+#' compute the importance of each covariate in each tree \code{x}. 
+#' Then, a barplot is drawn to visualize the distribution 
+#' of the importance of each covariate, averaged over all the trees. 
 #' @return Variable importance plot
 #' @export
 #'
@@ -372,9 +384,9 @@ boxplot.spforest <- function(x, ...) {
 #'   mtry = 1
 #' )
 #' vipplot(forest, sorted = TRUE)
-vipplot <- function(x, sorted = FALSE, ...) {
+vipplot <- function(x, sorted = FALSE, viptype = 4,...) {
   vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
-    importance(x, id_cov = i)
+    importance(x, id_cov = i, viptype = viptype)
   })
 
   avvip <- unlist(lapply(vipval, mean))
@@ -388,7 +400,8 @@ vipplot <- function(x, sorted = FALSE, ...) {
     graphics::barplot(avvipsort$x,
       names.arg = names(x$listcov)[avvipsort$ix],
       xlab = "Variables",
-      ylab = "Variable Importance"
+      ylab = "Variable Importance",
+      ...
     )
     return(invisible(data.frame(
       Variable = names(x$listcov)[avvipsort$ix],
@@ -433,16 +446,23 @@ vipplot <- function(x, sorted = FALSE, ...) {
 
 
 
-
-
 #' Merge two forests with same parameters
 #'
-#' @param x First forest
-#' @param y Second forest
-#' @param ... ignored
+#' Given two random forest intensity estimates, 
+#' merge them into one \code{\link{spforest}[spforest.object]}.
 #'
-#' @return An \code{\link{spforest}} object
-#' the intensity trees from both forest.
+#' @param x,y Two \code{\link{spforest}[spforest.object]} with identical entries 
+#' \code{p}, \code{mtry}, \code{listcov} and \code{X}.
+#' @param ... Ignored
+#'
+#' @details
+#' The function merges two \code{\link{spforest}[spforest.object]} by concatenating
+#' their entires \code{trees}, \code{pt_intree} and 
+#' averaging their intensity estimates given by their entries \code{imforest}.
+#' If any of the entries \code{p}, \code{mtry}, \code{listcov} or \code{X} is different, 
+#' the function returns an error.
+#' @return An \code{\link[spforest]{spforest.object}} 
+#' combining the information of \code{x} and \code{y}.
 #' @export
 #'
 #' @examples
@@ -456,7 +476,7 @@ vipplot <- function(x, sorted = FALSE, ...) {
 #' forest2 <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
-#'   Ntree = 3,
+#'   Ntree = 5,
 #'   minpts = 300,
 #'   mtry = 1
 #' )
@@ -480,7 +500,9 @@ merge.spforest <- function(x, y, ...) {
   }
 
   output <- list(
+    imforest = (x$imforest + y$imforest) / 2,
     trees = c(x$trees, y$trees),
+    ntrees = x$ntrees + y$ntrees,
     pt_intree = c(x$pt_intree, y$pt_intree),
     X = x$X,
     listcov = x$listcov,
@@ -492,13 +514,20 @@ merge.spforest <- function(x, y, ...) {
 }
 
 
-#' Extract a smaller forest
+#' Extract a smaller forest 
+#' 
+#' Given a random forest intensity estimate, return a random forest intensity estimated
+#' with a only subset of all the trees.
 #'
-#' @param forest An object of class \code{\link{spforest}}.
+#' @param forest A \code{\link{spforest}[spforest.object]} .
 #' @param whichtrees A vector indicating which trees to use in the
-#' new forest
+#' new forest.
 #'
-#' @return An object of class \code{\link{spforest}}.
+#' @details The function extracts the trees indicated in \code{whichtrees}
+#' from \code{forest} and returns a new \code{\link{spforest}[spforest.object]}.
+#' The intensity estimate of the new forest is obtained by averaging the intensity
+#' estimates of the selected trees. All the other arguments are updated accordingly.
+#' @return A \code{\link{spforest}[spforest.object]} .
 #' @export
 #'
 #' @examples
@@ -536,97 +565,3 @@ extractforest <- function(forest, whichtrees) {
 }
 
 
-
-
-# Function below to remove ?? ----
-#'
-#' #' Constructor for spforest
-#' new_spforest <- function(trees = list(),
-#'                          pt_intree = list(),
-#'                          X = ppp(),
-#'                          listcov = list(),
-#'                          p = double(),
-#'                          mtry = double()) {
-#'   output <- list(
-#'     trees = trees,
-#'     pt_intree = pt_intree,
-#'     X = X,
-#'     listcov = listcov,
-#'     p = p,
-#'     mtry = mtry
-#'   )
-#'
-#'   return(structure(output, class = "spforest"))
-#' }
-#'
-#'
-#'
-#'
-#' #' Validator for spforest
-#' #'
-#' #' @param x
-#' #'
-#' #' @return The input forest if it is valid
-#' #' @export
-#' #'
-#' #' @examples
-#' #' forest <- spforest(
-#' #'   X = spatstat.data::bei,
-#' #'   listcovariates = spatstat.data::bei.extra,
-#' #'   Ntree = 3,
-#' #'   minpts = 300,
-#' #'   mtry = 1
-#' #' )
-#' #' validate_spforest(forest)
-#' validate_spforest <- function(x) {
-#'   # TODO: add conformity checks on the entries of the forest
-#'   values <- unclass(x)
-#'
-#'   # Check for correct entries' name in the forest
-#'   if (sum(is.element(
-#'     c(
-#'       "trees", "pt_intree", "X",
-#'       "listcov", "p", "mtry"
-#'     ),
-#'     names(x)
-#'   )) != 6) {
-#'     stop(
-#'       "A spforest object should have entries
-#'             trees, pt_intree, X, listcov, p, mtry",
-#'       call. = FALSE
-#'     )
-#'   }
-#'   # Check for correct type in the forest's entries
-#'   if (!is.list(values$trees) | !is.list(values$listcov)) {
-#'     stop("A spforest object must have entries trees and listcov as list.",
-#'       call. = FALSE
-#'     )
-#'   }
-#'   if (!is.ppp(values$X) | !is.list(values$listcov)) {
-#'     stop("A spforest object must have entry X as a ppp object.",
-#'       call. = FALSE
-#'     )
-#'   }
-#'   if (!is.numeric(values$p) | !is.numeric(values$mtry)) {
-#'     stop("A spforest object must have entries p and mtry as numeric.",
-#'       call. = FALSE
-#'     )
-#'   }
-#'
-#'   # check if entries have possible values
-#'   if (values$p < 0 | values$p > 1 | values$mtry > 1 | values$mtry < 0) {
-#'     stop("p and mtry must be between 0 and 1.",
-#'       call. = FALSE
-#'     )
-#'   }
-#'
-#'   alllength_ptintree <- sapply(values$pt_intree, length)
-#'   if (!all(alllength_ptintree == npoints(values$X))) {
-#'     stop("pt_intree should be a vector with
-#'              same length as the number of points in X",
-#'       call. = FALSE
-#'     )
-#'   }
-#'
-#'   x
-#' }

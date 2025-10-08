@@ -7,16 +7,23 @@
 extractforest(forest, whichtrees)
 }
 \arguments{
-\item{forest}{An object of class \code{\link{spforest}}.}
+\item{forest}{A \code{\link{spforest}[spforest.object]} .}
 
 \item{whichtrees}{A vector indicating which trees to use in the
-new forest}
+new forest.}
 }
 \value{
-An object of class \code{\link{spforest}}.
+A \code{\link{spforest}[spforest.object]} .
 }
 \description{
-Extract a smaller forest
+Given a random forest intensity estimate, return a random forest intensity estimated
+with a only subset of all the trees.
+}
+\details{
+The function extracts the trees indicated in \code{whichtrees}
+from \code{forest} and returns a new \code{\link{spforest}[spforest.object]}.
+The intensity estimate of the new forest is obtained by averaging the intensity
+estimates of the selected trees. All the other arguments are updated accordingly.
 }
 \examples{
 bigforest <- spforest(

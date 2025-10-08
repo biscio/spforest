@@ -186,7 +186,7 @@ predicttree <- function(object, newdata, ...) {
 #'   mtry = 1
 #' )
 #' importance(forest, id_cov = 1)
-importance <- function(forest, id_cov, viptype = 1) {
+importance <- function(forest, id_cov, viptype = 4) {
   # listZ <- forest$listcovsp
   X <- forest$X # this is always the root
   Z <- forest$listcov[[id_cov]] # list of cov

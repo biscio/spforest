@@ -1,16 +1,21 @@
 #' Random intensity forest
 #'
+#' Estimate the intensity of a spatial point process by random intensity forest.
+#'
 #' @param X A spatial point process as a \code{\link[spatstat.geom]{ppp}} object.
 #' @param listcovariates A list of covariates as \code{\link[spatstat.geom]{im}} objects.
 #' @param Ntree Number of trees in the forest.
 #' @param minpts A positive integer.
-#' The minimum number of points allowed to try to split a cell.
+#' The minimum number of points after which we try to split a cell one last time.
 #' @param mtry Probability of choosing a covariate.
-#' @param p A number in \eqn{[0,1)}.
-#' Control the thinning process applied to the original point pattern __X__ before
-#' fitting a tree intensity estimator.
+#' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
+#' represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
+#' covariates are randomly chosen at each split.
+#' @param p A number in \eqn{[0,1)}
+#' controlling the thinning process applied to \code{X}.
+#' See \code{\link[spforest]{tesscovforest}} for details.
 #' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
-#' @param threshold Minimum threshold to allow to split cell.
+#' @param threshold Minimum area to allow to split cell.
 #' @param lambda An integer. The number of points used for random tessellation.
 #' @param dimyx A vector of two integers. The dimensions of the output image passed
 #' to \code{\link[spatstat.geom]{as.im}}.
@@ -18,17 +23,16 @@
 #' \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 #' in different connected components. It is only useful if the windows of
 #' observation of \code{X} is not convex.
-#' @param cores A positive integer.
-#' The number of cores used to compute each intensity tree.
+#' @param cores A positive integer. The number of cores to use.
+#' If strictly larger than 1, parallel computing
+#' is used to dispatch each intensity tree computation on different cores.
 #'
 #' @details
-#' This function is a wrapper around \code{\link{tesscovforest}}
-#' and \code{\link{tessforest}} to compute random intensity forest
-#' in the presence of covariates,
-#' or based on independent random tesselæation, respectively.
-#' If \code{listcovariates} is \code{NULL},
-#' the function will call \code{\link{tessforest}}. Otherwise, it will call
-#' \code{\link{tesscovforest}}.
+#' If \code{listcovariates} is not \code{NULL},
+#' the function computes a random intensity forest using
+#' \code{\link{tesscovforest}}. Otherwise, it computes a random intensity forest
+#' using \code{\link{tessforest}}.
+#' All arguments are passed to the corresponding function.
 #'
 #' @return An object of class \code{\link{spforest}}.
 #' @export
@@ -37,20 +41,16 @@
 #' forestwithcov <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
-#'   Ntree = 3,
+#'   Ntree = 5,
 #'   minpts = 200,
-#'   mtry = 1 / 3,
-#'   p = 0,
-#'   cores = 1
+#'   mtry = 2
 #' )
 #' plot(forestwithcov)
 #' forestwithtoutcov <- tessforest(
 #'   X = bei,
 #'   lambda = 50,
 #'   dimyx = c(101, 201),
-#'   test.connected = FALSE,
-#'   Ntree = 5,
-#'   cores = 1
+#'   Ntree = 100
 #' )
 #' plot(forestwithtoutcov)
 spforest <- function(X,
@@ -100,10 +100,13 @@ spforest <- function(X,
 #' @rdname spforest.object
 #'
 #' @details
-#' An object of this class represents a spatial intensity forest.
-#' It contains
+#' This class represents a spatial intensity forest and includes information
+#' about the original point pattern and how the random intensity forest has been computed.
+#' We recommend to always generate an \code{spforest.object} object with the function 
+#' \code{\link[spforest]{spforest}}.
+#' If \code{RFI} is a spatial intensity forest, it contains
 #' \itemize{
-#' \item \code{imforest}, an pixel image as
+#' \item \code{imforest}, a pixel image as
 #' \code{\link[spatstat.geom]{im.object}} object representing the value of
 #' the estimated intensity on the window of \code{X}.
 #' \item \code{trees}, a list of the spatial intensity trees as \code{\link{sptree.object}}.
@@ -112,14 +115,21 @@ spforest <- function(X,
 #' is a vector containing the index of the points of \code{X} used
 #' to compute the \eqn{i}-th intensity tree.
 #' \item \code{X}, the original point pattern as a \code{\link[spatstat.geom]{ppp}} object.
-#' \item \code{listcov}, a list of the covariates used to compute the forest
-#' as \code{\link[spatstat.geom]{im}} objects. If \code{NULL},
-#' independently random tessellation have been used.
+#' \item \code{listcov}, the list of the covariates passed in the argument \code{listcovariates}
+#' of \code{\link[spforest]{spforest}} as \code{\link[spatstat.geom]{im}} objects.
+#'  If \code{NULL}, independent random tessellations have been used instead of
+#'  a given list of covariates.
 #' \item \code{p}, a number in \eqn{[0,1)}
+#' passed in the argument \code{p}
+#' of \code{\link[spforest]{spforest}}.
 #' controlling the thinning process applied to \code{X}
 #' before computing a tree intensity estimator.
-#' \item \code{mtry}, probability that a covariate is used at each a split.
+#' \item \code{mtry}, the argument \code{mtry}
+#' of \code{\link[spforest]{spforest}}.
 #' }
+#' The class \code{spforest.object} has methods
+#' \code{\link[spforest]{print.spforest}},  \code{\link[spforest]{plot.spforest}}
+#' and  \code{\link[spforest]{predict.spforest}}.
 NULL
 
 #' Printing spatial intensity forest
@@ -143,7 +153,7 @@ NULL
 print.spforest <- function(x, ...) {
   cat(paste(
     "Spatial intensity forest with", x$ntrees,
-    "trees, of a point pattern with",
+    "trees of a point pattern with",
     x$X$n, "points.\n\n"
   ))
 
@@ -162,22 +172,45 @@ print.spforest <- function(x, ...) {
 
 #' Forest prediction
 #'
-#' @param object A spatial intensity forest return by spforest function
-#' @param newdata a xy vector or a ppp object
-#' @param ... Additional argument
+#' Given a random forest intensity estimator obtained by 
+#' \code{\link[spforest]{spforest}}, evaluate the intensity at new locations.
 #'
-#' @return A vector of predicted intensity
+#' @param object A spatial intensity forest \code{\link[spforest]{spforest.object}}.  
+#' @param newdata A matrix, a \code{c(x,y)} vector or 
+#' \code{\link[spatstat.geom]{ppp.object}} to be taken 
+#' as the new locations where the estimated intensity is evaluated.
+#' @param ... Ignored.
+#' 
+#' @details \code{predict.spforest} return the values of the 
+#' estimated intensity, obtained by evaluating the pixels values of \code{as.im(object)}
+#' at locations given by \code{newdata}.
+#' 
+#'
+#' @return A vector of numeric values corresponding to the estimated intensity 
+#' at the locations given by \code{object}. Currently \code{newdata} can be:
+#' \itemize{
+#' \item a vector of length 2 \code{c(x,y)}, 
+#' representing the \eqn{x} and \eqn{y} coordinates of a single location.
+#' \item a matrix with two columns, representing the \eqn{x} and \eqn{y} 
+#' coordinates of the new locations.
+#' \item a \code{\link[spatstat.geom]{ppp.object}} representing 
+#' the coordinates of the new locations.
+#' }
+#' If \code{newdata} is missing or \code{NULL}, 
+#' the intensity is evaluated at the points of \code{object$X}.
 #' @export
 #'
 #' @examples
-#' forest <- spforest(
+#' RFI <- spforest(
 #'   X = spatstat.data::bei,
 #'   listcovariates = spatstat.data::bei.extra,
-#'   Ntree = 3,
-#'   minpts = 300,
+#'   Ntree = 10,
+#'   minpts = 200,
 #'   mtry = 1
 #' )
-#' predict(forest, c(100, 100))
+#' predict(RFI, cbind(c(100, 100))
+#' newloc <- spatstat.random::runifpoint(n=10, win=spatstat.data::bei$w)
+#' predict(RFI, newloc)
 predict.spforest <- function(object, newdata, ...) {
   # Handles the newdata to be in the correct form
   if (missing(newdata) || is.null(newdata)) {
@@ -208,6 +241,8 @@ predict.spforest <- function(object, newdata, ...) {
 
 
 #' Plot spatial intensity forest
+#'
+#' Plot a \code{\link{spforest.object}}.
 #'
 #' @param x A spatial intensity tree return by spforest function
 #' @param ... additional arguments
@@ -244,6 +279,8 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
 
 #' Convert to Pixel Image
 #'
+#' Wrapper function to extract imforest from an \code{\link{spforest.object}}.
+#'
 #' @param X A spforest object
 #' @param ...  ignored
 #'
@@ -278,10 +315,12 @@ as.im.spforest <- function(X, ...) {
 
 
 #' Boxplot forest
+#' 
+#' Plot the boxplot of the importance of each covariate 
+#' in each tree of the random forest intensity
 #'
-#' @param x the forest
-#' @param cores To compute faster
-#' @param ... ignored.
+#' @param x A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.
+#' @param ... Ignored.
 #'
 #' @return Boxplot of the variable importances.
 #' @importFrom graphics boxplot

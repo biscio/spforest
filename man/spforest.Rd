@@ -28,17 +28,21 @@ spforest(
 \item{Ntree}{Number of trees in the forest.}
 
 \item{minpts}{A positive integer.
-The minimum number of points allowed to try to split a cell.}
+The minimum number of points after which we try to split a cell one last time.}
 
 \item{mtry}{Probability of choosing a covariate.}
 
-\item{p}{A number in \eqn{[0,1)}.
-Control the thinning process applied to the original point pattern \strong{X} before
-fitting a tree intensity estimator.}
+\item{randmtry}{Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
+represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
+covariates are randomly chosen at each split.}
+
+\item{p}{A number in \eqn{[0,1)}
+controlling the thinning process applied to \code{X}.
+See \code{\link[spforest]{tesscovforest}} for details.}
 
 \item{score}{A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".}
 
-\item{threshold}{Minimum threshold to allow to split cell.}
+\item{threshold}{Minimum area to allow to split cell.}
 
 \item{lambda}{An integer. The number of points used for random tessellation.}
 
@@ -50,42 +54,37 @@ to \code{\link[spatstat.geom]{as.im}}.}
 in different connected components. It is only useful if the windows of
 observation of \code{X} is not convex.}
 
-\item{cores}{A positive integer.
-The number of cores used to compute each intensity tree.}
+\item{cores}{A positive integer. The number of cores to use.
+If strictly larger than 1, parallel computing
+is used to dispatch each intensity tree computation on different cores.}
 }
 \value{
 An object of class \code{\link{spforest}}.
 }
 \description{
-Random intensity forest
+Estimate the intensity of a spatial point process by random intensity forest.
 }
 \details{
-This function is a wrapper around \code{\link{tesscovforest}}
-and \code{\link{tessforest}} to compute random intensity forest
-in the presence of covariates,
-or based on independent random tesselæation, respectively.
-If \code{listcovariates} is \code{NULL},
-the function will call \code{\link{tessforest}}. Otherwise, it will call
-\code{\link{tesscovforest}}.
+If \code{listcovariates} is not \code{NULL},
+the function computes a random intensity forest using
+\code{\link{tesscovforest}}. Otherwise, it computes a random intensity forest
+using \code{\link{tessforest}}.
+All arguments are passed to the corresponding function.
 }
 \examples{
 forestwithcov <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
-  Ntree = 3,
+  Ntree = 5,
   minpts = 200,
-  mtry = 1 / 3,
-  p = 0,
-  cores = 1
+  mtry = 2
 )
 plot(forestwithcov)
 forestwithtoutcov <- tessforest(
   X = bei,
   lambda = 50,
   dimyx = c(101, 201),
-  test.connected = FALSE,
-  Ntree = 5,
-  cores = 1
+  Ntree = 100
 )
 plot(forestwithtoutcov)
 }

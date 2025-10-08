@@ -7,10 +7,13 @@
 S3 class used to define random forest intensity
 }
 \details{
-An object of this class represents a spatial intensity forest.
-It contains
+This class represents a spatial intensity forest and includes information
+about the original point pattern and how the random intensity forest has been computed.
+We recommend to always generate an \code{spforest.object} object with the function
+\code{\link[spforest]{spforest}}.
+If \code{RFI} is a spatial intensity forest, it contains
 \itemize{
-\item \code{imforest}, an pixel image as
+\item \code{imforest}, a pixel image as
 \code{\link[spatstat.geom]{im.object}} object representing the value of
 the estimated intensity on the window of \code{X}.
 \item \code{trees}, a list of the spatial intensity trees as \code{\link{sptree.object}}.
@@ -19,12 +22,19 @@ the estimated intensity on the window of \code{X}.
 is a vector containing the index of the points of \code{X} used
 to compute the \eqn{i}-th intensity tree.
 \item \code{X}, the original point pattern as a \code{\link[spatstat.geom]{ppp}} object.
-\item \code{listcov}, a list of the covariates used to compute the forest
-as \code{\link[spatstat.geom]{im}} objects. If \code{NULL},
-independently random tessellation have been used.
+\item \code{listcov}, the list of the covariates passed in the argument \code{listcovariates}
+of \code{\link[spforest]{spforest}} as \code{\link[spatstat.geom]{im}} objects.
+If \code{NULL}, independent random tessellations have been used instead of
+a given list of covariates.
 \item \code{p}, a number in \eqn{[0,1)}
+passed in the argument \code{p}
+of \code{\link[spforest]{spforest}}.
 controlling the thinning process applied to \code{X}
 before computing a tree intensity estimator.
-\item \code{mtry}, probability that a covariate is used at each a split.
+\item \code{mtry}, the argument \code{mtry}
+of \code{\link[spforest]{spforest}}.
 }
+The class \code{spforest.object} has methods
+\code{\link[spforest]{print.spforest}},  \code{\link[spforest]{plot.spforest}}
+and  \code{\link[spforest]{predict.spforest}}.
 }

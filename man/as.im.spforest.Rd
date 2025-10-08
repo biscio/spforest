@@ -15,7 +15,7 @@
 A pixel image \code{\link[spatstat.geom]{im.object}}.
 }
 \description{
-Convert to Pixel Image
+Wrapper function to extract imforest from an \code{\link{spforest.object}}.
 }
 \examples{
 forest <- spforest(

@@ -4,16 +4,16 @@
 \alias{vipplot}
 \title{Vip barplot of forest}
 \usage{
-vipplot(x, sorted = FALSE, cores = 1, ...)
+vipplot(x, sorted = FALSE, ...)
 }
 \arguments{
 \item{x}{An spforest object}
 
 \item{sorted}{Logical. If TRUE, the variables are sorted by importance.}
 
-\item{cores}{To compute faster}
-
 \item{...}{ignoted}
+
+\item{cores}{To compute faster}
 }
 \value{
 Variable importance plot

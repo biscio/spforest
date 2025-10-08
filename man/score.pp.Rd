@@ -4,12 +4,14 @@
 \alias{score.pp}
 \title{Score parent}
 \usage{
-score.pp(X, score = "lcv")
+score.pp(n0, W0area, score = "lcv")
 }
 \arguments{
-\item{X}{A ppp object for the parent}
+\item{n0}{Number of points in point process}
 
-\item{score}{The score used}
+\item{W0area}{Area of the ppp}
+
+\item{score}{The score to use}
 }
 \value{
 A number
@@ -18,5 +20,5 @@ A number
 Score parent
 }
 \examples{
-score.pp(X = spatstat.random::rpoispp(10))
+score.split(5, 5)
 }

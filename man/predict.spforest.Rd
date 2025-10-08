@@ -7,25 +7,46 @@
 \method{predict}{spforest}(object, newdata, ...)
 }
 \arguments{
-\item{object}{A spatial intensity forest return by spforest function}
+\item{object}{A spatial intensity forest \code{\link[spforest]{spforest.object}}.}
 
-\item{newdata}{a xy vector or a ppp object}
+\item{newdata}{A matrix, a \code{c(x,y)} vector or
+\code{\link[spatstat.geom]{ppp.object}} to be taken
+as the new locations where the estimated intensity is evaluated.}
 
-\item{...}{Additional argument}
+\item{...}{Ignored.}
 }
 \value{
-A vector of predicted intensity
+A vector of numeric values corresponding to the estimated intensity
+at the locations given by \code{object}. Currently \code{newdata} can be:
+\itemize{
+\item a vector of length 2 \code{c(x,y)},
+representing the \eqn{x} and \eqn{y} coordinates of a single location.
+\item a matrix with two columns, representing the \eqn{x} and \eqn{y}
+coordinates of the new locations.
+\item a \code{\link[spatstat.geom]{ppp.object}} representing
+the coordinates of the new locations.
+}
+If \code{newdata} is missing or \code{NULL},
+the intensity is evaluated at the points of \code{object$X}.
 }
 \description{
-Forest prediction
+Given a random forest intensity estimator obtained by
+\code{\link[spforest]{spforest}}, evaluate the intensity at new locations.
+}
+\details{
+\code{predict.spforest} return the values of the
+estimated intensity, obtained by evaluating the pixels values of \code{as.im(object)}
+at locations given by \code{newdata}.
 }
 \examples{
-forest <- spforest(
+RFI <- spforest(
   X = spatstat.data::bei,
   listcovariates = spatstat.data::bei.extra,
-  Ntree = 3,
-  minpts = 300,
+  Ntree = 10,
+  minpts = 200,
   mtry = 1
 )
-predict(forest, c(100, 100))
+predict(RFI, cbind(c(100, 100))
+newloc <- spatstat.random::runifpoint(n=10, win=spatstat.data::bei$w)
+predict(RFI, newloc)
 }

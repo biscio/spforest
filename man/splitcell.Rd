@@ -57,7 +57,7 @@ vecval <- lapply(spforest::beisoilres, FUN = function(i) {
   }
   c(as.matrix.im(i))
 })
-usecovariates <- rep(1, 15)
+usecovariates <- c(rep(1, 5), rep(0, 5), rep(1, 5))
 areapixel <- listcovariates[[1]]$xstep * listcovariates[[1]]$ystep
 score <- "lcv"
 A <- splitcell(

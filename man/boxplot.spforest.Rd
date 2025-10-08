@@ -4,20 +4,19 @@
 \alias{boxplot.spforest}
 \title{Boxplot forest}
 \usage{
-\method{boxplot}{spforest}(x, cores = 1, ...)
+\method{boxplot}{spforest}(x, ...)
 }
 \arguments{
-\item{x}{the forest}
+\item{x}{A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.}
 
-\item{cores}{To compute faster}
-
-\item{...}{ignored.}
+\item{...}{Ignored.}
 }
 \value{
 Boxplot of the variable importances.
 }
 \description{
-Boxplot forest
+Plot the boxplot of the importance of each covariate
+in each tree of the random forest intensity
 }
 \examples{
 forest <- spforest(

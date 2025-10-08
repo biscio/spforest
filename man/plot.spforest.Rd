@@ -17,7 +17,7 @@
 Same as \code{\link[spatstat.geom]{plot.im}}.
 }
 \description{
-Plot spatial intensity forest
+Plot a \code{\link{spforest.object}}.
 }
 \details{
 This function first convert an \code{\link{spforest}}

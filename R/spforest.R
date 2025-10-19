@@ -384,17 +384,14 @@ boxplot.spforest <- function(x, viptype = 4, ...) {
 #'   mtry = 1
 #' )
 #' vipplot(forest, sorted = TRUE)
-vipplot <- function(x, sorted = FALSE, viptype = 4,...) {
-  vipval <- lapply(X = seq_along(x$listcov), FUN = function(i) {
-    importance(x, id_cov = i, viptype = viptype)
-  })
+vipplot <- function(x, sorted = FALSE, viptype = 4, ...) {
+  vipval <- vip(x, viptype = viptype)
 
-  avvip <- unlist(lapply(vipval, mean))
-
-  avvipsort <- sort(avvip,
+  avvipsort <- sort(vipval,
     decreasing = TRUE,
     index.return = TRUE
   )
+
 
   if (sorted) {
     graphics::barplot(avvipsort$x,

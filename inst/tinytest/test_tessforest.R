@@ -60,10 +60,10 @@ expect_true(spatstat.geom::is.im(imforest))
 
 
 expect_silent(
-  outputoob <- OOBscr(forest=forest, cores=1)
+  outputoob <- OOBscr(forest=forest)
 )
 
-expect_inherits(current=OOBscr(forest=forest, cores=1), class="numeric")
+expect_inherits(current=OOBscr(forest=forest), class="numeric")
 
 
 A <- tesscovforest(

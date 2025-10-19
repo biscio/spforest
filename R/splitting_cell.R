@@ -187,7 +187,7 @@ splitcell <- function(X,
       nsup = nsup,
       whystop = NULL,
       scrsplit = max(allscr, na.rm = TRUE),
-      scrdcr = scr_parent - scr_sub[id_best_scr] - scr_sup[id_best_scr]
+      scrdcr = scr_sub[id_best_scr] + scr_sup[id_best_scr] - scr_parent
     )
 
     return(nodeChilds)

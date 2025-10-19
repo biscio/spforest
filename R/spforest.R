@@ -102,7 +102,7 @@ spforest <- function(X,
 #' @details
 #' This class represents a spatial intensity forest and includes information
 #' about the original point pattern and how the random intensity forest has been computed.
-#' We recommend to always generate an \code{spforest.object} object with the function 
+#' We recommend to always generate an \code{spforest.object} object with the function
 #' \code{\link[spforest]{spforest}}.
 #' If \code{RFI} is a spatial intensity forest, it contains
 #' \itemize{
@@ -172,31 +172,30 @@ print.spforest <- function(x, ...) {
 
 #' Forest prediction
 #'
-#' Given a random forest intensity estimator obtained by 
+#' Given a random forest intensity estimator obtained by
 #' \code{\link[spforest]{spforest}}, evaluate the intensity at new locations.
 #'
-#' @param object A spatial intensity forest \code{\link[spforest]{spforest.object}}.  
-#' @param newdata A matrix, a \code{c(x,y)} vector or 
-#' \code{\link[spatstat.geom]{ppp.object}} to be taken 
+#' @param object A spatial intensity forest \code{\link[spforest]{spforest.object}}.
+#' @param newdata A matrix, a \code{c(x,y)} vector or
+#' \code{\link[spatstat.geom]{ppp.object}} to be taken
 #' as the new locations where the estimated intensity is evaluated.
 #' @param ... Ignored.
-#' 
-#' @details \code{predict.spforest} return the values of the 
+#'
+#' @details \code{predict.spforest} return the values of the
 #' estimated intensity, obtained by evaluating the pixels values of \code{as.im(object)}
 #' at locations given by \code{newdata}.
-#' 
 #'
-#' @return A vector of numeric values corresponding to the estimated intensity 
+#' @return A vector of numeric values corresponding to the estimated intensity
 #' at the locations given by \code{object}. Currently \code{newdata} can be:
 #' \itemize{
-#' \item a vector of length 2 \code{c(x,y)}, 
+#' \item a vector of length 2 \code{c(x,y)},
 #' representing the \eqn{x} and \eqn{y} coordinates of a single location.
-#' \item a matrix with two columns, representing the \eqn{x} and \eqn{y} 
+#' \item a matrix with two columns, representing the \eqn{x} and \eqn{y}
 #' coordinates of the new locations.
-#' \item a \code{\link[spatstat.geom]{ppp.object}} representing 
+#' \item a \code{\link[spatstat.geom]{ppp.object}} representing
 #' the coordinates of the new locations.
 #' }
-#' If \code{newdata} is missing or \code{NULL}, 
+#' If \code{newdata} is missing or \code{NULL},
 #' the intensity is evaluated at the points of \code{object$X}.
 #' @export
 #'
@@ -208,8 +207,8 @@ print.spforest <- function(x, ...) {
 #'   minpts = 200,
 #'   mtry = 1
 #' )
-#' predict(RFI, cbind(c(100, 100))
-#' newloc <- spatstat.random::runifpoint(n=10, win=spatstat.data::bei$w)
+#' predict(RFI, c(100, 100))
+#' newloc <- spatstat.random::runifpoint(n = 10, win = spatstat.data::bei$w)
 #' predict(RFI, newloc)
 predict.spforest <- function(object, newdata, ...) {
   # Handles the newdata to be in the correct form
@@ -315,8 +314,8 @@ as.im.spforest <- function(X, ...) {
 
 
 #' Boxplot forest
-#' 
-#' Plot the boxplot of the importance of each covariate 
+#'
+#' Plot the boxplot of the importance of each covariate
 #' in each tree of the random forest intensity
 #'
 #' @param x A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.
@@ -324,11 +323,11 @@ as.im.spforest <- function(X, ...) {
 #' @param ... Arguments passed to \code{\link[graphics]{boxplot}}.
 #'
 #' @details
-#' First the function \code{\link[spforest]{importance}} is called to 
+#' First the function \code{\link[spforest]{importance}} is called to
 #' compute the importance of each covariate in each tree \code{x}.
-#' Then, a boxplot is drawn to visualize the distribution of the 
-#' importance of each covariate. 
-#' 
+#' Then, a boxplot is drawn to visualize the distribution of the
+#' importance of each covariate.
+#'
 #' @return A list returned by the function \code{\link[graphics]{boxplot}}.
 #' @export
 #'
@@ -368,10 +367,10 @@ boxplot.spforest <- function(x, viptype = 4, ...) {
 #' @param ... Arguments passed to \code{\link[graphics]{barplot}}.
 #'
 #' @details
-#' First the function \code{\link[spforest]{importance}} is called to 
-#' compute the importance of each covariate in each tree \code{x}. 
-#' Then, a barplot is drawn to visualize the distribution 
-#' of the importance of each covariate, averaged over all the trees. 
+#' First the function \code{\link[spforest]{importance}} is called to
+#' compute the importance of each covariate in each tree \code{x}.
+#' Then, a barplot is drawn to visualize the distribution
+#' of the importance of each covariate, averaged over all the trees.
 #' @return Variable importance plot
 #' @export
 #'
@@ -384,37 +383,24 @@ boxplot.spforest <- function(x, viptype = 4, ...) {
 #'   mtry = 1
 #' )
 #' vipplot(forest, sorted = TRUE)
-vipplot <- function(x, sorted = FALSE, viptype = 4, ...) {
-  vipval <- vip(x, viptype = viptype)
-
-  avvipsort <- sort(vipval,
-    decreasing = TRUE,
-    index.return = TRUE
-  )
-
+vipplot <- function(x,
+                    sorted = FALSE,
+                    viptype = 4, ...) {
+  output <- vip(x, viptype = viptype, treesdetails = FALSE)
 
   if (sorted) {
-    graphics::barplot(avvipsort$x,
-      names.arg = names(x$listcov)[avvipsort$ix],
-      xlab = "Variables",
-      ylab = "Variable Importance",
-      ...
+    output <- sort(output,
+      decreasing = TRUE
     )
-    return(invisible(data.frame(
-      Variable = names(x$listcov)[avvipsort$ix],
-      Importance = avvipsort$x
-    )))
-  } else {
-    graphics::barplot(avvip,
-      names.arg = names(x$listcov),
-      xlab = "Variables",
-      ylab = "Variable Importance"
-    )
-    return(invisible(data.frame(
-      Variable = names(x$listcov),
-      Importance = avvip
-    )))
   }
+
+  graphics::barplot(output,
+    names.arg = names(output),
+    xlab = "Variables",
+    ylab = "Variable Importance"
+  )
+
+  return(invisible(output))
 }
 # vipplot.spforest_old <- function(x, cores = 1, ...) {
 #   vipval <- sapply(X = seq_along(x$listcov), FUN = function(i) {
@@ -442,23 +428,22 @@ vipplot <- function(x, sorted = FALSE, viptype = 4, ...) {
 # }
 
 
-
 #' Merge two forests with same parameters
 #'
-#' Given two random forest intensity estimates, 
+#' Given two random forest intensity estimates,
 #' merge them into one \code{\link{spforest}[spforest.object]}.
 #'
-#' @param x,y Two \code{\link{spforest}[spforest.object]} with identical entries 
+#' @param x,y Two \code{\link{spforest}[spforest.object]} with identical entries
 #' \code{p}, \code{mtry}, \code{listcov} and \code{X}.
 #' @param ... Ignored
 #'
 #' @details
 #' The function merges two \code{\link{spforest}[spforest.object]} by concatenating
-#' their entires \code{trees}, \code{pt_intree} and 
+#' their entires \code{trees}, \code{pt_intree} and
 #' averaging their intensity estimates given by their entries \code{imforest}.
-#' If any of the entries \code{p}, \code{mtry}, \code{listcov} or \code{X} is different, 
+#' If any of the entries \code{p}, \code{mtry}, \code{listcov} or \code{X} is different,
 #' the function returns an error.
-#' @return An \code{\link[spforest]{spforest.object}} 
+#' @return An \code{\link[spforest]{spforest.object}}
 #' combining the information of \code{x} and \code{y}.
 #' @export
 #'
@@ -511,8 +496,8 @@ merge.spforest <- function(x, y, ...) {
 }
 
 
-#' Extract a smaller forest 
-#' 
+#' Extract a smaller forest
+#'
 #' Given a random forest intensity estimate, return a random forest intensity estimated
 #' with a only subset of all the trees.
 #'
@@ -560,5 +545,3 @@ extractforest <- function(forest, whichtrees) {
   )
   return(structure(output, class = "spforest"))
 }
-
-

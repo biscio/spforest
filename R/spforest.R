@@ -396,8 +396,9 @@ vipplot <- function(x,
 
   graphics::barplot(output,
     names.arg = names(output),
-    xlab = "Variables",
-    ylab = "Variable Importance"
+    xlab = "Covariates",
+    ylab = "VIP",
+    ...
   )
 
   return(invisible(output))

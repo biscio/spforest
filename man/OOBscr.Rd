@@ -4,7 +4,7 @@
 \alias{OOBscr}
 \title{OOB forest}
 \usage{
-OOBscr(forest, cores = 1)
+OOBscr(forest)
 }
 \arguments{
 \item{forest}{spforest}

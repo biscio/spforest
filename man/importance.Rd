@@ -9,8 +9,10 @@ importance(forest, id_cov, viptype = 4)
 \arguments{
 \item{forest}{A spforest object}
 
-\item{id_cov}{The index in the list of covariates used in the argumet
+\item{id_cov}{The index in the list of covariates used in the argument
 \code{listcov} passed in \code{\link[spforest]{spforest}}.}
+
+\item{viptype}{An integer representing the typer of vip used.}
 }
 \value{
 A vector of the importance of the covariate \code{id_cov}

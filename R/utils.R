@@ -171,8 +171,9 @@ predicttree <- function(object, newdata, ...) {
 #' Importance of one covariate
 #'
 #' @param forest A spforest object
-#' @param id_cov The index in the list of covariates used in the argumet
+#' @param id_cov The index in the list of covariates used in the argument
 #' \code{listcov} passed in \code{\link[spforest]{spforest}}.
+#' @param viptype An integer in \{1,2,3,4\} representing the type of vip used.
 #'
 #' @return A vector of the importance of the covariate \code{id_cov}
 #' in the list of covariates of \code{forest}, for each tree.
@@ -292,15 +293,55 @@ importance <- function(forest, id_cov, viptype = 4) {
     }
   }
 
-
-
-
   # Return the error of all the trees
   return(unlist(vip_tree))
 }
 
 
+#' Importance of all the covariates
+#'
+#' @param forest A spforest object
+#' @param viptype Always set to 4. Argument passed to 
+#' \code{\link[spforest]{importance}}.
+#'
+#' @return A vector of the importance of all the covariates of
+#' \code{forest} as returned by \code{\link[spforest]{importance}}.
+#' @export
+#'
+#' @examples
+#' forest <- spforest(
+#'   X = spatstat.data::bei,
+#'   listcovariates = spatstat.data::bei.extra,
+#'   Ntree = 3,
+#'   minpts = 300,
+#'   mtry = 1
+#' )
+#' vip(forest)
+vip <- function(forest, viptype = 4) {
+  if (is.null(forest$listcov)) {
+    stop("There is no covariates on which computing the importance.")
+  }
+  
+  if (viptype != 4) {
+    warning("viptype has been set to 4. Other values are not implemented yet.")
+  }
 
+  vipval <- unlist(lapply(
+    X = seq_along(forest$listcov),
+    FUN = function(i) {
+      mean(importance(forest,
+        id_cov = i,
+        viptype = 4
+      ))
+    }
+  ))
+
+  if (!is.null(names(forest$listcov))) {
+    names(vipval) <- names(forest$listcov)
+  }
+
+  return(vipval)
+}
 
 #' OOB forest
 #'

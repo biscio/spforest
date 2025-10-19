@@ -64,10 +64,10 @@ tessforest <- function(X,
     })
   }
 
-  listim <- lapply(listtree, FUN=function(i) i$intensityim)
-  listtess <- lapply(listtree, FUN=function(i) i$intensitytess)
-  
-  
+  listim <- lapply(listtree, FUN = function(i) i$intensityim)
+  listtess <- lapply(listtree, FUN = function(i) i$intensitytess)
+
+
   output <- list(
     imforest = Reduce("+", listim) / length(listim),
     trees = NULL,
@@ -175,7 +175,7 @@ tesscovforest <- function(X,
                           Ntree = 10,
                           minpts = spatstat.geom::npoints(X) / 10,
                           mtry = 1 / 3,
-                          randmtry = FALSE, 
+                          randmtry = FALSE,
                           p = 0,
                           cores = 1,
                           score = "lcv",
@@ -204,8 +204,7 @@ tesscovforest <- function(X,
   covrangex <- listcovariates[[1]]$xrange
   covrangey <- listcovariates[[1]]$yrange
 
-  # Compute the forest's trees
-  treeinforest <- parallel::mclapply(1:Ntree, FUN = function(i) {
+  plantingtree <- function(i) {
     # Determine points in and out
 
     #########################
@@ -247,7 +246,7 @@ tesscovforest <- function(X,
       threshold = threshold,
       inforest = T
     )
-    
+
     # summary(tree)[,"split_var"] |> unlist() |> table()
 
     # TODO: change printing methods to take tree from a forest into account
@@ -260,7 +259,18 @@ tesscovforest <- function(X,
       sptree = tree,
       pt_intree = ptintree
     ))
-  }, mc.cores = cores)
+  }
+
+  # Compute the forest's trees - check if need to parallel
+  if (cores > 1) {
+    treeinforest <- parallel::mclapply(1:Ntree,
+      FUN = plantingtree,
+      mc.cores = cores
+    )
+  } else {
+    treeinforest <- lapply(1:Ntree, FUN = plantingtree)
+  }
+
 
   # Computation of the image
   list_im <- lapply(treeinforest, FUN = function(i) {

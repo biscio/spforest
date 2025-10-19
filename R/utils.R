@@ -43,10 +43,11 @@ rand_covar <- function(listcovariates, mtry = 1, randmtry = FALSE) {
            Decrease it or set randmtry to FALSE")
     }
     while (nbcov == 0) {
-      usedcov <- rbinom(n = length(listcovariates),
-                        size = 1, 
-                        prob = mtry
-                        )  
+      usedcov <- rbinom(
+        n = length(listcovariates),
+        size = 1,
+        prob = mtry
+      )
       # usedcov <- sample(c(0, 1),
       #   size = length(listcovariates),
       #   replace = T, prob = c(1 - mtry, mtry)
@@ -170,7 +171,7 @@ predicttree <- function(object, newdata, ...) {
 #' Importance of one covariate
 #'
 #' @param forest A spforest object
-#' @param id_cov The index in the list of covariates used in the argumet 
+#' @param id_cov The index in the list of covariates used in the argumet
 #' \code{listcov} passed in \code{\link[spforest]{spforest}}.
 #'
 #' @return A vector of the importance of the covariate \code{id_cov}
@@ -192,45 +193,44 @@ importance <- function(forest, id_cov, viptype = 4) {
   Z <- forest$listcov[[id_cov]] # list of cov
 
   vip_tree <- NULL
-  
+
   for (i in 1:length(forest$trees)) {
-    
     if (viptype == 3) {
       # Impurity like the randomForest R package - page 6 of the help
-      
+
       splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
         j$split_var
       }) |> unlist()
-      
+
       splitscr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
         j$scrsplit
-      }) |> unlist() 
-      
+      }) |> unlist()
+
       vip_tree[[i]] <- sum(splitscr[splitvar == id_cov], na.rm = TRUE)
     }
-    
+
     if (viptype == 4) {
       # Impurity like the randomForest R package - page 6 of the help
       # Look at the decrease of the scores between parent and children
-      
+
       splitvar <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
         j$split_var
       }) |> unlist()
-      
+
       splitdcr <- lapply(forest$trees[[i]]$tree, FUN = function(j) {
         j$scrdcr
-      }) |> unlist() 
-      
+      }) |> unlist()
+
       vip_tree[[i]] <- sum(splitdcr[splitvar == id_cov], na.rm = TRUE)
     }
-    
-    
+
+
     # Shuffle the chosen covariate value
     dimmat <- Z$dim
     Z$v <- matrix(Z$v[sample.int(length(Z$v))],
-                  ncol = dimmat[2]
+      ncol = dimmat[2]
     )
-    
+
     # OOB sample
     if (forest$p == 0) {
       torm <- unique(forest$pt_intree[[i]])
@@ -251,20 +251,20 @@ importance <- function(forest, id_cov, viptype = 4) {
       }
     }
     Xout <- X[OOBpts]
-    
+
     listZ_shuf <- forest$listcov
     listZ_shuf[[id_cov]] <- Z
-    
+
     # Shuffle the tree
     treepert <- forest$trees[[i]]
     treepert$listcov <- listZ_shuf
-    
+
     ### OOB prediction for shuffled covariate
     pts_pred_OOB_pert <- predicttree(
       object = treepert,
       newdata = Xout
     )
-    
+
     ### OOB prediction
     # tree when in a forest do not have listcov. I add it
     forest$trees[[i]]$listcov <- forest$listcov
@@ -272,26 +272,26 @@ importance <- function(forest, id_cov, viptype = 4) {
       object = forest$trees[[i]],
       newdata = Xout
     )
-    
+
     differr <- pts_pred_OOB_pert - pts_pred_OOB
-    
+
     if (viptype == 1) {
       # OOB mean square error of the tree
       vip_tree[[i]] <- sqrt(mean(differr^2, na.rm = TRUE))
     }
-    
+
     if (viptype == 2) {
       # like the randomForest R package - page 6 of the help
       errsd <- sd(differr,
-                  na.rm = TRUE
+        na.rm = TRUE
       )
       vip_tree[[i]] <- ifelse(errsd == 0,
-                       mean(abs(differr), na.rm = TRUE),
-                       mean(abs(differr), na.rm = TRUE) / errsd
+        mean(abs(differr), na.rm = TRUE),
+        mean(abs(differr), na.rm = TRUE) / errsd
       )
     }
   }
-  
+
 
 
 
@@ -319,10 +319,10 @@ importance <- function(forest, id_cov, viptype = 4) {
 #'   mtry = 1
 #' )
 #' OOBscr(forest, cores = 1)
-OOBscr <- function(forest, cores = 1) {
+OOBscr <- function(forest) {
   X <- forest$X # this is always the root
 
-  OOBscr <- parallel::mclapply(1:length(forest$trees),
+  OOBscr <- lapply(1:length(forest$trees),
     FUN = function(i) {
       OOBval <- rep(NA, X$n)
 
@@ -355,7 +355,7 @@ OOBscr <- function(forest, cores = 1) {
       OOBval[OOBpts] <- pts_pred_OOB
 
       return(OOBval)
-    }, mc.cores = cores
+    }
   )
 
   logterm <- log(rowMeans(do.call(cbind, OOBscr), na.rm = TRUE))
@@ -391,7 +391,7 @@ OOBscr <- function(forest, cores = 1) {
 OOBppmscr <- function(forest, covariates, cores = 1) {
   X <- forest$X # this is always the root
 
-  OOBppm <- parallel::mclapply(1:length(forest$trees), FUN = function(i) {
+  OOBppm <- lapply(1:length(forest$trees), FUN = function(i) {
     # vector of same length as number of pts in X
     OOBpts <- (forest$pt_intree[[i]] != 1)
     OOBval <- rep(NA, X$n)
@@ -406,7 +406,7 @@ OOBppmscr <- function(forest, covariates, cores = 1) {
 
     # OOB score
     return(OOBval)
-  }, mc.cores = cores)
+  })
 
   # Return the average error of all the trees
   output <- sum(log(rowMeans(do.call(cbind, OOBppm), na.rm = TRUE)), na.rm = TRUE)

@@ -4,13 +4,17 @@
 \alias{vip}
 \title{Importance of all the covariates}
 \usage{
-vip(forest, viptype = 4)
+vip(forest, viptype = 4, treesdetails = FALSE)
 }
 \arguments{
 \item{forest}{A spforest object}
 
 \item{viptype}{Always set to 4. Argument passed to
 \code{\link[spforest]{importance}}.}
+
+\item{treesdetails}{Boolean. If TRUE, returns a matrix where each column
+contains the importance of a variable for each trees. Otherwise, return
+the mean importance of each variable over all trees.}
 }
 \value{
 A vector of the importance of all the covariates of

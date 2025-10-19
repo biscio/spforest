@@ -74,8 +74,6 @@ rand_covar <- function(listcovariates, mtry = 1, randmtry = FALSE) {
 }
 
 
-
-
 #' Tree prediction for importance
 #'
 #' @param object A spatial intensity tree returned
@@ -301,8 +299,11 @@ importance <- function(forest, id_cov, viptype = 4) {
 #' Importance of all the covariates
 #'
 #' @param forest A spforest object
-#' @param viptype Always set to 4. Argument passed to 
+#' @param viptype Always set to 4. Argument passed to
 #' \code{\link[spforest]{importance}}.
+#' @param treesdetails Boolean. If TRUE, returns a matrix where each column 
+#' contains the importance of a variable for each trees. Otherwise, return 
+#' the mean importance of each variable over all trees. 
 #'
 #' @return A vector of the importance of all the covariates of
 #' \code{forest} as returned by \code{\link[spforest]{importance}}.
@@ -317,29 +318,39 @@ importance <- function(forest, id_cov, viptype = 4) {
 #'   mtry = 1
 #' )
 #' vip(forest)
-vip <- function(forest, viptype = 4) {
+vip <- function(forest, viptype = 4, treesdetails = FALSE) {
   if (is.null(forest$listcov)) {
     stop("There is no covariates on which computing the importance.")
   }
-  
+
   if (viptype != 4) {
     warning("viptype has been set to 4. Other values are not implemented yet.")
   }
 
-  vipval <- unlist(lapply(
+  vipvals <- sapply(
     X = seq_along(forest$listcov),
     FUN = function(i) {
-      mean(importance(forest,
+      importance(forest,
         id_cov = i,
         viptype = 4
-      ))
+      )
     }
-  ))
+  )
 
   if (!is.null(names(forest$listcov))) {
-    names(vipval) <- names(forest$listcov)
+    if (is.matrix(vipvals)) {
+      colnames(vipvals) <- names(forest$listcov)
+    } else {
+      names(vipvals) <- names(forest$listcov)
+    }
   }
 
+  if (treesdetails) {
+    return(vipvals)
+  } else {
+    return(colMeans(vipvals))
+  }
+  
   return(vipval)
 }
 
@@ -453,8 +464,6 @@ OOBppmscr <- function(forest, covariates, cores = 1) {
   output <- sum(log(rowMeans(do.call(cbind, OOBppm), na.rm = TRUE)), na.rm = TRUE)
   return(output)
 }
-
-
 
 
 # Function that to a nodeID find the parent ID. (Deprecated ??)

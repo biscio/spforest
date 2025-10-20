@@ -108,6 +108,9 @@ tesstree <- function(X,
 #' @param minpts A positive integer.
 #' The minimum number of points allowed to try to split a cell.
 #' @param mtry Probability of choosing a covariate.
+#' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
+#' represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
+#' covariates are randomly chosen at each split.
 #' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
 #' @param threshold Minimum threshold to allow to split cell.
 #' @param inforest Logical. Indicates if the function is run in a forest or not.

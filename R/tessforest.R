@@ -99,6 +99,9 @@ tessforest <- function(X,
 #' The minimum number of points in a region to allow a split.
 #' @param mtry A number in \eqn{[0,1)}.
 #' Probability that a covariate is used at each a split.
+#' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
+#' represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
+#' covariates are randomly chosen at each split.
 #' @param p A number in \eqn{[0,1)}.
 #' Control the thinning process applied to the original point pattern __X__ before
 #' fitting a tree intensity estimator.

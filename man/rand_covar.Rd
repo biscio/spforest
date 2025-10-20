@@ -10,6 +10,10 @@ rand_covar(listcovariates, mtry = 1, randmtry = FALSE)
 \item{listcovariates}{list of covariates used}
 
 \item{mtry}{Probability of choosing a covariate.}
+
+\item{randmtry}{Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
+represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
+covariates are randomly chosen at each split.}
 }
 \value{
 a vector of 0 and 1
@@ -20,6 +24,6 @@ Randomise input for tree
 \examples{
 rand_covar(
   listcovariates = list(1, 1, 1, 1, 1),
-  mtry = 1 / 2
+  mtry = 3
 )
 }

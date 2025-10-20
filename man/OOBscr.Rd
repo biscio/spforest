@@ -8,8 +8,6 @@ OOBscr(forest)
 }
 \arguments{
 \item{forest}{spforest}
-
-\item{cores}{to speed up}
 }
 \value{
 A number.
@@ -25,5 +23,5 @@ forest <- spforest(
   minpts = 300,
   mtry = 1
 )
-OOBscr(forest, cores = 1)
+OOBscr(forest)
 }

@@ -33,6 +33,10 @@ The minimum number of points in a region to allow a split.}
 \item{mtry}{A number in \eqn{[0,1)}.
 Probability that a covariate is used at each a split.}
 
+\item{randmtry}{Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
+represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
+covariates are randomly chosen at each split.}
+
 \item{p}{A number in \eqn{[0,1)}.
 Control the thinning process applied to the original point pattern \strong{X} before
 fitting a tree intensity estimator.}

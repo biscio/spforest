@@ -46,7 +46,7 @@ RFI <- spforest(
   minpts = 200,
   mtry = 1
 )
-predict(RFI, cbind(c(100, 100))
-newloc <- spatstat.random::runifpoint(n=10, win=spatstat.data::bei$w)
+predict(RFI, c(100, 100))
+newloc <- spatstat.random::runifpoint(n = 10, win = spatstat.data::bei$w)
 predict(RFI, newloc)
 }

@@ -27,5 +27,5 @@ It is used to compute the score.
 Provide a lot of info blabla
 }
 \examples{
-score.split(5, 5, 5, 5)
+score.split(n1 = 5, n2 = 5, W1area = 5, W2area = 5)
 }

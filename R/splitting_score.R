@@ -18,7 +18,7 @@
 #' @export
 #'
 #' @examples
-#' score.split(5, 5, 5, 5)
+#' score.split(n1 = 5, n2 = 5, W1area = 5, W2area = 5)
 score.split <- function(n1, n2, W1area, W2area, score = "lcv") {
   stopifnot(score %in% c("lcv", "lcv2", "ent", "star", "ise", "isecv"))
 

@@ -25,6 +25,9 @@ smallest_pixelarea <- function(x) {
 #'
 #' @param listcovariates list of covariates used
 #' @param mtry Probability of choosing a covariate.
+#' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
+#' represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
+#' covariates are randomly chosen at each split.
 #'
 #' @return a vector of 0 and 1
 #' @export
@@ -32,7 +35,7 @@ smallest_pixelarea <- function(x) {
 #' @examples
 #' rand_covar(
 #'   listcovariates = list(1, 1, 1, 1, 1),
-#'   mtry = 1 / 2
+#'   mtry = 3
 #' )
 rand_covar <- function(listcovariates, mtry = 1, randmtry = FALSE) {
   nbcov <- 0
@@ -43,7 +46,7 @@ rand_covar <- function(listcovariates, mtry = 1, randmtry = FALSE) {
            Decrease it or set randmtry to FALSE")
     }
     while (nbcov == 0) {
-      usedcov <- rbinom(
+      usedcov <- stats::rbinom(
         n = length(listcovariates),
         size = 1,
         prob = mtry
@@ -301,9 +304,9 @@ importance <- function(forest, id_cov, viptype = 4) {
 #' @param forest A spforest object
 #' @param viptype Always set to 4. Argument passed to
 #' \code{\link[spforest]{importance}}.
-#' @param treesdetails Boolean. If TRUE, returns a matrix where each column 
-#' contains the importance of a variable for each trees. Otherwise, return 
-#' the mean importance of each variable over all trees. 
+#' @param treesdetails Boolean. If TRUE, returns a matrix where each column
+#' contains the importance of a variable for each trees. Otherwise, return
+#' the mean importance of each variable over all trees.
 #'
 #' @return A vector of the importance of all the covariates of
 #' \code{forest} as returned by \code{\link[spforest]{importance}}.
@@ -350,14 +353,11 @@ vip <- function(forest, viptype = 4, treesdetails = FALSE) {
   } else {
     return(colMeans(vipvals))
   }
-  
-  return(vipval)
 }
 
 #' OOB forest
 #'
 #' @param forest spforest
-#' @param cores to speed up
 #'
 #' @return A number.
 #' @export
@@ -370,7 +370,7 @@ vip <- function(forest, viptype = 4, treesdetails = FALSE) {
 #'   minpts = 300,
 #'   mtry = 1
 #' )
-#' OOBscr(forest, cores = 1)
+#' OOBscr(forest)
 OOBscr <- function(forest) {
   X <- forest$X # this is always the root
 

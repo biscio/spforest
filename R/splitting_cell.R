@@ -70,13 +70,13 @@ splitcell <- function(X,
   scr_cov <- NULL
   scr_sub <- NULL
   scr_sup <- NULL
-  
+
   scr_parent <- score.pp(
-    n0 = length(na.omit(valptsused[[1]])),
-    W0area = areapixel*sum(!is.na(vecvalused[[1]])),
+    n0 = length(stats::na.omit(valptsused[[1]])),
+    W0area = areapixel * sum(!is.na(vecvalused[[1]])),
     score = score
   )
-  
+
   for (i in 1:sum(usecovariates)) {
     Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
     Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)

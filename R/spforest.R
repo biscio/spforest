@@ -317,9 +317,10 @@ as.im.spforest <- function(X, ...) {
 #'
 #' Plot the boxplot of the importance of each covariate
 #' in each tree of the random forest intensity
+#' 
+#' @usage boxplot(x = forest)
 #'
 #' @param x A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.
-#' @param viptype An integer in \{1,2,3,4\} passed to \code{\link[spforest]{importance}}.
 #' @param ... Arguments passed to \code{\link[graphics]{boxplot}}.
 #'
 #' @details
@@ -329,7 +330,8 @@ as.im.spforest <- function(X, ...) {
 #' importance of each covariate.
 #'
 #' @return A list returned by the function \code{\link[graphics]{boxplot}}.
-#' @export
+#' @param viptype An integer in \{1,2,3,4\} passed to \code{\link[spforest]{importance}}.
+#' @export 
 #'
 #' @examples
 #' forest <- spforest(

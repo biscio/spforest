@@ -4,7 +4,7 @@
 \alias{boxplot.spforest}
 \title{Boxplot forest}
 \usage{
-\method{boxplot}{spforest}(x, viptype = 4, ...)
+boxplot(x = forest)
 }
 \arguments{
 \item{x}{A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.}

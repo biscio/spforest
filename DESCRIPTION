@@ -12,14 +12,15 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: 
     R (>= 3.5),
-    spatstat.model
+    spatstat.geom (>= 3.3-2)
 Imports: 
     graphics,
     parallel,
-    spatstat.geom (>= 3.3-2),
+    spatstat.model,
     spatstat.random
 Suggests: 
     knitr,
+    rgl,
     rmarkdown,
     spatstat.data,
     tinytest

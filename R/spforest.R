@@ -65,7 +65,18 @@ spforest <- function(X,
                      lambda = 100,
                      dimyx = c(50, 50),
                      test.connected = FALSE,
+                     mesh = NULL,
                      cores = 1) {
+  if (!is.null(mesh)) {
+    
+    # lambda <- spatstat.geom::npoints(X)^(2 / 3)
+    triangle_density <- manifold_forest(Ntrees = Ntree, 
+                                        intensity = lambda, 
+                                        mesh = mesh, 
+                                        pointsech = X)
+    
+  }
+  
   if (is.null(listcovariates)) {
     output <- tessforest(X,
       Ntree = Ntree,

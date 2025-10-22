@@ -108,7 +108,7 @@ plot(forest)
   \item to return the predicted intensity in new locations. There, the function 
   accepts the new locations to be a \texttt{ppp} object,
 <<>>=
-predict(object = forest, newdata = runifpoint(n = 5, win = bei$window))
+predict(object = forest, newdata = spatstat.random::runifpoint(n = 5, win = bei$window))
 @
 or a matrix with the $x$ and $y$-coordinates on the 
 first and second columns, respectively.
@@ -124,7 +124,7 @@ predict(
 This is actually equivalent to return the estimated intensity 
 as an \texttt{im.object} and use \texttt{Extrat.im}. 
 <<>>=
-newdata <- runifpoint(n = 5, win = bei$window)
+newdata <- spatstat.random::runifpoint(n = 5, win = bei$window)
 as.im(forest)[newdata]
 @
 \end{itemize}
@@ -381,7 +381,7 @@ plot(forest2)
 @
 
 <<>>=
-predict(object = forest2, newdata = runifpoint(n = 5, win = bei$window))
+predict(object = forest2, newdata = spatstat.random::runifpoint(n = 5, win = bei$window))
 @
 
  

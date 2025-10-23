@@ -313,7 +313,7 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
 #' @export
 #'
 #' @examples
-plot.spforestmesh <- function(x, points = NULL, ...) {
+plot.spforestmesh <- function(x, points = FALSE, ...) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package RANN must be installed.")
   }

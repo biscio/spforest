@@ -14,10 +14,9 @@ spforest(
   p = 0,
   score = "lcv",
   threshold = 2 * smallest_pixelarea(listcovariates),
-  lambda = 100,
+  lambda = NULL,
   dimyx = c(50, 50),
   test.connected = FALSE,
-  mesh = NULL,
   cores = 1
 )
 }

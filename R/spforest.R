@@ -61,22 +61,37 @@ spforest <- function(X,
                      randmtry = FALSE,
                      p = 0,
                      score = "lcv",
-                     threshold = 2*smallest_pixelarea(listcovariates),
+                     threshold = 2 * smallest_pixelarea(listcovariates),
                      lambda = NULL,
                      dimyx = c(50, 50),
                      test.connected = FALSE,
-                     mesh = NULL,
                      cores = 1) {
-  if (!is.null(mesh)) {
-    
+  if (!is.null(X$mesh)) {
     # lambda <- spatstat.geom::npoints(X)^(2 / 3)
-    triangle_density <- manifold_forest(Ntrees = Ntree, 
-                                        intensity = lambda, 
-                                        mesh = mesh, 
-                                        pointsech = X)
-    
+    if (is.null(lambda)) {
+      lambda0 <- nrow(X$pp)^(2 / 3)
+    } else {
+      lambda0 <- lambda
+    }
+
+    triangle_density <- manifold_forest(
+      Ntrees = Ntree,
+      intensity = lambda0,
+      mesh = X$mesh,
+      pointsech = X$pp
+    )
+
+    output <- list(
+      tridensity = triangle_density,
+      mesh = X$mesh,
+      pp = X$pp
+    )
+
+    class(output) <- "spforestmesh"
+
+    return(output)
   }
-  
+
   if (is.null(listcovariates)) {
     output <- tessforest(X,
       Ntree = Ntree,
@@ -286,6 +301,49 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
   return(invisible(output))
 }
 
+#' Plot spatial intensity forest on a manifold
+#'
+#' Plot a \code{\link{spforest.object}}.
+#'
+#' @param x A spforestmesh object
+#' @param ... additional arguments
+#' @param main A title for the plot.
+#'
+#' @details details
+#' @export
+#'
+#' @examples
+plot.spforestmesh <- function(x, points = NULL, ...) {
+  if (!requireNamespace("rgl", quietly = TRUE)) {
+    stop("The package RANN must be installed.")
+  }
+
+  if (class(x) != "spforestmesh") {
+    stop("The object to plot must be of the class spforestmesh")
+  }
+
+  if (points) {
+    output <- plot_manifold_intensity(x,
+      points = TRUE,
+      colorbar = TRUE,
+      zoom = 0.65,
+      nticks = 10,
+      lasttick = TRUE
+    )
+  } else {
+    output <- plot_manifold_intensity(x,
+      points = FALSE,
+      colorbar = TRUE,
+      zoom = 0.65,
+      nticks = 10,
+      lasttick = TRUE
+    )
+  }
+
+  return(invisible(output))
+}
+
+
 
 #' Convert to Pixel Image
 #'
@@ -328,7 +386,7 @@ as.im.spforest <- function(X, ...) {
 #'
 #' Plot the boxplot of the importance of each covariate
 #' in each tree of the random forest intensity
-#' 
+#'
 #' @usage boxplot(x = forest)
 #'
 #' @param x A \code{\link{spforest.object}} with \code{listcov} not \code{NULL}.
@@ -342,7 +400,7 @@ as.im.spforest <- function(X, ...) {
 #'
 #' @return A list returned by the function \code{\link[graphics]{boxplot}}.
 #' @param viptype An integer in \{1,2,3,4\} passed to \code{\link[spforest]{importance}}.
-#' @export 
+#' @export
 #'
 #' @examples
 #' forest <- spforest(

@@ -5,8 +5,7 @@
 \title{Title}
 \usage{
 plot_manifold_intensity(
-  triangle_density,
-  mesh,
+  forestmesh,
   points = NULL,
   colorbar = FALSE,
   theta = 10,

@@ -8,7 +8,8 @@
 #' @export
 #'
 #' @examples
-elevmap <- function(X, elev, correction = 6) {
+pptomesh <- function(X, elev, correction = 6) {
+  # TODO: Check that window of elev same as X. If note, what to do ?
   z <- correction * spatstat.geom::as.matrix.im(elev)
   nx <- ncol(z)
   ny <- nrow(z)
@@ -42,7 +43,7 @@ elevmap <- function(X, elev, correction = 6) {
 
   pointsech <- matrix(c(X$x, X$y, zP), ncol = 3)
 
-  return(list(mesh = mesh, X = pointsech))
+  return(list(mesh = mesh, pp = pointsech))
 }
 
 
@@ -267,8 +268,7 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
 ### Visualisation
 #' Title
 #'
-#' @param triangle_density
-#' @param mesh
+#' @param forestmesh
 #' @param points
 #' @param colorbar
 #' @param theta
@@ -282,8 +282,8 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
 #' @export
 #'
 #' @examples
-plot_manifold_intensity <- function(triangle_density,
-                                    mesh, points = NULL,
+plot_manifold_intensity <- function(forestmesh,
+                                    points = FALSE,
                                     colorbar = FALSE,
                                     theta = 10,
                                     phi = -50,
@@ -291,6 +291,10 @@ plot_manifold_intensity <- function(triangle_density,
                                     pos = NULL,
                                     nticks = 5,
                                     lasttick = TRUE) {
+  
+  triangle_density <- forestmesh$tridensity
+  mesh <- forestmesh$mesh
+  
   # Normaliser les densités entre 0 et 1
   normalized_density <- (triangle_density - min(triangle_density)) /
     (max(triangle_density) - min(triangle_density))
@@ -340,8 +344,8 @@ plot_manifold_intensity <- function(triangle_density,
     )
   }
 
-  if (!is.null(points)) {
-    rgl::points3d(pointsech, col = "black", size = 2, add = T)
+  if (points) {
+    rgl::points3d(forestmesh$pp, col = "black", size = 2, add = T)
   }
 }
 

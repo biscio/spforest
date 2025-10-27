@@ -46,15 +46,10 @@ pptomesh <- function(X, elev, correction = 6) {
   return(list(mesh = mesh, pp = pointsech))
 }
 
-###################### --------------------
-
-
 # tirage des points de l'échantillon sur un mesh
 #' Title
 #'
-#' @param tricenter
-#' @param vertices
-#' @param faces description
+#' @param mesh
 #' @param n
 #' @param weights
 #' @param dimweight
@@ -67,13 +62,12 @@ pponmesh <- function(mesh,
                      n,
                      weights = TRUE,
                      dimweight = 3) {
-  
   features <- features_mesh(mesh)
   tricenter <- features$tricenter
   # triarea <- features$triarea
   vertices <- features$vertices
   faces <- features$faces
-  
+
   # Pondération : plus la coordonnée dimweight est grande, plus la probabilité est élevée
   if (weights == TRUE) {
     x_weights <- tricenter[, dimweight] # coordonnées x
@@ -107,16 +101,6 @@ pponmesh <- function(mesh,
 
   return(list(mesh = mesh, pp = sampled_points))
 }
-
-
-
-
-
-################## -----------
-
-
-
-
 
 # tirage des points de l'échantillon sur un mesh (intern)
 #' Title

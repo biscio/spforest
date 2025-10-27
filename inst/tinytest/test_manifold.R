@@ -23,4 +23,6 @@ expect_silent(
   B<- plot.spforestmesh(log(forest+exp(-8)), points=FALSE)
 )
 
-
+expect_silent(
+  pponmesh(n=100, mesh = res$mesh)
+)

@@ -46,10 +46,79 @@ pptomesh <- function(X, elev, correction = 6) {
   return(list(mesh = mesh, pp = pointsech))
 }
 
-
+###################### --------------------
 
 
 # tirage des points de l'échantillon sur un mesh
+#' Title
+#'
+#' @param tricenter
+#' @param vertices
+#' @param faces description
+#' @param n
+#' @param weights
+#' @param dimweight
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+pponmesh <- function(mesh,
+                     n,
+                     weights = TRUE,
+                     dimweight = 3) {
+  
+  features <- features_mesh(mesh)
+  tricenter <- features$tricenter
+  # triarea <- features$triarea
+  vertices <- features$vertices
+  faces <- features$faces
+  
+  # Pondération : plus la coordonnée dimweight est grande, plus la probabilité est élevée
+  if (weights == TRUE) {
+    x_weights <- tricenter[, dimweight] # coordonnées x
+    x_weights <- x_weights - min(x_weights) # mettre à zéro le minimum
+    x_weights <- x_weights^2 # accentuer les grandes x, éviter 0
+    x_weights <- x_weights / max(x_weights)
+    # Échantillonnage des triangles pondéré par x
+    sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE, prob = x_weights)
+  } else {
+    sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE)
+  }
+
+  # Coordonnées barycentriques aléatoires dans chaque triangle
+  random_barycentric <- function() {
+    u <- runif(1)
+    v <- runif(1)
+    if (u + v > 1) {
+      u <- 1 - u
+      v <- 1 - v
+    }
+    c(u, v, 1 - u - v)
+  }
+
+  sampled_points <- t(sapply(sampled_faces, function(i) {
+    A <- vertices[faces[i, 1], ]
+    B <- vertices[faces[i, 2], ]
+    C <- vertices[faces[i, 3], ]
+    lambda <- random_barycentric()
+    lambda[1] * A + lambda[2] * B + lambda[3] * C
+  }))
+
+  return(list(mesh = mesh, pp = sampled_points))
+}
+
+
+
+
+
+################## -----------
+
+
+
+
+
+# tirage des points de l'échantillon sur un mesh (intern)
 #' Title
 #'
 #' @param tricenter
@@ -69,7 +138,6 @@ sample_points_manifold <- function(tricenter,
                                    n,
                                    weights = TRUE,
                                    dimweight = 3) {
-
   # Pondération : plus la coordonnée dimweight est grande, plus la probabilité est élevée
   if (weights == TRUE) {
     x_weights <- tricenter[, dimweight] # coordonnées x
@@ -161,7 +229,7 @@ manifold_tree <- function(intensity,
   if (!requireNamespace("RANN", quietly = TRUE)) {
     stop("The package RANN must be installed.")
   }
-  
+
   # Echantillonage des dummy points
   points3D <- sample_points_manifold(
     tricenter,
@@ -219,15 +287,15 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package rgl must be installed")
   }
-  
+
   features <- features_mesh(mesh)
   tricenter <- features$tricenter
   triarea <- features$triarea
   vertices <- features$vertices
   faces <- features$faces
-  
+
   # triangle_areas
-  
+
   triangle_density <- manifold_tree(
     intensity = intensity,
     tricenter = tricenter,

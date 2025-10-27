@@ -23,6 +23,7 @@ Suggests:
     RANN,
     rgl,
     rmarkdown,
+    Rvcg,
     spatstat.data,
     tinytest
 VignetteBuilder: knitr

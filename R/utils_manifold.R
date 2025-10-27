@@ -52,9 +52,7 @@ pptomesh <- function(X, elev, correction = 6) {
 # tirage des points de l'échantillon sur un mesh
 #' Title
 #'
-#' @param vertices
-#' @param faces
-#' @param triangle_centers
+#' @param mesh
 #' @param n
 #' @param weights
 #' @param dimweight
@@ -63,22 +61,20 @@ pptomesh <- function(X, elev, correction = 6) {
 #' @export
 #'
 #' @examples
-sample_points_manifold <- function(vertices,
-                                   faces,
-                                   triangle_centers,
-                                   n, weights = FALSE,
-                                   dimweight = 1) {
-  # vertices <- t(mesh$vb[1:3,])  # sommets : N x 3
-  # faces <- t(mesh$it)           # triangles : M x 3
-
-  # Calcul du centre (barycentre) de chaque triangle
-  # triangle_centers <- t(apply(faces, 1, function(f) colMeans(vertices[f,])))
+sample_points_manifold <- function(mesh,
+                                   n,
+                                   weights = TRUE,
+                                   dimweight = 3) {
+  features <- features_mesh(mesh)
+  tricenter <- features$tricenter
+  vertices <- features$vertices
+  faces <- features$faces
 
   # Pondération : plus la coordonnée dimweight est grande, plus la probabilité est élevée
   if (weights == TRUE) {
-    x_weights <- triangle_centers[, dimweight] # coordonnées x
+    x_weights <- tricenter[, dimweight] # coordonnées x
     x_weights <- x_weights - min(x_weights) # mettre à zéro le minimum
-    x_weights <- x_weights^3 # accentuer les grandes x, éviter 0
+    x_weights <- x_weights^2 # accentuer les grandes x, éviter 0
     x_weights <- x_weights / max(x_weights)
     # Échantillonnage des triangles pondéré par x
     sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE, prob = x_weights)
@@ -86,14 +82,7 @@ sample_points_manifold <- function(vertices,
     sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE)
   }
 
-
   # Coordonnées barycentriques aléatoires dans chaque triangle
-  #' Title
-  #'
-  #' @returns
-  #' @export
-  #'
-  #' @examples
   random_barycentric <- function() {
     u <- runif(1)
     v <- runif(1)
@@ -115,8 +104,6 @@ sample_points_manifold <- function(vertices,
   return(sampled_points)
 }
 
-
-
 # Calcul du centre et de l'aire de chaque triangle
 #' Title
 #'
@@ -137,24 +124,19 @@ features_mesh <- function(mesh) {
   }))
 
   # Calcul des aires de chaque triangle
-  triangle_area <- function(A, B, C) {
-    0.5 * norm(
-      crossprod(
-        matrix(B - A, ncol = 3),
-        matrix(C - A, ncol = 3)
-      ),
-      type = "2"
-    )
-  }
-  triangle_areas <- apply(faces, 1, function(f) {
-    triangle_area(
-      vertices[f[1], ],
-      vertices[f[2], ],
-      vertices[f[3], ]
-    )
-  })
-
-  return(list(triangle_centers, triangle_areas, vertices, faces))
+  # triangle_area <- function(A, B, C) {
+  #   0.5 * norm(crossprod(matrix(B - A, ncol = 3), matrix(C - A, ncol = 3)), type = "2")
+  # }
+  # triangle_areas <- apply(faces, 1, function(f) {
+  #   triangle_area(vertices[f[1], ], vertices[f[2], ], vertices[f[3], ])
+  # })
+  triangle_areas <- Rvcg::vcgArea(mesh, perface = TRUE)[[2]]
+  return(list(
+    tricenter = triangle_centers,
+    triarea = triangle_areas,
+    vertices = vertices,
+    faces = faces
+  ))
 }
 
 #' Title
@@ -171,20 +153,22 @@ features_mesh <- function(mesh) {
 #'
 #' @examples
 manifold_tree <- function(intensity,
-                          vertices,
-                          faces,
-                          triangle_centers,
-                          triangle_areas,
+                          mesh,
                           pointsech) {
   if (!requireNamespace("RANN", quietly = TRUE)) {
     stop("The package RANN must be installed.")
   }
+  
+  features <- features_mesh(mesh)
+  triangle_centers <- features$tricenter
+  triangle_areas <- features$triarea
+  vertices <- features$vertices
+  faces <- features$faces
+  
   # Echantillonage des dummy points
   points3D <- sample_points_manifold(
-    vertices,
-    faces,
-    triangle_centers,
-    intensity
+    mesh = mesh,
+    n = intensity
   )
   # Trouver pour chaque triangle le point3D le plus proche
   nearest <- RANN::nn2(points3D, triangle_centers, k = 1) # k = 1 => plus proche
@@ -237,26 +221,16 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
     stop("The package rgl must be installed")
   }
 
-  features <- features_mesh(mesh)
-  triangle_centers <- features[[1]]
-  triangle_areas <- features[[2]]
-  vertices <- features[[3]]
-  faces <- features[[4]]
   triangle_density <- manifold_tree(
     intensity,
-    vertices,
-    faces,
-    triangle_centers,
-    triangle_areas, pointsech
+    mesh,  
+    pointsech
   )
   if (Ntrees > 1) {
     for (i in 2:Ntrees) {
       triangle_density <- triangle_density + manifold_tree(
         intensity,
-        vertices,
-        faces,
-        triangle_centers,
-        triangle_areas,
+        mesh,
         pointsech
       )
     }
@@ -264,8 +238,7 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
   return(triangle_density / Ntrees)
 }
 
-###########################
-### Visualisation
+
 #' Title
 #'
 #' @param forestmesh
@@ -291,10 +264,9 @@ plot_manifold_intensity <- function(forestmesh,
                                     pos = NULL,
                                     nticks = 5,
                                     lasttick = TRUE) {
-  
   triangle_density <- forestmesh$tridensity
   mesh <- forestmesh$mesh
-  
+
   # Normaliser les densités entre 0 et 1
   normalized_density <- (triangle_density - min(triangle_density)) /
     (max(triangle_density) - min(triangle_density))

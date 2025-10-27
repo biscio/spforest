@@ -61,14 +61,12 @@ pptomesh <- function(X, elev, correction = 6) {
 #' @export
 #'
 #' @examples
-sample_points_manifold <- function(mesh,
+sample_points_manifold <- function(tricenter,
+                                   vertices,
+                                   faces,
                                    n,
                                    weights = TRUE,
                                    dimweight = 3) {
-  features <- features_mesh(mesh)
-  tricenter <- features$tricenter
-  vertices <- features$vertices
-  faces <- features$faces
 
   # Pondération : plus la coordonnée dimweight est grande, plus la probabilité est élevée
   if (weights == TRUE) {
@@ -153,38 +151,37 @@ features_mesh <- function(mesh) {
 #'
 #' @examples
 manifold_tree <- function(intensity,
-                          mesh,
+                          tricenter,
+                          triarea,
+                          vertices,
+                          faces,
                           pointsech) {
   if (!requireNamespace("RANN", quietly = TRUE)) {
     stop("The package RANN must be installed.")
   }
   
-  features <- features_mesh(mesh)
-  triangle_centers <- features$tricenter
-  triangle_areas <- features$triarea
-  vertices <- features$vertices
-  faces <- features$faces
-  
   # Echantillonage des dummy points
   points3D <- sample_points_manifold(
-    mesh = mesh,
+    tricenter,
+    vertices,
+    faces,
     n = intensity
   )
   # Trouver pour chaque triangle le point3D le plus proche
-  nearest <- RANN::nn2(points3D, triangle_centers, k = 1) # k = 1 => plus proche
+  nearest <- RANN::nn2(points3D, tricenter, k = 1) # k = 1 => plus proche
 
   # Indice du point3D le plus proche pour chaque triangle
   assigned_points <- nearest$nn.idx[, 1]
 
   # Regrouper les triangles par point
   # Liste : pour chaque point, les indices des triangles associés
-  ntriangles <- nrow(triangle_centers)
+  ntriangles <- nrow(tricenter)
   triangles_by_point <- split(1:ntriangles, assigned_points)
 
   # pour chaque dummy point, aire totale de sa partition
   partition_areas <- sapply(
     triangles_by_point,
-    function(idx) sum(triangle_areas[idx])
+    function(idx) sum(triarea[idx])
   )
 
   # Pour chaque dummy point, combien de points de ech sont les plus proches
@@ -220,18 +217,32 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package rgl must be installed")
   }
-
+  
+  features <- features_mesh(mesh)
+  tricenter <- features$tricenter
+  triarea <- features$triarea
+  vertices <- features$vertices
+  faces <- features$faces
+  
+  # triangle_areas
+  
   triangle_density <- manifold_tree(
-    intensity,
-    mesh,  
-    pointsech
+    intensity = intensity,
+    tricenter = tricenter,
+    triarea = triarea,
+    vertices = vertices,
+    faces = faces,
+    pointsech = pointsech
   )
   if (Ntrees > 1) {
     for (i in 2:Ntrees) {
       triangle_density <- triangle_density + manifold_tree(
-        intensity,
-        mesh,
-        pointsech
+        intensity = intensity,
+        tricenter = tricenter,
+        triarea = triarea,
+        vertices = vertices,
+        faces = faces,
+        pointsech = pointsech
       )
     }
   }

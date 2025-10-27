@@ -6,7 +6,7 @@
 \usage{
 plot_manifold_intensity(
   forestmesh,
-  points = NULL,
+  points = FALSE,
   colorbar = FALSE,
   theta = 10,
   phi = -50,

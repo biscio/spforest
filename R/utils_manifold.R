@@ -52,7 +52,9 @@ pptomesh <- function(X, elev, correction = 6) {
 # tirage des points de l'échantillon sur un mesh
 #' Title
 #'
-#' @param mesh
+#' @param tricenter
+#' @param vertices
+#' @param faces description
 #' @param n
 #' @param weights
 #' @param dimweight

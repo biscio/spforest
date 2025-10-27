@@ -5,21 +5,19 @@
 \title{Title}
 \usage{
 sample_points_manifold(
+  tricenter,
   vertices,
   faces,
-  triangle_centers,
   n,
-  weights = FALSE,
-  dimweight = 1
+  weights = TRUE,
+  dimweight = 3
 )
 }
 \arguments{
+\item{faces}{description}
+
 \item{dimweight}{}
 }
 \description{
 Title
-}
-\examples{
-Title
-
 }

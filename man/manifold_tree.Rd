@@ -4,14 +4,7 @@
 \alias{manifold_tree}
 \title{Title}
 \usage{
-manifold_tree(
-  intensity,
-  vertices,
-  faces,
-  triangle_centers,
-  triangle_areas,
-  pointsech
-)
+manifold_tree(intensity, tricenter, triarea, vertices, faces, pointsech)
 }
 \arguments{
 \item{pointsech}{}

@@ -313,7 +313,7 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
 #' @export
 #'
 #' @examples
-plot.spforestmesh <- function(x, points = FALSE, ...) {
+plot.spforestmesh <- function(x, points = FALSE, colorbar = FALSE, ...) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package RANN must be installed.")
   }
@@ -325,7 +325,7 @@ plot.spforestmesh <- function(x, points = FALSE, ...) {
   if (points) {
     output <- plot_manifold_intensity(x,
       points = TRUE,
-      colorbar = TRUE,
+      colorbar = colorbar,
       zoom = 0.65,
       nticks = 10,
       lasttick = TRUE
@@ -333,7 +333,7 @@ plot.spforestmesh <- function(x, points = FALSE, ...) {
   } else {
     output <- plot_manifold_intensity(x,
       points = FALSE,
-      colorbar = TRUE,
+      colorbar = colorbar,
       zoom = 0.65,
       nticks = 10,
       lasttick = TRUE

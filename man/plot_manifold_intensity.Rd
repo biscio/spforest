@@ -7,6 +7,7 @@
 plot_manifold_intensity(
   forestmesh,
   points = FALSE,
+  size = 2,
   colorbar = FALSE,
   theta = 10,
   phi = -50,
@@ -17,6 +18,8 @@ plot_manifold_intensity(
 )
 }
 \arguments{
+\item{size}{description}
+
 \item{lasttick}{}
 }
 \description{

@@ -334,7 +334,8 @@ plot.spforestmesh <- function(x, points = FALSE, colorbar = FALSE, log=F, offset
       colorbar = colorbar,
       zoom = 0.65,
       nticks = 10,
-      lasttick = TRUE
+      lasttick = TRUE,
+      ...
     )
   } else {
     output <- plot_manifold_intensity(y,
@@ -342,7 +343,8 @@ plot.spforestmesh <- function(x, points = FALSE, colorbar = FALSE, log=F, offset
       colorbar = colorbar,
       zoom = 0.65,
       nticks = 10,
-      lasttick = TRUE
+      lasttick = TRUE,
+      ...
     )
   }
 

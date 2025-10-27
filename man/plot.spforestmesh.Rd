@@ -4,7 +4,7 @@
 \alias{plot.spforestmesh}
 \title{Plot spatial intensity forest on a manifold}
 \usage{
-\method{plot}{spforestmesh}(x, points = FALSE, colorbar = FALSE, ...)
+\method{plot}{spforestmesh}(x, points = FALSE, colorbar = FALSE, log = F, offset = exp(-8), ...)
 }
 \arguments{
 \item{x}{A spforestmesh object}

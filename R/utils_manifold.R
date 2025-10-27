@@ -308,6 +308,7 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
 #'
 #' @param forestmesh
 #' @param points
+#' @param size description
 #' @param colorbar
 #' @param theta
 #' @param phi
@@ -322,6 +323,7 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
 #' @examples
 plot_manifold_intensity <- function(forestmesh,
                                     points = FALSE,
+                                    size = 2,
                                     colorbar = FALSE,
                                     theta = 10,
                                     phi = -50,
@@ -382,7 +384,7 @@ plot_manifold_intensity <- function(forestmesh,
   }
 
   if (points) {
-    rgl::points3d(forestmesh$pp, col = "black", size = 2, add = T)
+    rgl::points3d(forestmesh$pp, col = "black", size = size, add = T)
   }
 }
 

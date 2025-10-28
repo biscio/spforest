@@ -5,13 +5,14 @@
   
 ## Requirements
   
-To install the packages directly from Github, run the following command. 
+To install the package directly from Github, run the following command. 
 ```{r}
 #| message: false
 if (!requireNamespace("pak")) {install.packages("pak")}
 if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
+library(spforest)
 ```
-
+  
 ```{r}
 #| label: setup
 #| include: false
@@ -23,21 +24,13 @@ options(rgl.useNULL = TRUE, webshot.quiet = TRUE)
 setupKnitr(autoprint = TRUE)
 ```
 
-The random forest intensity are computed by the package 
-`spforest`, available the github of the author, which relies
-heavily on the package `spatstat`. 
-
-
-```{r}
-#| message: FALSE
-library(spforest)
-```
-
 ## Generation of a synthetic dataset
 
 We simulate three realisations of a Gaussian random field which 
 we will treat as covariates. 
 ```{r}
+#| fig-height: 3
+#| fig-width: 9
 set.seed(10)
 simcov <- solapply(
   spatstat.random:::rGRFexpo(
@@ -61,13 +54,12 @@ lambda0 <- 500 * simcov[[1]] / integral(simcov[[1]])
 X <- spatstat.random::rpoispp(lambda = lambda0)
 ```
 
-Let's fix the colour map for all the plots 
+Let's fix the colour map for all the plots.
 ```{r}
 cm <- colourmap(default.image.colours(), range = c(0, 2300))
 ```
 
 The true intensity is shown on the plot below.
-
 ```{r}
 plot(lambda0, col = cm, main = "True Intensity")
 ```
@@ -146,7 +138,7 @@ Let's generate an example of point process on a manifold. We use the function
 are independently distributed inhomogeneoulsy on the z-axis. 
 
 ```{r}
-#| out-width: "50%"
+#| out-width: "70%"
 set.seed(129)
 pponface <- pponmesh(mesh = humface, n = 1000)
 shade3d(pponface$mesh, col = "gray")
@@ -157,7 +149,7 @@ view3d(theta = 20, phi = 0)
 We can generate a random forest intensity estimator with
 `Ntree=100` independent tessellations generated on the manifold. 
 ```{r}
-#| out-width: "50%"
+#| out-width: "70%"
 forestmesh <- spforest(X = pponface, Ntree = 100)
 plot(forestmesh)
 view3d(theta = 20, phi = 0)

@@ -3,18 +3,11 @@
 
 ## Requirements
 
-To install the packages directly from Github, run the following command.
+To install the package directly from Github, run the following command.
 
 ``` r
 if (!requireNamespace("pak")) {install.packages("pak")}
 if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
-```
-
-The random forest intensity are computed by the package `spforest`,
-available the github of the author, which relies heavily on the package
-`spatstat`.
-
-``` r
 library(spforest)
 ```
 
@@ -39,7 +32,7 @@ names(simcov) <- c("A", "B", "C")
 plot(simcov, main = "")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-4-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-3-1.png)
 
 Then, let’s simulate an inhomogeneous Poisson point process whose
 intensity depends on the covariates `A`: the first random field.  
@@ -50,7 +43,7 @@ lambda0 <- 500 * simcov[[1]] / integral(simcov[[1]])
 X <- spatstat.random::rpoispp(lambda = lambda0)
 ```
 
-Let’s fix the colour map for all the plots
+Let’s fix the colour map for all the plots.
 
 ``` r
 cm <- colourmap(default.image.colours(), range = c(0, 2300))
@@ -62,7 +55,7 @@ The true intensity is shown on the plot below.
 plot(lambda0, col = cm, main = "True Intensity")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-7-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
 
 The realisation of the Poisson process with intensity given by `lambda0`
 as defined above is shown below.
@@ -71,7 +64,7 @@ as defined above is shown below.
 plot(X, main = "", pch = 20, cex = 0.8)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-7-1.png)
 
 ## Random forest intensity with covariates
 
@@ -105,7 +98,7 @@ plot(RF,
 )
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 Finally, we can compute the variable importance (VIP) of the covariates
 and find the most important one: here the first one “A”.
@@ -114,7 +107,7 @@ and find the most important one: here the first one “A”.
 vipplot(RF)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-11-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
 
 ## Random forest intensity on the plane without covariates
 
@@ -133,7 +126,7 @@ RFnocov <- spforest(X, Ntree = 2)
 plot(RFnocov, col = cm, main="")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-12-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 ## Random forest intensity on a manifold
 
@@ -159,8 +152,8 @@ points3d(pponface$pp, col = "black", size = 5, add = T)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-14-1.-rgl.png"
-style="width:50.0%" />
+<img src="README_files/figure-commonmark/unnamed-chunk-13-1.-rgl.png"
+style="width:70.0%" />
 
 We can generate a random forest intensity estimator with `Ntree=100`
 independent tessellations generated on the manifold.
@@ -171,5 +164,5 @@ plot(forestmesh)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-15-2.-rgl.png"
-style="width:50.0%" />
+<img src="README_files/figure-commonmark/unnamed-chunk-14-2.-rgl.png"
+style="width:70.0%" />

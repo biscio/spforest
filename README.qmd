@@ -3,10 +3,11 @@
   format: gfm
 ---
   
-# Requirements
+## Requirements
   
 To install the packages directly from Github, run the following command. 
 ```{r}
+#| message: false
 if (!requireNamespace("pak")) {install.packages("pak")}
 if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
 ```
@@ -32,7 +33,7 @@ heavily on the package `spatstat`.
 library(spforest)
 ```
 
-# Generation of a synthetic dataset
+## Generation of a synthetic dataset
 
 We simulate three realisations of a Gaussian random field which 
 we will treat as covariates. 
@@ -76,7 +77,7 @@ The realisation of the Poisson process with intensity given by `lambda0` as defi
 plot(X, main = "", pch = 20, cex = 0.8)
 ```
 
-# Random forest intensity with covariates 
+## Random forest intensity with covariates 
 
 We will estimate the intensity of the point process in the last section, using the three covariates from `simcov`. 
 
@@ -113,7 +114,7 @@ vipplot(RF)
 ```
 
 
-# Random forest intensity on the plane without covariates
+## Random forest intensity on the plane without covariates
 
 We will estimate the intensity of the point process in the first section, 
 without the generated covariates, meaning, using only the spatial coordinates of the points.
@@ -128,7 +129,7 @@ plot(RFnocov, col = cm, main="")
 ```
 
 
-# Random forest intensity on a manifold
+## Random forest intensity on a manifold
 
 To work with meshes of manifolds, we rely on the `rgl` package. 
 As an example, we will use the mesh `humface` from the R package `Rvcg`.

@@ -3,9 +3,9 @@
   format: gfm
 ---
   
-  # Requirements
+# Requirements
   
-  To install the packages directly from Github, run the following command. 
+To install the packages directly from Github, run the following command. 
 ```{r}
 if (!requireNamespace("pak")) {install.packages("pak")}
 if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}

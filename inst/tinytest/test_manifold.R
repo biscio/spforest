@@ -24,5 +24,5 @@ expect_silent(
 )
 
 expect_silent(
-  pponmesh(n=100, mesh = res$mesh)
+  dummypponmesh(n=100, mesh = res$mesh)
 )

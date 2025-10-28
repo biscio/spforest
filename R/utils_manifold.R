@@ -53,15 +53,19 @@ pptomesh <- function(X, elev, correction = 6) {
 #' @param n
 #' @param weights
 #' @param dimweight
+#' @param thres
+#' @param p description
 #'
 #' @returns
 #' @export
 #'
 #' @examples
-pponmesh <- function(mesh,
+dummypponmesh <- function(mesh,
                      n,
                      weights = TRUE,
-                     dimweight = 3) {
+                     dimweight = 1,
+                     thres=15,
+                     p=0.7) {
   features <- features_mesh(mesh)
   tricenter <- features$tricenter
   # triarea <- features$triarea
@@ -71,9 +75,18 @@ pponmesh <- function(mesh,
   # Pondération : plus la coordonnée dimweight est grande, plus la probabilité est élevée
   if (weights == TRUE) {
     x_weights <- tricenter[, dimweight] # coordonnées x
-    x_weights <- x_weights - min(x_weights) # mettre à zéro le minimum
-    x_weights <- x_weights^2 # accentuer les grandes x, éviter 0
-    x_weights <- x_weights / max(x_weights)
+    f<-function(u){
+      if (u>=thres) {
+        return(p)
+      }
+      if (u<thres) {
+        return(1-p)
+      }
+    }
+    x_weights <- sapply(x_weights, f)
+    # x_weights <- x_weights - min(x_weights) # mettre à zéro le minimum
+    # x_weights <- x_weights^2 # accentuer les grandes x, éviter 0
+    # x_weights <- x_weights / max(x_weights)
     # Échantillonnage des triangles pondéré par x
     sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE, prob = x_weights)
   } else {

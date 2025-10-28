@@ -1,21 +1,14 @@
 # Getting started with spforest
 
 
-# Requirements
+## Requirements
 
 To install the packages directly from Github, run the following command.
 
 ``` r
 if (!requireNamespace("pak")) {install.packages("pak")}
-```
-
-    Loading required namespace: pak
-
-``` r
 if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
 ```
-
-    Loading required namespace: spforest
 
 The random forest intensity are computed by the package `spforest`,
 available the github of the author, which relies heavily on the package
@@ -25,7 +18,7 @@ available the github of the author, which relies heavily on the package
 library(spforest)
 ```
 
-# Generation of a synthetic dataset
+## Generation of a synthetic dataset
 
 We simulate three realisations of a Gaussian random field which we will
 treat as covariates.
@@ -80,7 +73,7 @@ plot(X, main = "", pch = 20, cex = 0.8)
 
 ![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
 
-# Random forest intensity with covariates
+## Random forest intensity with covariates
 
 We will estimate the intensity of the point process in the last section,
 using the three covariates from `simcov`.
@@ -123,7 +116,7 @@ vipplot(RF)
 
 ![](README_files/figure-commonmark/unnamed-chunk-11-1.png)
 
-# Random forest intensity on the plane without covariates
+## Random forest intensity on the plane without covariates
 
 We will estimate the intensity of the point process in the first
 section, without the generated covariates, meaning, using only the
@@ -142,7 +135,7 @@ plot(RFnocov, col = cm, main="")
 
 ![](README_files/figure-commonmark/unnamed-chunk-12-1.png)
 
-# Random forest intensity on a manifold
+## Random forest intensity on a manifold
 
 To work with meshes of manifolds, we rely on the `rgl` package. As an
 example, we will use the mesh `humface` from the R package `Rvcg`.
@@ -167,7 +160,7 @@ view3d(theta = 20, phi = 0)
 ```
 
 <img src="README_files/figure-commonmark/unnamed-chunk-14-1.-rgl.png"
-style="width:30.0%" />
+style="width:50.0%" />
 
 We can generate a random forest intensity estimator with `Ntree=100`
 independent tessellations generated on the manifold.
@@ -179,4 +172,4 @@ view3d(theta = 20, phi = 0)
 ```
 
 <img src="README_files/figure-commonmark/unnamed-chunk-15-2.-rgl.png"
-style="width:30.0%" />
+style="width:50.0%" />

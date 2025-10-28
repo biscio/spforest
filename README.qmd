@@ -146,7 +146,7 @@ Let's generate an example of point process on a manifold. We use the function
 are independently distributed inhomogeneoulsy on the z-axis. 
 
 ```{r}
-#| out-width: "30%"
+#| out-width: "50%"
 set.seed(129)
 pponface <- pponmesh(mesh = humface, n = 1000)
 shade3d(pponface$mesh, col = "gray")
@@ -157,7 +157,7 @@ view3d(theta = 20, phi = 0)
 We can generate a random forest intensity estimator with
 `Ntree=100` independent tessellations generated on the manifold. 
 ```{r}
-#| out-width: "30%"
+#| out-width: "50%"
 forestmesh <- spforest(X = pponface, Ntree = 100)
 plot(forestmesh)
 view3d(theta = 20, phi = 0)

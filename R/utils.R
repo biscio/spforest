@@ -422,6 +422,59 @@ OOBscr <- function(forest) {
 }
 
 
+
+#' Find best OOB parameter combination
+#'
+#' @param X The point pattern as a \code{\link[spatstat.geom]{ppp}} .
+#' @param listcovariates list of covariates
+#' @param params A list containing entries mtry, minpts and, optionally, Ntree.  
+#' @param ... Other arguments passed to spforest.
+#' 
+#' @details
+#' A spatial random forest is generated from the combinations of all the 
+#' arguments given in params. If Ntree is not given, it is set to 50 by defaults. 
+#' The arguments ... are passed to the function \code{\link{spforest}}.
+#' 
+#' @return A dataframe with 3 columns: mtry, minpts and OOB
+#' @export
+#'
+#' @examples
+#' X = spatstat.data::bei
+#' listcovariates = spatstat.data::bei.extra
+#' params = list(mtry = c(1,2), minpts = c(50,100,200))
+#' OOBoptim(X = X, listcovariates = listcovariates, Ntree = 50, params = params)
+OOBoptim <- function(X, listcovariates, params, ...) {
+  if (!"mtry" %in% names(params)) {
+    stop("The arguments 'params' must have an entry named 'mtry'.")
+  }
+  if (!"minpts" %in% names(params)) {
+    stop("The arguments 'params' must have an entry named 'minpts'.")
+  }
+  if (!"Ntree" %in% names(params)){
+    nbtree <- 50
+  } else {
+    nbtree <- Ntree
+  }
+
+  argu <- expand.grid(params)
+
+  allforest <- mapply(spforest,
+    mtry = argu$mtry,
+    minpts = argu$minpts,
+    Ntree = nbtree,
+    MoreArgs = list(
+      X = X,
+      listcovariates = listcovariates,
+      ...
+    )
+  )
+  
+  allOOB <- apply(allforest, 2, OOBscr)
+
+  return(cbind(argu, OOB = allOOB))
+}
+
+
 #' OOB ppm
 #'
 #' @param forest  spforest

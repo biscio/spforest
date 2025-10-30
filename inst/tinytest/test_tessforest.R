@@ -81,6 +81,17 @@ B <- format(object.size(A), units = "Mb")
 expect_true(as.numeric(gsub(" Mb", "",B)) < 2.2)
 
 
+expect_inherits(
+  OOBoptim(X = spatstat.data::bei, 
+           listcovariates = spatstat.data::bei.extra, 
+           params = list(Ntree = 5,
+                         mtry = 2, 
+                         minpts = c(500,800))),
+  class="data.frame"
+)
+
+
+
 
 
 

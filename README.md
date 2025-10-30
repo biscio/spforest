@@ -131,38 +131,29 @@ plot(RFnocov, col = cm, main="")
 ## Random forest intensity on a manifold
 
 To work with meshes of manifolds, we rely on the `rgl` package. As an
-example, we will use the mesh `humface` from the R package `Rvcg`.
+example, we will use a simulated point pattern that we simulated on the
+the mesh `humface` from the R package `Rvcg`.
 
 ``` r
 library(rgl)
 library(Rvcg)
-data("humface")
-```
-
-Let’s generate an example of point process on a manifold. We use the
-function `pponmesh` from `spforest`: `n` is the number of points to
-sample and `mesh` the mesh on which to sample them. By default the
-points are independently distributed inhomogeneoulsy on the z-axis.
-
-``` r
-set.seed(129)
-pponface <- pponmesh(mesh = humface, n = 1000)
-shade3d(pponface$mesh, col = "gray")
-points3d(pponface$pp, col = "black", size = 5, add = T)
+X <- spforest::simppface
+shade3d(X$mesh, col = "gray")
+points3d(X$pp, col = "black", size = 5, add = T)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-13-1.-rgl.png"
+<img src="README_files/figure-commonmark/unnamed-chunk-12-1.-rgl.png"
 style="width:70.0%" />
 
 We can generate a random forest intensity estimator with `Ntree=100`
 independent tessellations generated on the manifold.
 
 ``` r
-forestmesh <- spforest(X = pponface, Ntree = 100)
+forestmesh <- spforest(X = X, Ntree = 100)
 plot(forestmesh)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-14-2.-rgl.png"
+<img src="README_files/figure-commonmark/unnamed-chunk-13-2.-rgl.png"
 style="width:70.0%" />

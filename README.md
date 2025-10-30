@@ -80,7 +80,8 @@ function `spforest`. The hyperparameters are
   100 points in it.
 
 For the purpose of this notebook, they have been chosen arbitrarily but
-they could be optimised by OOB cross-validation.
+they could be optimised by OOB cross-validation with the function
+`OOBoptim`.
 
 ``` r
 RF <- spforest(

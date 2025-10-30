@@ -80,8 +80,7 @@ The hyperparameters are
 - `mtry = 3`, at each split, we use the three covariates;
 - `minpts = 100`, we do not try to split a cell if there is less that 100 points in it. 
 
-For the purpose of this notebook, they have been chosen arbitrarily but they could 
-be optimised by OOB cross-validation with the function `OOBoptim`.
+For the purpose of this notebook, they have been chosen arbitrarily but they could be optimised by OOB cross-validation with the function `OOBoptim`.
 ```{r}
 RF <- spforest(
   X = X,
@@ -108,13 +107,9 @@ vipplot(RF)
 
 ## Random forest intensity on the plane without covariates
 
-We will estimate the intensity of the point process in the first section, 
-without the generated covariates, meaning, using only the spatial coordinates of the points.
+We will estimate the intensity of the point process in the first section, without the generated covariates, meaning, using only the spatial coordinates of the points.
 
-Then, the random forest  intensity estimate is computed with `Ntree` independent and 
-identically distributed Poisson Voronoi tessellations, each with intensity `lambda`. 
-A sensible choice for `lambda`, based on the Freedman-Diaconis choice of bins’ widths for a histogram,  
-is chosen by default.
+Then, the random forest  intensity estimate is computed with `Ntree` independent and identically distributed Poisson Voronoi tessellations, each with intensity `lambda`. A sensible choice for `lambda`, based on the Freedman-Diaconis choice of bins’ widths for a histogram,  is chosen by default.
 ```{r}
 RFnocov <- spforest(X, Ntree = 2)
 plot(RFnocov, col = cm, main="")

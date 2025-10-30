@@ -119,8 +119,8 @@ spatial coordinates of the points.
 Then, the random forest intensity estimate is computed with `Ntree`
 independent and identically distributed Poisson Voronoi tessellations,
 each with intensity `lambda`. A sensible choice for `lambda`, based on
-the Freedman-Diaconis choice of bins’ widths for a histogram,  
-is chosen by default.
+the Freedman-Diaconis choice of bins’ widths for a histogram, is chosen
+by default.
 
 ``` r
 RFnocov <- spforest(X, Ntree = 2)

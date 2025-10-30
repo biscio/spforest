@@ -239,3 +239,43 @@
 #'
 #'
 "Xtest"
+
+
+#' @title Simulated point pattern on a 3D mesh
+#'
+#' @description Contains a simulated inhomogeneous point pattern simulated on 
+#' the mesh humface from the R package Rvcg.
+#'library(Rvcg)
+#'library(rgl)
+#'library(spforest)
+#'data("humface")
+#'
+#'features <- features_mesh(humface)
+#'tricenter <- features$tricenter
+#'nearest <- RANN::nn2(tricenter, rbind(humface$vb[, 7440][1:3]), k = 2000) # k = 1 => plus proche
+#'meshspot <- humface
+#'meshspot$it <- meshspot$it[, nearest$nn.idx]
+#'
+#'set.seed(28)
+#'X <- dummypponmesh(mesh = meshspot, n = 300, weights = FALSE)
+#'Y <- dummypponmesh(mesh = humface, n = 850, weights = FALSE)
+#'Z <- Y
+#'Z$pp <- rbind(X$pp, Y$pp)
+#'
+#'g <- function(pts) {
+#'  (0.2 * pts[1] - 0.9 * pts[2] + pts[3] + 70) < 0
+#'}
+#'
+#'idside <- sapply(1:dim(Z$pp)[1], FUN = function(i) {
+#'  g(Z$pp[i, ])
+#'})
+#'
+#'simppface <- list(mesh = Z$mesh, pp = Z$pp[!idside,])
+#'
+#'save(simppface, file = "simppface.rda", compress = "xz")
+#' @format A list of two elements: "mesh" and "pp". 
+#' 
+#'
+#'
+"simppface"
+

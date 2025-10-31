@@ -1,13 +1,17 @@
 # Getting started with spforest
 
 
+Testing sharing bis
+
 ## Requirements
 
-To install the package directly from Github, run the following command.
+To install the package directly from Github, with the minimum version to
+run this vignette, run the following command.
 
 ``` r
 if (!requireNamespace("pak")) {install.packages("pak")}
 if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
+if (packageVersion("spforest")<"0.0.0.927") {pak::pkg_install("biscio/spforest", upgrade = TRUE)}
 library(spforest)
 ```
 

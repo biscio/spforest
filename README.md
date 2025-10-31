@@ -1,10 +1,6 @@
 # Getting started with spforest
 
-Testing sharing bis
-
-Testing sharing bis
-
-## Requirements
+nlkjn \## Requirements
 
 To install the package directly from Github, with the minimum version to
 run this vignette, run the following command.

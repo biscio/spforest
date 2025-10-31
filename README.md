@@ -71,7 +71,8 @@ We estimate in this section the intensity of `X` using the three
 covariates `A`, `B` and `C` stored in the list `simcov`.
 
 The computation of the random forest intensity estimator is handled by
-the function `spforest`.
+the `spforest` function. It applies to a point pattern of class `ppp`
+and the covariates are supplied as a list of images (of class `im`).
 
 For this notebook, the hyperparameters are set arbitrarely to
 
@@ -111,7 +112,9 @@ vipplot(RF)
 ## Random forest intensity estimation on the plane without covariates
 
 We estimate in this section the intensity of `X` without using any
-covariate, but only the spatial coordinates of the points.
+covariate, but only the spatial coordinates of the points. This is the
+default behavior of the `spforest` function when no covariates are
+specified.
 
 The intensity estimator is then computed with `Ntree` independent and
 identically distributed Poisson Voronoï tessellations, each with
@@ -128,8 +131,12 @@ plot(RFnocov, col = cm, main="RF intensity estimation without covariates")
 
 ## Random forest intensity estimation on a manifold
 
-To work with 3D-meshes of manifolds, we rely on the `rgl` package. As an
-example, we use a simulated point pattern that we generated on the
+To work with 3D-meshes of manifolds, we rely on the `rgl` package. In
+this case, the main argument of the `spforest` function should be a list
+containing the mesh (of class `mesh3d`) and the point pattern
+(represented as a three-column matrix).
+
+As an example, we use a simulated point pattern that we generated on the
 manifold `humface` from the R package `Rvcg`. The list object
 `simppface` contains the 3D-mesh and the generated points. They are
 represented below.

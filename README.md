@@ -127,7 +127,7 @@ the Freedman-Diaconis choice of bins’ widths for a histogram, is chosen
 by default.
 
 ``` r
-RFnocov <- spforest(X, Ntree = 2)
+RFnocov <- spforest(X, Ntree = 100)
 plot(RFnocov, col = cm, main="")
 ```
 
@@ -144,7 +144,7 @@ library(rgl)
 library(Rvcg)
 X <- spforest::simppface
 shade3d(X$mesh, col = "gray")
-points3d(X$pp, col = "black", size = 5, add = T)
+points3d(X$pp, col = "black", size = 2, add = T)
 view3d(theta = 20, phi = 0)
 ```
 

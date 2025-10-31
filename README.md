@@ -1,5 +1,6 @@
 # Getting started with spforest
 
+Testing sharing bis
 
 Testing sharing bis
 
@@ -14,6 +15,12 @@ if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
 if (packageVersion("spforest")<"0.0.0.927") {pak::pkg_install("biscio/spforest", upgrade = TRUE)}
 library(spforest)
 ```
+
+    Warning: package 'spatstat.geom' was built under R version 4.3.3
+
+    Warning: package 'spatstat.data' was built under R version 4.3.3
+
+    Warning: package 'spatstat.univar' was built under R version 4.3.3
 
 ## Generation of a synthetic dataset
 
@@ -142,13 +149,18 @@ the mesh `humface` from the R package `Rvcg`.
 ``` r
 library(rgl)
 library(Rvcg)
+```
+
+    Warning: package 'Rvcg' was built under R version 4.3.3
+
+``` r
 X <- spforest::simppface
 shade3d(X$mesh, col = "gray")
 points3d(X$pp, col = "black", size = 2, add = T)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-12-1.-rgl.png"
+<img src="README_files/figure-commonmark/unnamed-chunk-12-1-rgl.png"
 style="width:70.0%" />
 
 We can generate a random forest intensity estimator with `Ntree=100`
@@ -160,5 +172,5 @@ plot(forestmesh)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-13-2.-rgl.png"
+<img src="README_files/figure-commonmark/unnamed-chunk-13-2-rgl.png"
 style="width:70.0%" />

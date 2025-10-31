@@ -4,15 +4,15 @@
 ---
 
 
-nlkjn
+
 ## Requirements
   
 To install the package directly from Github, with the minimum version to run this vignette, run the following command. 
 ```{r}
 #| message: false
+#| warning : false
 if (!requireNamespace("pak")) {install.packages("pak")}
 if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
-if (packageVersion("spforest")<"0.0.0.927") {pak::pkg_install("biscio/spforest", upgrade = TRUE)}
 library(spforest)
 ```
   
@@ -48,42 +48,43 @@ simcov <- solapply(
 names(simcov) <- c("A", "B", "C")
 plot(simcov, main = "")
 ```
-Then, let's simulate an inhomogeneous Poisson point process whose 
+Now, let's simulate an inhomogeneous Poisson point process `X` whose 
 intensity depends on the
-covariates `A`: the first random field.  
-The intensity is normalised to have, in average, 500 points. 
+covariate `A`, that is the first random field.  The intensity is normalised to have, in average, 500 points. 
 ```{r}
 lambda0 <- 500 * simcov[[1]] / integral(simcov[[1]])
 X <- spatstat.random::rpoispp(lambda = lambda0)
 ```
 
-Let's fix the colour map for all the plots.
+Let's fix the colour map for all plots.
 ```{r}
 cm <- colourmap(default.image.colours(), range = c(0, 2300))
 ```
 
-The true intensity is shown on the plot below.
+The true intensity is shown below.
 ```{r}
 plot(lambda0, col = cm, main = "True Intensity")
 ```
 
-The realisation of the Poisson process with intensity given by `lambda0` as defined above is shown below.  
+The generated point pattern `X` is shown on the plot below.  
 ```{r}
 plot(X, main = "", pch = 20, cex = 0.8)
 ```
 
-## Random forest intensity with covariates 
+## Random forest intensity estimation with covariates 
 
-We will estimate the intensity of the point process in the last section, using the three covariates from `simcov`. 
+We  estimate in this section the intensity of `X` using the three covariates `A`, `B` and `C` stored in  the list `simcov`. 
 
-The computation of the random forest intensity is handled by the function `spforest`.
-The hyperparameters are
+The computation of the random forest intensity estimator is handled by the function `spforest`.
 
-- `Ntree = 100`, We generates 100 tree intensity estimates;
-- `mtry = 3`, at each split, we use the three covariates;
-- `minpts = 100`, we do not try to split a cell if there is less that 100 points in it. 
+For this notebook, the hyperparameters are set arbitrarely to 
 
-For the purpose of this notebook, they have been chosen arbitrarily but they could be optimised by OOB cross-validation with the function `OOBoptim`.
+- `Ntree = 100`: 100 tree intensity estimators are averaged;
+- `mtry = 3`: at each split in a tree, the three covariates are used;
+- `minpts = 100`: we do not try to split a cell if there is less that 100 points in the cell.
+
+(Note that these hyperparameters can be optimised by OOB cross-validation with the function `OOBoptim`.)
+
 ```{r}
 RF <- spforest(
   X = X,
@@ -97,49 +98,53 @@ RF <- spforest(
 
 
 ```{r}
-plot(RF,
-     main = "", col = cm
-)
+plot(RF, main = "RF intensity estimation with covariates", col = cm)
 ```
-Finally, we can compute the variable importance (VIP) of the covariates and find the most important one: here the first one "A". 
+Finally, we can compute and plot the variable importance of each covariate. As expected, the most important one is `A`. 
 
 ```{r}
 vipplot(RF)
 ```
 
 
-## Random forest intensity on the plane without covariates
+## Random forest intensity estimation on the plane without covariates
 
-We will estimate the intensity of the point process in the first section, without the generated covariates, meaning, using only the spatial coordinates of the points.
+We estimate in this section the intensity of `X` without using any covariate, but only the spatial coordinates of the points.
 
-Then, the random forest  intensity estimate is computed with `Ntree` independent and identically distributed Poisson Voronoi tessellations, each with intensity `lambda`. A sensible choice for `lambda`, based on the Freedman-Diaconis choice of bins’ widths for a histogram,  is chosen by default.
+The intensity estimator is then computed with `Ntree` independent and identically distributed Poisson Voronoï tessellations, each with intensity `gamma`. A sensible default value for `gamma` is computed automatically, based on the Freedman-Diaconis rule for selecting histogram bin widhts.
+
 ```{r}
 RFnocov <- spforest(X, Ntree = 100)
-plot(RFnocov, col = cm, main="")
+plot(RFnocov, col = cm, main="RF intensity estimation without covariates")
 ```
 
 
-## Random forest intensity on a manifold
+## Random forest intensity estimation on a manifold
 
-To work with meshes of manifolds, we rely on the `rgl` package. 
-As an example, we will use a simulated 
-point pattern that we simulated on the the mesh `humface` from the R package `Rvcg`.
+To work with 3D-meshes of manifolds, we rely on the `rgl` package. 
+As an example, we use a simulated 
+point pattern that we generated on the manifold `humface` from the R package `Rvcg`.
+The list object `simppface` contains the 3D-mesh and the generated points. They are represented below. 
 
 ```{r}
 #| out-width: "70%"
+#| warning: false
 library(rgl)
 library(Rvcg)
-X <- spforest::simppface
-shade3d(X$mesh, col = "gray")
-points3d(X$pp, col = "black", size = 2, add = T)
+XX <- spforest::simppface
+shade3d(XX$mesh, col = "gray")
+points3d(XX$pp, col = "black", size = 2, add = T)
 view3d(theta = 20, phi = 0)
 ```
 
-We can generate a random forest intensity estimator with
-`Ntree=100` independent tessellations generated on the manifold. 
+We now estimate the intensity of points, using 
+`Ntree=100` independent Poisson Voronoï tessellations generated on the manifold. 
+
+
+
 ```{r}
 #| out-width: "70%"
-forestmesh <- spforest(X = X, Ntree = 100)
+forestmesh <- spforest(X = XX, Ntree = 100)
 plot(forestmesh)
 view3d(theta = 20, phi = 0)
 ```

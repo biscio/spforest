@@ -44,7 +44,7 @@ expect_silent(
   forest2 <- spforest(
     X = spatstat.data::bei,
     Ntree = 5,
-    lambda = 50,
+    gamma = 50,
     dimyx = c(51, 101),
     test.connected = FALSE,
     cores = 1

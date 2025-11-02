@@ -16,7 +16,7 @@
 #' See \code{\link[spforest]{tesscovforest}} for details.
 #' @param score A score to choose among "lcv", "lcv2", "ent", "star", "ise", "isecv".
 #' @param threshold Minimum area to allow to split cell.
-#' @param lambda An integer. The number of points used for random tessellation.
+#' @param gamma An integer. The number of points used for random tessellation.
 #' @param dimyx A vector of two integers. The dimensions of the output image passed
 #' to \code{\link[spatstat.geom]{as.im}}.
 #' @param test.connected Logical. If \code{TRUE},
@@ -48,7 +48,7 @@
 #' plot(forestwithcov)
 #' forestwithtoutcov <- tessforest(
 #'   X = bei,
-#'   lambda = 50,
+#'   gamma = 50,
 #'   dimyx = c(101, 201),
 #'   Ntree = 100
 #' )
@@ -62,21 +62,21 @@ spforest <- function(X,
                      p = 0,
                      score = "lcv",
                      threshold = 2 * smallest_pixelarea(listcovariates),
-                     lambda = NULL,
+                     gamma = NULL,
                      dimyx = c(50, 50),
                      test.connected = FALSE,
                      cores = 1) {
   if (!is.null(X$mesh)) {
-    # lambda <- spatstat.geom::npoints(X)^(2 / 3)
-    if (is.null(lambda)) {
-      lambda0 <- nrow(X$pp)^(2 / 3)
+    # gamma <- spatstat.geom::npoints(X)^(2 / 3)
+    if (is.null(gamma)) {
+      gamma0 <- nrow(X$pp)^(2 / 3)
     } else {
-      lambda0 <- lambda
+      gamma0 <- gamma
     }
 
     triangle_density <- manifold_forest(
       Ntrees = Ntree,
-      intensity = lambda0,
+      intensity = gamma0,
       mesh = X$mesh,
       pointsech = X$pp
     )
@@ -95,7 +95,7 @@ spforest <- function(X,
   if (is.null(listcovariates)) {
     output <- tessforest(X,
       Ntree = Ntree,
-      lambda = lambda,
+      gamma = gamma,
       dimyx = dimyx,
       test.connected = test.connected,
       cores = cores

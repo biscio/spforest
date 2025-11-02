@@ -7,7 +7,7 @@
 tessforest(
   X,
   Ntree = 1,
-  lambda = 100,
+  gamma = 100,
   dimyx = c(50, 50),
   test.connected = FALSE,
   cores = 1
@@ -20,7 +20,7 @@ as a \code{\link[spatstat.geom]{ppp.object}}.}
 \item{Ntree}{A positive integer.
 The number of trees in the random intensity forest.}
 
-\item{lambda}{An integer. The number of points used to generate random tessellation.}
+\item{gamma}{An integer. The number of points used to generate random tessellation.}
 
 \item{dimyx}{A vector of two integers representing the dimensions of the output image passed
 to \code{\link[spatstat.geom]{as.im}}.}
@@ -44,7 +44,7 @@ This function compute a random intensity forest
 using \code{Ntree} independent spatial Intensity tree
 computed with the function \code{\link{tesstree}}.
 
-The arguments \code{X}, \code{lambda}, \code{dimyx},
+The arguments \code{X}, \code{gamma}, \code{dimyx},
 and \code{test.connected} are passed to \code{\link{tesstree}}.
 If the argument \code{cores} is strictly greater than \eqn{1},
 it is to the argument \code{mc.cores} of the function
@@ -54,7 +54,7 @@ assign each spatial intensity tree computation to a core.
 \examples{
 Z <- tessforest(
   X = bei,
-  lambda = 100,
+  gamma = 100,
   dimyx = c(101, 201),
   test.connected = FALSE,
   Ntree = 5,

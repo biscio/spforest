@@ -19,6 +19,7 @@ Imports:
     spatstat.model,
     spatstat.random
 Suggests: 
+    fields,
     knitr,
     RANN,
     rgl,

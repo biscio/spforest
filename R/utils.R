@@ -453,7 +453,7 @@ OOBoptim <- function(X, listcovariates, params, ...) {
   if (!"Ntree" %in% names(params)){
     nbtree <- 50
   } else {
-    nbtree <- Ntree
+    nbtree <- params$Ntree
   }
 
   argu <- expand.grid(params)

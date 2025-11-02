@@ -2,7 +2,7 @@
 #'
 #' @param X The observed data point pattern,
 #' as a \code{\link[spatstat.geom]{ppp.object}}.
-#' @param lambda An integer. The number of points used to generate random tessellation.
+#' @param gamma An integer. The number of points used to generate random tessellation.
 #' @param dimyx A vector of two integers representing the dimensions of the output image passed
 #' to \code{\link[spatstat.geom]{as.im}}.
 #' @param test.connected Logical. If \code{TRUE},
@@ -16,9 +16,9 @@
 #' generated Voronoi tessellation.
 #' If the point pattern \code{X} is on a rectangular window,
 #' the algorithm generates a Voronoi tessellation from
-#' \code{lambda} points
+#' \code{gamma} points
 #' uniformly sampled on the window of \code{X}, fattened by
-#' \eqn{2 / \sqrt{\lambda}} to avoid border effect.
+#' \eqn{2 / \sqrt{\gamma}} to avoid border effect.
 #' The intensity tree at coordinates \eqn{(x, y)}
 #' is the number of points of \code{X} in the tile
 #' of the tessellation containing \eqn{(x, y)}
@@ -27,7 +27,7 @@
 #' If the point pattern \code{X} is on a non-rectangular window,
 #' the algorithm generates a Voronoi tessellation
 #' on the enclosing rectangle of the window of \code{X},
-#' fattened by \eqn{2 / \sqrt{\lambda}}.
+#' fattened by \eqn{2 / \sqrt{\gamma}}.
 #' The tessellation is then intersected 
 #' with the window of \code{X} and,
 #' if \code{test.connected = TRUE},
@@ -40,23 +40,23 @@
 #' @examples
 #' Z <- tesstree(
 #'   X = bei,
-#'   lambda = 100,
+#'   gamma = 100,
 #'   dimyx = c(101, 201),
 #'   test.connected = FALSE
 #' )
 #' plot(Z)
 tesstree <- function(X,
-                     lambda = 100,
+                     gamma = 100,
                      dimyx = c(128, 128),
                      test.connected = FALSE) {
-  # lambda is the nb of points (not the intensity)
+  # gamma is the nb of points (not the intensity)
   wind <- Window(X)
   enclose.rect <- spatstat.geom::owin(wind$xrange, wind$yrange)
 
-  tol <- 2 / sqrt(lambda) # in order to add points outside the window
+  tol <- 2 / sqrt(gamma) # in order to add points outside the window
   # Alternative to avoid a polygonal windows.
   tess.points <- spatstat.geom::runifrect(
-    lambda,
+    gamma,
     owin(
       xrange = enclose.rect$xrange + c(-tol, tol),
       yrange = enclose.rect$yrange + c(-tol, tol)

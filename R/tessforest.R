@@ -11,7 +11,7 @@
 #' using \code{Ntree} independent spatial Intensity tree
 #' computed with the function \code{\link{tesstree}}.
 #'
-#' The arguments \code{X}, \code{lambda}, \code{dimyx},
+#' The arguments \code{X}, \code{gamma}, \code{dimyx},
 #' and \code{test.connected} are passed to \code{\link{tesstree}}.
 #' If the argument \code{cores} is strictly greater than \eqn{1},
 #' it is to the argument \code{mc.cores} of the function
@@ -24,7 +24,7 @@
 #' @examples
 #' Z <- tessforest(
 #'   X = bei,
-#'   lambda = 100,
+#'   gamma = 100,
 #'   dimyx = c(101, 201),
 #'   test.connected = FALSE,
 #'   Ntree = 5,
@@ -33,12 +33,12 @@
 #' plot(Z)
 tessforest <- function(X,
                        Ntree = 1,
-                       lambda = 100,
+                       gamma = 100,
                        dimyx = c(50, 50),
                        test.connected = FALSE,
                        cores = 1) {
-  if (is.null(lambda)) {
-    lambda <- floor(mean(c(
+  if (is.null(gamma)) {
+    gamma <- floor(mean(c(
       grDevices::nclass.FD(X$x),
       grDevices::nclass.FD(X$y)
     ))^2)
@@ -48,7 +48,7 @@ tessforest <- function(X,
     listtree <- parallel::mclapply(1:Ntree, FUN = function(i) {
       tesstree(
         X = X,
-        lambda = lambda,
+        gamma = gamma,
         dimyx = dimyx,
         test.connected = test.connected
       )
@@ -57,7 +57,7 @@ tessforest <- function(X,
     listtree <- lapply(1:Ntree, FUN = function(i) {
       tesstree(
         X = X,
-        lambda = lambda,
+        gamma = gamma,
         dimyx = dimyx,
         test.connected = test.connected
       )

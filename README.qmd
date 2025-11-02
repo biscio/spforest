@@ -111,7 +111,7 @@ vipplot(RF)
 
 We estimate in this section the intensity of `X` without using any covariate, but only the spatial coordinates of the points. This is the default behavior of the `spforest` function when no covariates are specified. 
 
-The intensity estimator is then computed with `Ntree` independent and identically distributed Poisson Voronoï tessellations, each with intensity `gamma`. A sensible default value for `gamma` is computed automatically, based on the Freedman-Diaconis rule for selecting histogram bin widhts.
+The intensity estimator is then computed with `Ntree` independent and identically distributed Poisson Voronoï tessellations, each with intensity `gamma`. A sensible default value for `gamma` is computed automatically, based on the Freedman-Diaconis rule for selecting histogram bin widths.
 
 ```{r}
 RFnocov <- spforest(X, Ntree = 100)

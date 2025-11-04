@@ -28,3 +28,4 @@ expect_silent(
 expect_silent(
   dummypponmesh(n=100, mesh = res$mesh)
 )
+rgl::close3d()

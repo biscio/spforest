@@ -33,7 +33,7 @@ names(simcov) <- c("A", "B", "C")
 plot(simcov, main = "")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-2-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-3-1.png)
 
 Now, let’s simulate an inhomogeneous Poisson point process `X` whose
 intensity depends on the covariate `A`, that is the first random field.
@@ -56,7 +56,7 @@ The true intensity is shown below.
 plot(lambda0, col = cm, main = "True Intensity")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-5-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
 
 The generated point pattern `X` is shown on the plot below.
 
@@ -64,7 +64,7 @@ The generated point pattern `X` is shown on the plot below.
 plot(X, main = "", pch = 20, cex = 0.8)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-7-1.png)
 
 ## Random forest intensity estimation with covariates
 
@@ -99,7 +99,7 @@ RF <- spforest(
 plot(RF, main = "RF intensity estimation with covariates", col = cm)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 Finally, we can compute and plot the variable importance of each
 covariate. As expected, the most important one is `A`.
@@ -108,7 +108,7 @@ covariate. As expected, the most important one is `A`.
 vipplot(RF)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
 
 ## Random forest intensity estimation on the plane without covariates
 
@@ -128,7 +128,7 @@ RFnocov <- spforest(X, Ntree = 100)
 plot(RFnocov, col = cm, main="RF intensity estimation without covariates")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 ## Random forest intensity estimation on a manifold
 
@@ -151,7 +151,7 @@ points3d(XX$pp, col = "black", size = 2, add = T)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-11-1.-rgl.png"
+<img src="README_files/figure-commonmark/unnamed-chunk-12-1.-rgl.png"
 style="width:70.0%" />
 
 We now estimate the intensity of points, using `Ntree=100` independent
@@ -163,5 +163,5 @@ plot(forestmesh)
 view3d(theta = 20, phi = 0)
 ```
 
-<img src="README_files/figure-commonmark/unnamed-chunk-12-2.-rgl.png"
+<img src="README_files/figure-commonmark/unnamed-chunk-13-2.-rgl.png"
 style="width:70.0%" />

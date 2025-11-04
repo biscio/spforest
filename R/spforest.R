@@ -23,10 +23,7 @@
 #' \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 #' in different connected components. It is only useful if the windows of
 #' observation of \code{X} is not convex.
-#' @param cores A positive integer. The number of cores to use.
-#' If strictly larger than 1, parallel computing
-#' is used to dispatch each intensity tree computation on different cores.
-#'
+#' 
 #' @details
 #' If \code{listcovariates} is not \code{NULL},
 #' the function computes a random intensity forest using
@@ -64,8 +61,7 @@ spforest <- function(X,
                      threshold = 2 * smallest_pixelarea(listcovariates),
                      gamma = NULL,
                      dimyx = c(50, 50),
-                     test.connected = FALSE,
-                     cores = 1) {
+                     test.connected = FALSE) {
   if (!is.null(X$mesh)) {
     # gamma <- spatstat.geom::npoints(X)^(2 / 3)
     if (is.null(gamma)) {
@@ -97,8 +93,7 @@ spforest <- function(X,
       Ntree = Ntree,
       gamma = gamma,
       dimyx = dimyx,
-      test.connected = test.connected,
-      cores = cores
+      test.connected = test.connected
     )
   } else {
     output <- tesscovforest(X,
@@ -108,7 +103,6 @@ spforest <- function(X,
       mtry = mtry,
       randmtry = randmtry,
       p = p,
-      cores = cores,
       score = score,
       threshold = threshold
     )

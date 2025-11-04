@@ -12,7 +12,6 @@ tesscovforest(
   mtry = 1/3,
   randmtry = FALSE,
   p = 0,
-  cores = 1,
   score = "lcv",
   threshold = smallest_pixelarea(listcovariates)
 )
@@ -40,9 +39,6 @@ covariates are randomly chosen at each split.}
 \item{p}{A number in \eqn{[0,1)}.
 Control the thinning process applied to the original point pattern \strong{X} before
 fitting a tree intensity estimator.}
-
-\item{cores}{A positive integer.
-The number of cores used to computes the intensity trees.}
 
 \item{score}{String specifying the score used to choose among splits, see details.}
 
@@ -109,8 +105,7 @@ forest <- tesscovforest(
   Ntree = 3,
   minpts = 100,
   mtry = 1 / 3,
-  p = 0,
-  cores = 1
+  p = 0
 )
 }
 \references{

@@ -8,7 +8,6 @@ expect_silent(
     p = 1 / 2,
     Ntree = 3,
     threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
-    cores = 1,
     mtry = 1 / 3,
     randmtry = TRUE,
     minpts = 50
@@ -24,7 +23,6 @@ expect_silent(
     p = 1 / 2,
     Ntree = 2,
     threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
-    cores = 1,
     mtry = 1 / 3,
     randmtry = TRUE,
     minpts = 50
@@ -74,8 +72,7 @@ A <- tesscovforest(
   Ntree = 10,
   minpts = 100,
   mtry = 1,
-  p = 0,
-  cores = 2
+  p = 0
 )
 B <- format(object.size(A), units = "Mb")
 expect_true(as.numeric(gsub(" Mb", "",B)) < 2.2)
@@ -96,5 +93,32 @@ expect_inherits(
 
 
 # Test for tessforest ---- 
-
+# 
+# library(future)
+# library(future.apply)
+# 
+# plan("multisession", workers=10)
+# plan(future.mirai::mirai_multisession, workers = 10)
+# tic2 <- proc.time()
+# Z <- tessforest(
+#   X = bei,
+#   gamma = 100,
+#   dimyx = c(101, 201),
+#   test.connected = FALSE,
+#   Ntree = 250,
+#   cores = 2
+# )
+# toc2 <- proc.time() - tic2
+# toc2
+# 
+# tic <- proc.time()
+# Z <- tessforest(
+#   X = bei,
+#   gamma = 100,
+#   dimyx = c(101, 201),
+#   test.connected = FALSE,
+#   Ntree = 500,
+#   cores = 1
+# )
+# toc <- proc.time() - tic
 # TODO 

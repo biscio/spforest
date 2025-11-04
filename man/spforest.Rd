@@ -16,8 +16,7 @@ spforest(
   threshold = 2 * smallest_pixelarea(listcovariates),
   gamma = NULL,
   dimyx = c(50, 50),
-  test.connected = FALSE,
-  cores = 1
+  test.connected = FALSE
 )
 }
 \arguments{
@@ -53,10 +52,6 @@ to \code{\link[spatstat.geom]{as.im}}.}
 \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 in different connected components. It is only useful if the windows of
 observation of \code{X} is not convex.}
-
-\item{cores}{A positive integer. The number of cores to use.
-If strictly larger than 1, parallel computing
-is used to dispatch each intensity tree computation on different cores.}
 }
 \value{
 An object of class \code{\link{spforest}}.

@@ -3,8 +3,6 @@
 #' @inheritParams tesstree
 #' @param Ntree A positive integer.
 #' The number of trees in the random intensity forest.
-#' @param cores A positive integer.
-#' The number of cores used to computes the intensity trees.
 #'
 #' @details
 #' This function compute a random intensity forest
@@ -13,10 +11,6 @@
 #'
 #' The arguments \code{X}, \code{gamma}, \code{dimyx},
 #' and \code{test.connected} are passed to \code{\link{tesstree}}.
-#' If the argument \code{cores} is strictly greater than \eqn{1},
-#' it is to the argument \code{mc.cores} of the function
-#' \code{\link[parallel]{mclapply}} to
-#' assign each spatial intensity tree computation to a core.
 #'
 #' @return A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
 #' @export
@@ -27,39 +21,27 @@
 #'   gamma = 100,
 #'   dimyx = c(101, 201),
 #'   test.connected = FALSE,
-#'   Ntree = 5,
-#'   cores = 1
+#'   Ntree = 5
 #' )
 #' plot(Z)
 tessforest <- function(X,
                        Ntree = 1,
                        gamma = 100,
                        dimyx = c(50, 50),
-                       test.connected = FALSE,
-                       cores = 1) {
+                       test.connected = FALSE) {
   if (is.null(gamma)) {
     gamma <- gamma_choice(X)
   }
 
-  if (cores > 1) {
-    listtree <- parallel::mclapply(1:Ntree, FUN = function(i) {
-      tesstree(
-        X = X,
-        gamma = gamma,
-        dimyx = dimyx,
-        test.connected = test.connected
-      )
-    }, mc.cores = cores)
-  } else {
-    listtree <- lapply(1:Ntree, FUN = function(i) {
-      tesstree(
-        X = X,
-        gamma = gamma,
-        dimyx = dimyx,
-        test.connected = test.connected
-      )
-    })
-  }
+  listtree <- future.apply::future_lapply(1:Ntree, FUN = function(i) {
+    tesstree(
+      X = X,
+      gamma = gamma,
+      dimyx = dimyx,
+      test.connected = test.connected
+    )
+  }, future.seed = TRUE)
+
 
   listim <- lapply(listtree, FUN = function(i) i$intensityim)
   listtess <- lapply(listtree, FUN = function(i) i$intensitytess)
@@ -102,8 +84,6 @@ tessforest <- function(X,
 #' @param p A number in \eqn{[0,1)}.
 #' Control the thinning process applied to the original point pattern __X__ before
 #' fitting a tree intensity estimator.
-#' @param cores A positive integer.
-#' The number of cores used to computes the intensity trees.
 #' @param score String specifying the score used to choose among splits, see details.
 #' @param threshold A positive number.
 #' The minimum area of a region for which we allow at most one split.
@@ -167,8 +147,7 @@ tessforest <- function(X,
 #'   Ntree = 3,
 #'   minpts = 100,
 #'   mtry = 1 / 3,
-#'   p = 0,
-#'   cores = 1
+#'   p = 0
 #' )
 tesscovforest <- function(X,
                           listcovariates = NULL,
@@ -177,7 +156,6 @@ tesscovforest <- function(X,
                           mtry = 1 / 3,
                           randmtry = FALSE,
                           p = 0,
-                          cores = 1,
                           score = "lcv",
                           threshold = smallest_pixelarea(listcovariates)) {
   nbcov <- length(listcovariates)
@@ -262,15 +240,10 @@ tesscovforest <- function(X,
   }
 
   # Compute the forest's trees - check if need to parallel
-  if (cores > 1) {
-    treeinforest <- parallel::mclapply(1:Ntree,
-      FUN = plantingtree,
-      mc.cores = cores
-    )
-  } else {
-    treeinforest <- lapply(1:Ntree, FUN = plantingtree)
-  }
-
+  treeinforest <- future.apply::future_lapply(1:Ntree,
+    FUN = plantingtree,
+    future.seed = TRUE
+  )
 
   # Computation of the image
   list_im <- lapply(treeinforest, FUN = function(i) {

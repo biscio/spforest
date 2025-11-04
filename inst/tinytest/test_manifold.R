@@ -16,11 +16,13 @@ expect_silent(
 )
 
 expect_silent(
-  A<- plot.spforestmesh(log(forest+exp(-8)), points=TRUE)
+  A <- plot.spforestmesh(log(forest+exp(-8)), points=TRUE),
+  rgl::close3d()
 )
 
 expect_silent(
-  B<- plot.spforestmesh(log(forest+exp(-8)), points=FALSE)
+  B <- plot.spforestmesh(log(forest+exp(-8)), points=FALSE),
+  rgl::close3d()
 )
 
 expect_silent(

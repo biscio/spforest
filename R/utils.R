@@ -500,7 +500,6 @@ OOBoptim <- function(X, listcovariates, params, ...) {
 #'
 #' @param forest  spforest
 #' @param covariates list of covariates considered
-#' @param cores  to speed up
 #'
 #' @return A number
 #' @export
@@ -517,7 +516,7 @@ OOBoptim <- function(X, listcovariates, params, ...) {
 OOBppmscr <- function(forest, covariates, cores = 1) {
   X <- forest$X # this is always the root
 
-  OOBppm <- lapply(1:length(forest$trees), FUN = function(i) {
+  OOBppm <- future.apply::future_lapply(1:length(forest$trees), FUN = function(i) {
     # vector of same length as number of pts in X
     OOBpts <- (forest$pt_intree[[i]] != 1)
     OOBval <- rep(NA, X$n)

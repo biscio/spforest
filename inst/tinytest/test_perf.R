@@ -12,8 +12,7 @@ foo1 <- spforest(
   randmtry = TRUE,
   p = 0,
   score = "lcv",
-  threshold = 50,
-  cores = 2
+  threshold = 50
 )
 
 expect_true(max(abs(as.im(foo1) - z500sin)) < 0.002)

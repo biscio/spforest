@@ -9,8 +9,7 @@ tessforest(
   Ntree = 1,
   gamma = 100,
   dimyx = c(50, 50),
-  test.connected = FALSE,
-  cores = 1
+  test.connected = FALSE
 )
 }
 \arguments{
@@ -29,9 +28,6 @@ to \code{\link[spatstat.geom]{as.im}}.}
 \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 in different connected components. It is only useful if the windows of
 observation of \code{X} is not convex.}
-
-\item{cores}{A positive integer.
-The number of cores used to computes the intensity trees.}
 }
 \value{
 A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.
@@ -46,10 +42,6 @@ computed with the function \code{\link{tesstree}}.
 
 The arguments \code{X}, \code{gamma}, \code{dimyx},
 and \code{test.connected} are passed to \code{\link{tesstree}}.
-If the argument \code{cores} is strictly greater than \eqn{1},
-it is to the argument \code{mc.cores} of the function
-\code{\link[parallel]{mclapply}} to
-assign each spatial intensity tree computation to a core.
 }
 \examples{
 Z <- tessforest(
@@ -57,8 +49,7 @@ Z <- tessforest(
   gamma = 100,
   dimyx = c(101, 201),
   test.connected = FALSE,
-  Ntree = 5,
-  cores = 1
+  Ntree = 5
 )
 plot(Z)
 }

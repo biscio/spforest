@@ -10,8 +10,6 @@ OOBppmscr(forest, covariates, cores = 1)
 \item{forest}{spforest}
 
 \item{covariates}{list of covariates considered}
-
-\item{cores}{to speed up}
 }
 \value{
 A number

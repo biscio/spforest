@@ -1,6 +1,6 @@
 Package: spforest
 Title: Spatial Random Forest
-Version: 0.0.0.929
+Version: 0.0.0.930
 Authors@R: 
     person("Christophe", "Biscio", , "christophe@math.aau.dk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2218-6825"))
@@ -14,12 +14,14 @@ Depends:
     R (>= 3.5),
     spatstat.geom (>= 3.3-2)
 Imports: 
+    future.apply,
     graphics,
     parallel,
     spatstat.model,
     spatstat.random
 Suggests: 
     fields,
+    future,
     knitr,
     RANN,
     rgl,

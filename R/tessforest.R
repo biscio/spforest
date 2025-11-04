@@ -35,6 +35,11 @@ tessforest <- function(X,
     gamma <- gamma_choice(X)
   }
 
+  seedparallel <- TRUE
+  if (is(future::plan(), "sequential")) {
+    seedparallel <- NULL
+  }
+
   if (verbose) {
     progressr::handlers(global = TRUE)
     forestpgr <- function(x) {
@@ -48,7 +53,7 @@ tessforest <- function(X,
         )
         p(sprintf("x=%g", x))
         output
-      }, future.seed = TRUE)
+      }, future.seed = seedparallel)
     }
     listtree <- forestpgr(x = 1:Ntree)
     progressr::handlers(global = FALSE)
@@ -60,7 +65,7 @@ tessforest <- function(X,
         dimyx = dimyx,
         test.connected = test.connected
       )
-    }, future.seed = TRUE)
+    }, future.seed = seedparallel)
   }
 
   listim <- lapply(listtree, FUN = function(i) i$intensityim)
@@ -262,6 +267,11 @@ tesscovforest <- function(X,
   }
 
   # Compute the forest's trees - check if need to parallel
+  seedparallel <- TRUE
+  if (is(future::plan(), "sequential")) {
+    seedparallel <- NULL
+  }
+  
   if (verbose) {
     progressr::handlers(global = TRUE)
     forestpgr <- function(x) {
@@ -270,14 +280,14 @@ tesscovforest <- function(X,
         output <- plantingtree(i)
         p(sprintf("x=%g", x))
         output
-      }, future.seed = TRUE)
+      }, future.seed = seedparallel)
     }
     treeinforest <- forestpgr(x = 1:Ntree)
     progressr::handlers(global = FALSE)
   } else {
     treeinforest <- future.apply::future_lapply(1:Ntree,
       FUN = plantingtree,
-      future.seed = TRUE
+      future.seed = seedparallel
     )
   }
 

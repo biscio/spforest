@@ -40,13 +40,14 @@ tessforest <- function(X,
     forestpgr <- function(x) {
       p <- progressr::progressor(along = x)
       future.apply::future_lapply(x, FUN = function(i) {
-        tesstree(
+        output <- tesstree(
           X = X,
           gamma = gamma,
           dimyx = dimyx,
           test.connected = test.connected
         )
         p(sprintf("x=%g", x))
+        output
       }, future.seed = TRUE)
     }
     listtree <- forestpgr(x = 1:Ntree)
@@ -266,19 +267,20 @@ tesscovforest <- function(X,
     forestpgr <- function(x) {
       p <- progressr::progressor(along = x)
       future.apply::future_lapply(x, FUN = function(i) {
-        plantingtree(i)
+        output <- plantingtree(i)
         p(sprintf("x=%g", x))
+        output
       }, future.seed = TRUE)
     }
     treeinforest <- forestpgr(x = 1:Ntree)
     progressr::handlers(global = FALSE)
   } else {
     treeinforest <- future.apply::future_lapply(1:Ntree,
-                                                FUN = plantingtree,
-                                                future.seed = TRUE
+      FUN = plantingtree,
+      future.seed = TRUE
     )
   }
-  
+
   # Computation of the image
   list_im <- lapply(treeinforest, FUN = function(i) {
     i$sptree$im

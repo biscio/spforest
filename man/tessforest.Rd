@@ -9,7 +9,8 @@ tessforest(
   Ntree = 1,
   gamma = 100,
   dimyx = c(50, 50),
-  test.connected = FALSE
+  test.connected = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ to \code{\link[spatstat.geom]{as.im}}.}
 \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 in different connected components. It is only useful if the windows of
 observation of \code{X} is not convex.}
+
+\item{verbose}{If TRUE, display progress bar.}
 }
 \value{
 A pixel image, object of class \code{\link[spatstat.geom]{im.object}}.

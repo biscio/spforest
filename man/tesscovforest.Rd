@@ -13,7 +13,8 @@ tesscovforest(
   randmtry = FALSE,
   p = 0,
   score = "lcv",
-  threshold = smallest_pixelarea(listcovariates)
+  threshold = smallest_pixelarea(listcovariates),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ fitting a tree intensity estimator.}
 
 \item{threshold}{A positive number.
 The minimum area of a region for which we allow at most one split.}
+
+\item{verbose}{If TRUE, display progress bar.}
 }
 \value{
 An object of class \code{\link{spforest}}.

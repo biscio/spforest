@@ -3,6 +3,7 @@
 #' @inheritParams tesstree
 #' @param Ntree A positive integer.
 #' The number of trees in the random intensity forest.
+#' @param verbose If TRUE, display progress bar.
 #'
 #' @details
 #' This function compute a random intensity forest
@@ -28,20 +29,38 @@ tessforest <- function(X,
                        Ntree = 1,
                        gamma = 100,
                        dimyx = c(50, 50),
-                       test.connected = FALSE) {
+                       test.connected = FALSE,
+                       verbose = FALSE) {
   if (is.null(gamma)) {
     gamma <- gamma_choice(X)
   }
 
-  listtree <- future.apply::future_lapply(1:Ntree, FUN = function(i) {
-    tesstree(
-      X = X,
-      gamma = gamma,
-      dimyx = dimyx,
-      test.connected = test.connected
-    )
-  }, future.seed = TRUE)
-
+  if (verbose) {
+    progressr::handlers(global = TRUE)
+    forestpgr <- function(x) {
+      p <- progressr::progressor(along = x)
+      future.apply::future_lapply(x, FUN = function(i) {
+        tesstree(
+          X = X,
+          gamma = gamma,
+          dimyx = dimyx,
+          test.connected = test.connected
+        )
+        p(sprintf("x=%g", x))
+      }, future.seed = TRUE)
+    }
+    listtree <- forestpgr(x = 1:Ntree)
+    progressr::handlers(global = FALSE)
+  } else {
+    listtree <- future.apply::future_lapply(1:Ntree, FUN = function(i) {
+      tesstree(
+        X = X,
+        gamma = gamma,
+        dimyx = dimyx,
+        test.connected = test.connected
+      )
+    }, future.seed = TRUE)
+  }
 
   listim <- lapply(listtree, FUN = function(i) i$intensityim)
   listtess <- lapply(listtree, FUN = function(i) i$intensitytess)
@@ -87,6 +106,7 @@ tessforest <- function(X,
 #' @param score String specifying the score used to choose among splits, see details.
 #' @param threshold A positive number.
 #' The minimum area of a region for which we allow at most one split.
+#' @param verbose If TRUE, display progress bar.
 #'
 #' @details
 #' This function compute a random intensity forest using the covariates given
@@ -157,7 +177,8 @@ tesscovforest <- function(X,
                           randmtry = FALSE,
                           p = 0,
                           score = "lcv",
-                          threshold = smallest_pixelarea(listcovariates)) {
+                          threshold = smallest_pixelarea(listcovariates),
+                          verbose = FALSE) {
   nbcov <- length(listcovariates)
   namescov <- names(listcovariates)
 
@@ -240,11 +261,24 @@ tesscovforest <- function(X,
   }
 
   # Compute the forest's trees - check if need to parallel
-  treeinforest <- future.apply::future_lapply(1:Ntree,
-    FUN = plantingtree,
-    future.seed = TRUE
-  )
-
+  if (verbose) {
+    progressr::handlers(global = TRUE)
+    forestpgr <- function(x) {
+      p <- progressr::progressor(along = x)
+      future.apply::future_lapply(x, FUN = function(i) {
+        plantingtree(i)
+        p(sprintf("x=%g", x))
+      }, future.seed = TRUE)
+    }
+    treeinforest <- forestpgr(x = 1:Ntree)
+    progressr::handlers(global = FALSE)
+  } else {
+    treeinforest <- future.apply::future_lapply(1:Ntree,
+                                                FUN = plantingtree,
+                                                future.seed = TRUE
+    )
+  }
+  
   # Computation of the image
   list_im <- lapply(treeinforest, FUN = function(i) {
     i$sptree$im

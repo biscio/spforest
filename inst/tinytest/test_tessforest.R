@@ -91,34 +91,3 @@ expect_inherits(
 
 
 
-
-# Test for tessforest ---- 
-# 
-# library(future)
-# library(future.apply)
-# 
-# plan("multisession", workers=10)
-# plan(future.mirai::mirai_multisession, workers = 10)
-# tic2 <- proc.time()
-# Z <- tessforest(
-#   X = bei,
-#   gamma = 100,
-#   dimyx = c(101, 201),
-#   test.connected = FALSE,
-#   Ntree = 250,
-#   cores = 2
-# )
-# toc2 <- proc.time() - tic2
-# toc2
-# 
-# tic <- proc.time()
-# Z <- tessforest(
-#   X = bei,
-#   gamma = 100,
-#   dimyx = c(101, 201),
-#   test.connected = FALSE,
-#   Ntree = 500,
-#   cores = 1
-# )
-# toc <- proc.time() - tic
-# TODO 

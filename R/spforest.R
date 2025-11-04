@@ -23,7 +23,8 @@
 #' \code{\link[spatstat.geom]{connected}} is applied to the tessellation to split tiles
 #' in different connected components. It is only useful if the windows of
 #' observation of \code{X} is not convex.
-#' 
+#' @param verbose If TRUE, display progress bar.
+#'
 #' @details
 #' If \code{listcovariates} is not \code{NULL},
 #' the function computes a random intensity forest using
@@ -61,7 +62,8 @@ spforest <- function(X,
                      threshold = 2 * smallest_pixelarea(listcovariates),
                      gamma = NULL,
                      dimyx = c(50, 50),
-                     test.connected = FALSE) {
+                     test.connected = FALSE,
+                     verbose = FALSE) {
   if (!is.null(X$mesh)) {
     # gamma <- spatstat.geom::npoints(X)^(2 / 3)
     if (is.null(gamma)) {
@@ -93,7 +95,8 @@ spforest <- function(X,
       Ntree = Ntree,
       gamma = gamma,
       dimyx = dimyx,
-      test.connected = test.connected
+      test.connected = test.connected,
+      verbose = verbose
     )
   } else {
     output <- tesscovforest(X,
@@ -104,7 +107,8 @@ spforest <- function(X,
       randmtry = randmtry,
       p = p,
       score = score,
-      threshold = threshold
+      threshold = threshold,
+      verbose = verbose
     )
   }
 
@@ -307,7 +311,7 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
 #' @export
 #'
 #' @examples
-plot.spforestmesh <- function(x, points = FALSE, colorbar = FALSE, log=F, offset = exp(-8), ...) {
+plot.spforestmesh <- function(x, points = FALSE, colorbar = FALSE, log = F, offset = exp(-8), ...) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package RANN must be installed.")
   }
@@ -315,13 +319,13 @@ plot.spforestmesh <- function(x, points = FALSE, colorbar = FALSE, log=F, offset
   if (class(x) != "spforestmesh") {
     stop("The object to plot must be of the class spforestmesh")
   }
-  
+
   if (isTRUE(log)) {
-    y <- log(x+offset)
+    y <- log(x + offset)
   } else {
     y <- x
   }
-  
+
   if (points) {
     output <- plot_manifold_intensity(y,
       points = TRUE,

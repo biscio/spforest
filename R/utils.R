@@ -21,6 +21,27 @@ smallest_pixelarea <- function(x) {
 }
 
 
+
+#' Tesselation intensityy by rule of thumb
+#'
+#' @param X The observed data point pattern,
+#' as a \code{\link[spatstat.geom]{ppp.object}}.
+#'
+#' @return A number.
+#' @export
+#'
+#' @examples
+#' gamma_choice(spatstat.random::rpoispp(100))
+gamma_choice <- function(X) {
+  gamma0 <- floor(mean(c(
+    grDevices::nclass.FD(X$x),
+    grDevices::nclass.FD(X$y)
+  ))^2)
+
+  return(gamma0)
+}
+
+
 #' Randomise input for tree
 #'
 #' @param listcovariates list of covariates used
@@ -427,21 +448,21 @@ OOBscr <- function(forest) {
 #'
 #' @param X The point pattern as a \code{\link[spatstat.geom]{ppp}} .
 #' @param listcovariates list of covariates
-#' @param params A list containing entries mtry, minpts and, optionally, Ntree.  
+#' @param params A list containing entries mtry, minpts and, optionally, Ntree.
 #' @param ... Other arguments passed to spforest.
-#' 
+#'
 #' @details
-#' A spatial random forest is generated from the combinations of all the 
-#' arguments given in params. If Ntree is not given, it is set to 50 by defaults. 
+#' A spatial random forest is generated from the combinations of all the
+#' arguments given in params. If Ntree is not given, it is set to 50 by defaults.
 #' The arguments ... are passed to the function \code{\link{spforest}}.
-#' 
+#'
 #' @return A dataframe with 3 columns: mtry, minpts and OOB
 #' @export
 #'
 #' @examples
-#' X = spatstat.data::bei
-#' listcovariates = spatstat.data::bei.extra
-#' params = list(mtry = c(1,2), minpts = c(50,100,200))
+#' X <- spatstat.data::bei
+#' listcovariates <- spatstat.data::bei.extra
+#' params <- list(mtry = c(1, 2), minpts = c(50, 100, 200))
 #' OOBoptim(X = X, listcovariates = listcovariates, Ntree = 50, params = params)
 OOBoptim <- function(X, listcovariates, params, ...) {
   if (!"mtry" %in% names(params)) {
@@ -450,7 +471,7 @@ OOBoptim <- function(X, listcovariates, params, ...) {
   if (!"minpts" %in% names(params)) {
     stop("The arguments 'params' must have an entry named 'minpts'.")
   }
-  if (!"Ntree" %in% names(params)){
+  if (!"Ntree" %in% names(params)) {
     nbtree <- 50
   } else {
     nbtree <- params$Ntree
@@ -468,7 +489,7 @@ OOBoptim <- function(X, listcovariates, params, ...) {
       ...
     )
   )
-  
+
   allOOB <- apply(allforest, 2, OOBscr)
 
   return(cbind(argu, OOB = allOOB))

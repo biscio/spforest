@@ -27,8 +27,8 @@ arguments given in params. If Ntree is not given, it is set to 50 by defaults.
 The arguments ... are passed to the function \code{\link{spforest}}.
 }
 \examples{
-X = spatstat.data::bei
-listcovariates = spatstat.data::bei.extra
-params = list(mtry = c(1,2), minpts = c(50,100,200))
+X <- spatstat.data::bei
+listcovariates <- spatstat.data::bei.extra
+params <- list(mtry = c(1, 2), minpts = c(50, 100, 200))
 OOBoptim(X = X, listcovariates = listcovariates, Ntree = 50, params = params)
 }

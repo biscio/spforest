@@ -38,10 +38,7 @@ tessforest <- function(X,
                        test.connected = FALSE,
                        cores = 1) {
   if (is.null(gamma)) {
-    gamma <- floor(mean(c(
-      grDevices::nclass.FD(X$x),
-      grDevices::nclass.FD(X$y)
-    ))^2)
+    gamma <- gamma_choice(X)
   }
 
   if (cores > 1) {

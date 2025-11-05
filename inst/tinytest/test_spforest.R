@@ -29,10 +29,12 @@ expect_silent(
     threshold = 0.01,
     mtry = 8,
     randmtry = FALSE,
-    minpts = 100
+    minpts = 100,
+    parallel = TRUE
   )
 )
 future::plan("sequential")
+
 
 # Test spforest with tesscovforest - other parameters ----
 
@@ -80,11 +82,21 @@ expect_silent(
     Ntree = 4,
     gamma = 50,
     dimyx = c(51, 101),
-    test.connected = FALSE
+    test.connected = FALSE,
+    parallel = TRUE
   )
 )
 future::plan("sequential")
-
+expect_error(
+  forest2 <- spforest(
+    X = spatstat.data::bei,
+    Ntree = 4,
+    gamma = 50,
+    dimyx = c(51, 101),
+    test.connected = FALSE,
+    parallel = TRUE
+  )
+)
 
 # Test method for spforest from tessforest ----
 

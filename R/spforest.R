@@ -24,6 +24,7 @@
 #' in different connected components. It is only useful if the windows of
 #' observation of \code{X} is not convex.
 #' @param verbose If TRUE, display progress bar.
+#' @param parallel Check if future::plan has been called.
 #'
 #' @details
 #' If \code{listcovariates} is not \code{NULL},
@@ -63,7 +64,8 @@ spforest <- function(X,
                      gamma = NULL,
                      dimyx = c(50, 50),
                      test.connected = FALSE,
-                     verbose = FALSE) {
+                     verbose = FALSE,
+                     parallel = FALSE) {
   if (!is.null(X$mesh)) {
     # gamma <- spatstat.geom::npoints(X)^(2 / 3)
     if (is.null(gamma)) {
@@ -96,7 +98,8 @@ spforest <- function(X,
       gamma = gamma,
       dimyx = dimyx,
       test.connected = test.connected,
-      verbose = verbose
+      verbose = verbose, 
+      parallel = parallel
     )
   } else {
     output <- tesscovforest(X,
@@ -108,7 +111,8 @@ spforest <- function(X,
       p = p,
       score = score,
       threshold = threshold,
-      verbose = verbose
+      verbose = verbose, 
+      parallel = parallel
     )
   }
 

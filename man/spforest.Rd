@@ -17,7 +17,8 @@ spforest(
   gamma = NULL,
   dimyx = c(50, 50),
   test.connected = FALSE,
-  verbose = FALSE
+  verbose = FALSE,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ in different connected components. It is only useful if the windows of
 observation of \code{X} is not convex.}
 
 \item{verbose}{If TRUE, display progress bar.}
+
+\item{parallel}{Check if future::plan has been called.}
 }
 \value{
 An object of class \code{\link{spforest}}.

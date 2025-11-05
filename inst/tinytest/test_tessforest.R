@@ -87,7 +87,3 @@ expect_inherits(
   class="data.frame"
 )
 
-
-
-
-

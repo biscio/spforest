@@ -40,8 +40,7 @@ tessforest <- function(X,
   
   
   if (parallel & is(future::plan(), "sequential")) {
-    stop('"parallel = T" but no parallel backend has been set with future::plan. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html. 
-         Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.')
+    stop('"parallel = T" but no parallel backend has been set with future::plan. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html. Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.')
   }
 
   if (!parallel & !is(future::plan(), "sequential")) {

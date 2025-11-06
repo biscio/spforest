@@ -310,7 +310,7 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech, verbose = FALSE)
         return(output)
       })
     }
-    listmeshtree <- forestpgr(x = 1:Ntree)
+    listmeshtree <- forestpgr(x = 1:Ntrees)
     progressr::handlers(global = FALSE)
   } else {
     listmeshtree <- lapply(1:Ntrees, FUN = function(j) {

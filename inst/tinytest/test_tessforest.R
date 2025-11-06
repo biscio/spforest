@@ -10,7 +10,8 @@ expect_silent(
     threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
     mtry = 1 / 3,
     randmtry = TRUE,
-    minpts = 50
+    minpts = 50,
+    parallel = FALSE
   )
 )
 expect_length(forest$trees, 3)
@@ -25,7 +26,8 @@ expect_silent(
     threshold = spatstat.geom::area(spatstat.data::bei) / 2^4,
     mtry = 1 / 3,
     randmtry = TRUE,
-    minpts = 50
+    minpts = 50,
+    parallel = FALSE
   )
 )
 expect_length(forest2$trees, 2)
@@ -72,7 +74,8 @@ A <- tesscovforest(
   Ntree = 10,
   minpts = 100,
   mtry = 1,
-  p = 0
+  p = 0,
+  parallel = FALSE
 )
 B <- format(object.size(A), units = "Mb")
 expect_true(as.numeric(gsub(" Mb", "",B)) < 2.2)
@@ -83,7 +86,8 @@ expect_inherits(
            listcovariates = spatstat.data::bei.extra, 
            params = list(Ntree = 5,
                          mtry = 2, 
-                         minpts = c(500,800))),
+                         minpts = c(500,800)),
+           parallel = FALSE),
   class="data.frame"
 )
 

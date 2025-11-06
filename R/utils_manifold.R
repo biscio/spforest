@@ -61,11 +61,11 @@ pptomesh <- function(X, elev, correction = 6) {
 #'
 #' @examples
 dummypponmesh <- function(mesh,
-                     n,
-                     weights = TRUE,
-                     dimweight = 1,
-                     thres=15,
-                     p=0.7) {
+                          n,
+                          weights = TRUE,
+                          dimweight = 1,
+                          thres = 15,
+                          p = 0.7) {
   features <- features_mesh(mesh)
   tricenter <- features$tricenter
   # triarea <- features$triarea
@@ -75,12 +75,12 @@ dummypponmesh <- function(mesh,
   # Pondération : plus la coordonnée dimweight est grande, plus la probabilité est élevée
   if (weights == TRUE) {
     x_weights <- tricenter[, dimweight] # coordonnées x
-    f<-function(u){
-      if (u>=thres) {
+    f <- function(u) {
+      if (u >= thres) {
         return(p)
       }
-      if (u<thres) {
-        return(1-p)
+      if (u < thres) {
+        return(1 - p)
       }
     }
     x_weights <- sapply(x_weights, f)
@@ -280,7 +280,7 @@ manifold_tree <- function(intensity,
 #' @export
 #'
 #' @examples
-manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
+manifold_forest <- function(Ntrees, intensity, mesh, pointsech, verbose = FALSE) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package rgl must be installed")
   }
@@ -293,17 +293,28 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
 
   # triangle_areas
 
-  triangle_density <- manifold_tree(
-    intensity = intensity,
-    tricenter = tricenter,
-    triarea = triarea,
-    vertices = vertices,
-    faces = faces,
-    pointsech = pointsech
-  )
-  if (Ntrees > 1) {
-    for (i in 2:Ntrees) {
-      triangle_density <- triangle_density + manifold_tree(
+  if (verbose) {
+    progressr::handlers(global = TRUE)
+    forestpgr <- function(x) {
+      p <- progressr::progressor(along = x)
+      lapply(1:Ntrees, FUN = function(j) {
+        output <- manifold_tree(
+          intensity = intensity,
+          tricenter = tricenter,
+          triarea = triarea,
+          vertices = vertices,
+          faces = faces,
+          pointsech = pointsech
+        )
+        p(sprintf("x=%g", x))
+        return(output)
+      })
+    }
+    listmeshtree <- forestpgr(x = 1:Ntree)
+    progressr::handlers(global = FALSE)
+  } else {
+    listmeshtree <- lapply(1:Ntrees, FUN = function(j) {
+      output <- manifold_tree(
         intensity = intensity,
         tricenter = tricenter,
         triarea = triarea,
@@ -311,9 +322,34 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech) {
         faces = faces,
         pointsech = pointsech
       )
-    }
+      return(output)
+    })
   }
-  return(triangle_density / Ntrees)
+
+  return(Reduce("+", listmeshtree) / Ntrees)
+
+  # triangle_density <- manifold_tree(
+  #   intensity = intensity,
+  #   tricenter = tricenter,
+  #   triarea = triarea,
+  #   vertices = vertices,
+  #   faces = faces,
+  #   pointsech = pointsech
+  # )
+  # if (Ntrees > 1) {
+  #   for (i in 2:Ntrees) {
+  #     triangle_density <- triangle_density + manifold_tree(
+  #       intensity = intensity,
+  #       tricenter = tricenter,
+  #       triarea = triarea,
+  #       vertices = vertices,
+  #       faces = faces,
+  #       pointsech = pointsech
+  #     )
+  #   }
+  # }
+  #
+  # return(triangle_density / Ntrees)
 }
 
 
@@ -400,8 +436,6 @@ plot_manifold_intensity <- function(forestmesh,
     rgl::points3d(forestmesh$pp, col = "black", size = size, add = T)
   }
 }
-
-
 
 
 #' Title

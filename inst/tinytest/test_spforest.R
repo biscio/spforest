@@ -10,7 +10,8 @@ expect_silent(
     threshold = 0.01,
     mtry = 1 / 3,
     randmtry = TRUE,
-    minpts = 100
+    minpts = 100,
+    parallel = FALSE
   )
 )
 
@@ -50,7 +51,8 @@ expect_silent(
     threshold = 0.01,
     mtry = 8,
     randmtry = FALSE,
-    minpts = 100
+    minpts = 100,
+    parallel = FALSE
   )
 )
 
@@ -63,7 +65,8 @@ expect_silent(
     Ntree = 5,
     gamma = 50,
     dimyx = c(51, 101),
-    test.connected = FALSE
+    test.connected = FALSE,
+    parallel = FALSE
   )
 )
 

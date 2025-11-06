@@ -78,7 +78,8 @@ spforest <- function(X,
       Ntrees = Ntree,
       intensity = gamma0,
       mesh = X$mesh,
-      pointsech = X$pp
+      pointsech = X$pp, 
+      verbose = verbose
     )
 
     output <- list(

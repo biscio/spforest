@@ -65,7 +65,7 @@ spforest <- function(X,
                      dimyx = c(50, 50),
                      test.connected = FALSE,
                      verbose = FALSE,
-                     parallel = FALSE) {
+                     parallel = TRUE) {
   if (!is.null(X$mesh)) {
     # gamma <- spatstat.geom::npoints(X)^(2 / 3)
     if (is.null(gamma)) {

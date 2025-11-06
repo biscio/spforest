@@ -32,31 +32,19 @@ tessforest <- function(X,
                        dimyx = c(50, 50),
                        test.connected = FALSE,
                        verbose = FALSE,
-                       parallel = FALSE) {
+                       parallel = TRUE) {
   if (is.null(gamma)) {
     gamma <- gamma_choice(X)
   }
 
+  
+  
   if (parallel & is(future::plan(), "sequential")) {
-    stop(
-      '
-    "parallel = T" but no future::plan has been set. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html.
-    Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.
-    '
-    )
+    stop('"parallel = T" but no parallel backend has been set with future::plan. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html. 
+         Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.')
   }
 
   if (!parallel & !is(future::plan(), "sequential")) {
-    warning(
-      'A future::plan has been set. The argument "parallel=FALSE" is discarded.'
-    )
-  }
-
-  if (parallel & is(future::plan(), "sequential")) {
-    stop('"parallel = T" but no parallel backend has been set with future::plan. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html. Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.')
-  }
-
-  if (parallel == FALSE & !is(future::plan(), "sequential")) {
     message('"parallel=F" but a parallel backend with future::plan has been detected. No parallelism will be applied. Consider "parallel = T” to enable parallelism.')
     if (verbose) {
       progressr::handlers(global = TRUE)
@@ -239,7 +227,7 @@ tesscovforest <- function(X,
                           score = "lcv",
                           threshold = smallest_pixelarea(listcovariates),
                           verbose = FALSE,
-                          parallel = FALSE) {
+                          parallel = TRUE) {
   nbcov <- length(listcovariates)
   namescov <- names(listcovariates)
 

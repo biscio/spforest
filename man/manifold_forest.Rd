@@ -4,7 +4,7 @@
 \alias{manifold_forest}
 \title{Title}
 \usage{
-manifold_forest(Ntrees, intensity, mesh, pointsech)
+manifold_forest(Ntrees, intensity, mesh, pointsech, verbose = FALSE)
 }
 \arguments{
 \item{pointsech}{}

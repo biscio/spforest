@@ -18,7 +18,7 @@ spforest(
   dimyx = c(50, 50),
   test.connected = FALSE,
   verbose = FALSE,
-  parallel = FALSE
+  parallel = TRUE
 )
 }
 \arguments{

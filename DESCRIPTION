@@ -14,14 +14,13 @@ Depends:
     R (>= 3.5),
     spatstat.geom (>= 3.3-2)
 Imports: 
+    future,
     future.apply,
     graphics,
-    parallel,
     spatstat.model,
     spatstat.random
 Suggests: 
     fields,
-    future,
     knitr,
     progressr,
     RANN,

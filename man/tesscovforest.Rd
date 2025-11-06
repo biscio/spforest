@@ -15,7 +15,7 @@ tesscovforest(
   score = "lcv",
   threshold = smallest_pixelarea(listcovariates),
   verbose = FALSE,
-  parallel = FALSE
+  parallel = TRUE
 )
 }
 \arguments{

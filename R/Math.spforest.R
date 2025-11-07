@@ -1,12 +1,16 @@
 #' Dispatch standard math functions
 #'
-#' @param x
-#' @param ...
+#' @param x An object of class \code{spforestmesh}
+#' @param ... Additional arguments passed to the function
 #'
-#' @returns
+#' @returns An object of class \code{spforestmesh}
 #' @export
-#'
+#' 
 #' @examples
+#' res <- pptomesh(X=spatstat.data::bei,
+#' elev= spatstat.data::bei.extra$elev)
+#' forest <- spforest(X = res)
+#' log(forest+exp(-8))
 Math.spforestmesh <- function(x, ...) {
   m <- do.call(.Generic, list(x$tridensity, ...))
   rslt <- list(
@@ -22,13 +26,17 @@ Math.spforestmesh <- function(x, ...) {
 
 #' Standard binary operations Ops
 #'
-#' @param e1
-#' @param e2
+#' @param e1 An object of class \code{spforestmesh}
+#' @param e2 Either a numeric or an object of class \code{spforestmesh}
 #'
-#' @returns
+#' @returns An object of class \code{spforestmesh}
 #' @export
 #'
-#' @examples
+#' @examples 
+#' res <- pptomesh(X=spatstat.data::bei,
+#' elev= spatstat.data::bei.extra$elev)
+#' forest <- spforest(X = res)
+#' forest + forest
 Ops.spforestmesh <- function(e1, e2 = NULL) {
   # Do test compatibility objects
 

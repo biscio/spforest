@@ -304,7 +304,7 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
   return(invisible(output))
 }
 
-#' Plot spatial intensity forest on a manifold
+#' Plot spatial intensity forest on a manifold 
 #'
 #' Plot a \code{\link{spforest.object}}.
 #'
@@ -316,6 +316,11 @@ plot.spforest <- function(x, ..., main = "Spatial Intensity Forest") {
 #' @export
 #'
 #' @examples
+#' res <- pptomesh(X=spatstat.data::bei,
+#' elev= spatstat.data::bei.extra$elev)
+#' forest <- spforest(X = res)
+#' ## Open an RGL window with the package rgl 
+#' plot.spforestmesh(log(forest+exp(-8)))
 plot.spforestmesh <- function(x, points = FALSE, colorbar = FALSE, log = F, offset = exp(-8), ...) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package RANN must be installed.")

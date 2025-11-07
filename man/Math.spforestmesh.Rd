@@ -7,8 +7,19 @@
 \method{Math}{spforestmesh}(x, ...)
 }
 \arguments{
-\item{...}{}
+\item{x}{An object of class \code{spforestmesh}}
+
+\item{...}{Additional arguments passed to the function}
+}
+\value{
+An object of class \code{spforestmesh}
 }
 \description{
 Dispatch standard math functions
+}
+\examples{
+res <- pptomesh(X=spatstat.data::bei,
+elev= spatstat.data::bei.extra$elev)
+forest <- spforest(X = res)
+log(forest+exp(-8))
 }

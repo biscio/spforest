@@ -2,13 +2,42 @@
 % Please edit documentation in R/utils_manifold.R
 \name{manifold_tree}
 \alias{manifold_tree}
-\title{Title}
+\title{Tree intensity on 3D manifold}
 \usage{
 manifold_tree(intensity, tricenter, triarea, vertices, faces, pointsech)
 }
 \arguments{
-\item{pointsech}{}
+\item{intensity}{Number of dummy points to sample}
+
+\item{vertices}{Coordinates of each triange vertex in the mesh}
+
+\item{faces}{Indices of each triangle vertex in the mesh}
+
+\item{pointsech}{Coordinates of each point of the observed point pattern on the mesh}
+
+\item{triangle_centers}{Centres of each triangle of the mesh}
+
+\item{triangle_areas}{Areas of each triangle of the mesh}
+}
+\value{
+A numeric vector of length equal to the number of triangles,
+representing the estimated intensity for each triangle.
 }
 \description{
-Title
+Tree intensity on 3D manifold
+}
+\examples{
+res <- pptomesh(
+  X = spatstat.data::bei,
+  elev = spatstat.data::bei.extra$elev
+)
+features <- features_mesh(res$mesh)
+manifold_tree(
+  intensity = 200,
+  tricenter = features$tricenter,
+  triarea = features$triarea,
+  vertices = features$vertices,
+  faces = features$faces,
+  pointsech = res$pp
+)
 }

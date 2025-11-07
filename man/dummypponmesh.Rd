@@ -2,13 +2,39 @@
 % Please edit documentation in R/utils_manifold.R
 \name{dummypponmesh}
 \alias{dummypponmesh}
-\title{Title}
+\title{Tirage des points de l'échantillon sur un mesh}
 \usage{
 dummypponmesh(mesh, n, weights = TRUE, dimweight = 1, thres = 15, p = 0.7)
 }
 \arguments{
-\item{p}{description}
+\item{mesh}{A 3D mesh object (of class "mesh3d")}
+
+\item{n}{Number of points to sample}
+
+\item{weights}{Logical, whether to use weights for sampling}
+
+\item{dimweight}{Dimension on which the weight are applied to (1 for x, 2 for y, 3 for z)}
+
+\item{thres}{threshold value for weighting}
+
+\item{p}{weight parameter}
+}
+\value{
+A list with two elements: \code{mesh}, the input mesh, and \code{pp}.
 }
 \description{
-Title
+Tirage des points de l'échantillon sur un mesh
+}
+\examples{
+res <- pptomesh(
+  X = spatstat.data::bei,
+  elev = spatstat.data::bei.extra$elev
+)
+dummypponmesh(
+  mesh = res$mesh,
+  n = 100,
+  weights = TRUE,
+  dimweight = 3,
+  thres = 15
+)
 }

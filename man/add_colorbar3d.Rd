@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_manifold.R
 \name{add_colorbar3d}
 \alias{add_colorbar3d}
-\title{Title}
+\title{Create colorbar for 3D plot}
 \usage{
 add_colorbar3d(
   center,
@@ -20,8 +20,33 @@ add_colorbar3d(
 )
 }
 \arguments{
-\item{cex}{}
+\item{center}{Center position of the colorbar}
+
+\item{length}{Size of color rectangles}
+
+\item{width}{Width of the colorbar}
+
+\item{theta}{Angle for visualisation}
+
+\item{phi}{Angle for visualisation}
+
+\item{zlim}{Limits of the colorbar}
+
+\item{ncolors}{Number of colors in the colorbar}
+
+\item{colfun}{Color function to generate colors}
+
+\item{nticks}{Number of ticks on the colorbar}
+
+\item{lasttick}{If TRUE, add the last tick on the colorbar}
+
+\item{title}{Title of the colorbar}
+
+\item{cex}{Character expansion for text}
+}
+\value{
+A colorbar added to the current RGL 3D plot
 }
 \description{
-Title
+Create colorbar for 3D plot
 }

@@ -2,13 +2,37 @@
 % Please edit documentation in R/utils_manifold.R
 \name{manifold_forest}
 \alias{manifold_forest}
-\title{Title}
+\title{random forest intensity on mesh (intern)}
 \usage{
 manifold_forest(Ntrees, intensity, mesh, pointsech, verbose = FALSE)
 }
 \arguments{
-\item{pointsech}{}
+\item{Ntrees}{Number of trees}
+
+\item{intensity}{Number of dummy points to sample}
+
+\item{mesh}{A 3D mesh object (of class "mesh3d")}
+
+\item{pointsech}{Coordinates of each point of the observed point pattern on the mesh}
+
+\item{verbose}{Logical. If TRUE show progress bar}
+}
+\value{
+A list of tree intensity estimates on manifold
 }
 \description{
-Title
+random forest intensity on mesh (intern)
+}
+\examples{
+res <- pptomesh(
+  X = spatstat.data::bei,
+  elev = spatstat.data::bei.extra$elev
+)
+A <- manifold_forest(
+  Ntrees = 10,
+  intensity = 200,
+  mesh = res$mesh,
+  pointsech = res$pp,
+  verbose = FALSE
+)
 }

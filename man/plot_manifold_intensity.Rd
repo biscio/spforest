@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_manifold.R
 \name{plot_manifold_intensity}
 \alias{plot_manifold_intensity}
-\title{Title}
+\title{Plot manifold intensity (intern)}
 \usage{
 plot_manifold_intensity(
   forestmesh,
@@ -18,10 +18,43 @@ plot_manifold_intensity(
 )
 }
 \arguments{
+\item{forestmesh}{A spforestmesh object}
+
+\item{points}{If TRUE, add the observed points on the plot}
+
 \item{size}{description}
 
-\item{lasttick}{}
+\item{colorbar}{If TRUE, add a colorbar to the plot}
+
+\item{theta}{Angle for visualisation}
+
+\item{phi}{Angle for visualisation}
+
+\item{zoom}{Zoom for visualisation}
+
+\item{pos}{Center position of the colorbar}
+
+\item{nticks}{Number of ticks on the colorbar}
+
+\item{lasttick}{If TRUE, add the last tick on the colorbar}
+}
+\value{
+A 3D plot, in a RGL window, of the manifold with intensity coloring
 }
 \description{
-Title
+Plot manifold intensity (intern)
+}
+\examples{
+res <- pptomesh(
+  X = spatstat.data::bei, ,
+  elev = spatstat.data::bei.extra$elev
+)
+forest <- spforest(X = res)
+plot_manifold_intensity(log(forest + exp(-8)),
+  points = TRUE,
+  colorbar = TRUE,
+  zoom = 0.65,
+  nticks = 10,
+  lasttick = TRUE,
+)
 }

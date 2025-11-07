@@ -2,13 +2,24 @@
 % Please edit documentation in R/utils_manifold.R
 \name{features_mesh}
 \alias{features_mesh}
-\title{Title}
+\title{Compute centres, areas, vertices, faces of triangular 3D mesh}
 \usage{
 features_mesh(mesh)
 }
 \arguments{
-\item{mesh}{}
+\item{mesh}{A 3D mesh object (of class "mesh3d")}
+}
+\value{
+A list with four elements: \code{tricenter}, the centres of each triangle;
+\code{triarea}, the area of each triangle; \code{vertices}, the coordinates of each vertex;
+\code{faces}, the indices of each triangle vertex.
 }
 \description{
-Title
+Compute centres, areas, vertices, faces of triangular 3D mesh
+}
+\examples{
+#' library(Rvcg)
+data("humface")
+
+features <- features_mesh(humface)
 }

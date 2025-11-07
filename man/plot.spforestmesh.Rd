@@ -19,3 +19,10 @@ Plot a \code{\link{spforest.object}}.
 \details{
 details
 }
+\examples{
+res <- pptomesh(X=spatstat.data::bei,
+elev= spatstat.data::bei.extra$elev)
+forest <- spforest(X = res)
+## Open an RGL window with the package rgl 
+plot.spforestmesh(log(forest+exp(-8)))
+}

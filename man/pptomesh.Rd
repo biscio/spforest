@@ -2,13 +2,27 @@
 % Please edit documentation in R/utils_manifold.R
 \name{pptomesh}
 \alias{pptomesh}
-\title{Title}
+\title{Build a 3D mesh from points and elevation data}
 \usage{
 pptomesh(X, elev, correction = 6)
 }
 \arguments{
-\item{correction}{}
+\item{X}{A point pattern (of class "ppp")}
+
+\item{elev}{An image (of class "im") representing the elevation}
+
+\item{correction}{A numeric value to scale the elevation data for visual representation.}
+}
+\value{
+A list with two elements: \code{mesh}, a 3D mesh object, and \code{pp},
+a matrix of 3D coordinates of the points projected onto the mesh.
 }
 \description{
-Title
+Build a 3D mesh from points and elevation data
+}
+\examples{
+res <- pptomesh(
+  X = spatstat.data::bei,
+  elev = spatstat.data::bei.extra$elev
+)
 }

@@ -1,13 +1,18 @@
-#' Title
+#' Build a 3D mesh from points and elevation data
 #'
-#' @param X
-#' @param elev
-#' @param correction
+#' @param X A point pattern (of class "ppp")
+#' @param elev An image (of class "im") representing the elevation
+#' @param correction A numeric value to scale the elevation data for visual representation.
 #'
-#' @returns
+#' @returns A list with two elements: \code{mesh}, a 3D mesh object, and \code{pp},
+#' a matrix of 3D coordinates of the points projected onto the mesh.
 #' @export
 #'
 #' @examples
+#' res <- pptomesh(
+#'   X = spatstat.data::bei,
+#'   elev = spatstat.data::bei.extra$elev
+#' )
 pptomesh <- function(X, elev, correction = 6) {
   # TODO: Check that window of elev same as X. If note, what to do ?
   z <- correction * spatstat.geom::as.matrix.im(elev)
@@ -46,20 +51,30 @@ pptomesh <- function(X, elev, correction = 6) {
   return(list(mesh = mesh, pp = pointsech))
 }
 
-# tirage des points de l'échantillon sur un mesh
-#' Title
+#' Tirage des points de l'échantillon sur un mesh
 #'
-#' @param mesh
-#' @param n
-#' @param weights
-#' @param dimweight
-#' @param thres
-#' @param p description
+#' @param mesh A 3D mesh object (of class "mesh3d")
+#' @param n Number of points to sample
+#' @param weights Logical, whether to use weights for sampling
+#' @param dimweight Dimension on which the weight are applied to (1 for x, 2 for y, 3 for z)
+#' @param thres threshold value for weighting
+#' @param p weight parameter
 #'
-#' @returns
+#' @returns A list with two elements: \code{mesh}, the input mesh, and \code{pp}.
 #' @export
 #'
 #' @examples
+#' res <- pptomesh(
+#'   X = spatstat.data::bei,
+#'   elev = spatstat.data::bei.extra$elev
+#' )
+#' dummypponmesh(
+#'   mesh = res$mesh,
+#'   n = 100,
+#'   weights = TRUE,
+#'   dimweight = 3,
+#'   thres = 15
+#' )
 dummypponmesh <- function(mesh,
                           n,
                           weights = TRUE,
@@ -88,9 +103,16 @@ dummypponmesh <- function(mesh,
     # x_weights <- x_weights^2 # accentuer les grandes x, éviter 0
     # x_weights <- x_weights / max(x_weights)
     # Échantillonnage des triangles pondéré par x
-    sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE, prob = x_weights)
+    sampled_faces <- sample(1:nrow(faces),
+      size = n,
+      replace = TRUE,
+      prob = x_weights
+    )
   } else {
-    sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE)
+    sampled_faces <- sample(1:nrow(faces),
+      size = n,
+      replace = TRUE
+    )
   }
 
   # Coordonnées barycentriques aléatoires dans chaque triangle
@@ -115,20 +137,33 @@ dummypponmesh <- function(mesh,
   return(list(mesh = mesh, pp = sampled_points))
 }
 
-# tirage des points de l'échantillon sur un mesh (intern)
-#' Title
+#' Tirage des points de l'échantillon sur un mesh (intern)
 #'
-#' @param tricenter
-#' @param vertices
-#' @param faces description
-#' @param n
-#' @param weights
-#' @param dimweight
+#' @param tricenter Center of each triangle of the mesh
+#' @param vertices Coordinates of each triange vertex in the mesh
+#' @param faces Indices of each triangle vertex in the mesh
+#' @param n Number of points to sample
+#' @param weights Logical, whether to use weights for sampling
+#' @param dimweight Dimension on which the weight are applied to (1 for x, 2 for y, 3 for z)
 #'
-#' @returns
+#' @returns A matrix of sampled 3D points of size n x 3.
 #' @export
 #'
 #' @examples
+#' library(Rvcg)
+#' data("humface")
+#'
+#' features <- features_mesh(humface)
+#' tricenter <- features$tricenter
+#' vertices <- features$vertices
+#' faces <- features$faces
+#' sample_points_manifold(tricenter,
+#'   vertices,
+#'   faces,
+#'   n = 100,
+#'   weights = TRUE,
+#'   dimweight = 3
+#' )
 sample_points_manifold <- function(tricenter,
                                    vertices,
                                    faces,
@@ -169,15 +204,20 @@ sample_points_manifold <- function(tricenter,
   return(sampled_points)
 }
 
-# Calcul du centre et de l'aire de chaque triangle
-#' Title
+#' Compute centres, areas, vertices, faces of triangular 3D mesh
 #'
-#' @param mesh
+#' @param mesh A 3D mesh object (of class "mesh3d")
 #'
-#' @returns
+#' @returns A list with four elements: \code{tricenter}, the centres of each triangle;
+#' \code{triarea}, the area of each triangle; \code{vertices}, the coordinates of each vertex;
+#' \code{faces}, the indices of each triangle vertex.
 #' @export
 #'
 #' @examples
+#' #' library(Rvcg)
+#' data("humface")
+#'
+#' features <- features_mesh(humface)
 features_mesh <- function(mesh) {
   # 1. Extraire les sommets du maillage
   vertices <- t(mesh$vb[1:3, ]) # N x 3
@@ -204,19 +244,33 @@ features_mesh <- function(mesh) {
   ))
 }
 
-#' Title
+#' Tree intensity on 3D manifold
 #'
-#' @param intensity
-#' @param vertices
-#' @param faces
-#' @param triangle_centers
-#' @param triangle_areas
-#' @param pointsech
+#' @param intensity Number of dummy points to sample
+#' @param triangle_centers Centres of each triangle of the mesh
+#' @param triangle_areas Areas of each triangle of the mesh
+#' @param vertices Coordinates of each triange vertex in the mesh
+#' @param faces Indices of each triangle vertex in the mesh
+#' @param pointsech Coordinates of each point of the observed point pattern on the mesh
 #'
-#' @returns
+#' @returns A numeric vector of length equal to the number of triangles,
+#' representing the estimated intensity for each triangle.
 #' @export
 #'
 #' @examples
+#' res <- pptomesh(
+#'   X = spatstat.data::bei,
+#'   elev = spatstat.data::bei.extra$elev
+#' )
+#' features <- features_mesh(res$mesh)
+#' manifold_tree(
+#'   intensity = 200,
+#'   tricenter = features$tricenter,
+#'   triarea = features$triarea,
+#'   vertices = features$vertices,
+#'   faces = features$faces,
+#'   pointsech = res$pp
+#' )
 manifold_tree <- function(intensity,
                           tricenter,
                           triarea,
@@ -269,18 +323,34 @@ manifold_tree <- function(intensity,
   return(triangle_density)
 }
 
-#' Title
+#' random forest intensity on mesh (intern)
 #'
-#' @param Ntrees
-#' @param intensity
-#' @param mesh
-#' @param pointsech
+#' @param Ntrees Number of trees
+#' @param intensity Number of dummy points to sample
+#' @param mesh A 3D mesh object (of class "mesh3d")
+#' @param pointsech Coordinates of each point of the observed point pattern on the mesh
+#' @param verbose Logical. If TRUE show progress bar
 #'
-#' @returns
+#' @returns A list of tree intensity estimates on manifold
 #' @export
 #'
 #' @examples
-manifold_forest <- function(Ntrees, intensity, mesh, pointsech, verbose = FALSE) {
+#' res <- pptomesh(
+#'   X = spatstat.data::bei,
+#'   elev = spatstat.data::bei.extra$elev
+#' )
+#' A <- manifold_forest(
+#'   Ntrees = 10,
+#'   intensity = 200,
+#'   mesh = res$mesh,
+#'   pointsech = res$pp,
+#'   verbose = FALSE
+#' )
+manifold_forest <- function(Ntrees,
+                            intensity,
+                            mesh,
+                            pointsech,
+                            verbose = FALSE) {
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("The package rgl must be installed")
   }
@@ -353,23 +423,35 @@ manifold_forest <- function(Ntrees, intensity, mesh, pointsech, verbose = FALSE)
 }
 
 
-#' Title
+#' Plot manifold intensity (intern)
 #'
-#' @param forestmesh
-#' @param points
+#' @param forestmesh A spforestmesh object
+#' @param points If TRUE, add the observed points on the plot
 #' @param size description
-#' @param colorbar
-#' @param theta
-#' @param phi
-#' @param zoom
-#' @param pos
-#' @param nticks
-#' @param lasttick
+#' @param colorbar If TRUE, add a colorbar to the plot
+#' @param theta Angle for visualisation
+#' @param phi Angle for visualisation
+#' @param zoom Zoom for visualisation
+#' @param pos Center position of the colorbar
+#' @param nticks Number of ticks on the colorbar
+#' @param lasttick If TRUE, add the last tick on the colorbar
 #'
-#' @returns
+#' @returns A 3D plot, in a RGL window, of the manifold with intensity coloring
 #' @export
 #'
 #' @examples
+#' res <- pptomesh(
+#'   X = spatstat.data::bei, ,
+#'   elev = spatstat.data::bei.extra$elev
+#' )
+#' forest <- spforest(X = res)
+#' plot_manifold_intensity(log(forest + exp(-8)),
+#'   points = TRUE,
+#'   colorbar = TRUE,
+#'   zoom = 0.65,
+#'   nticks = 10,
+#'   lasttick = TRUE,
+#' )
 plot_manifold_intensity <- function(forestmesh,
                                     points = FALSE,
                                     size = 2,
@@ -427,7 +509,8 @@ plot_manifold_intensity <- function(forestmesh,
       phi = phi,
       zlim = range(triangle_density),
       title = "",
-      nticks = nticks, lasttick = lasttick,
+      nticks = nticks,
+      lasttick = lasttick,
       colfun = colfun
     )
   }
@@ -438,26 +521,25 @@ plot_manifold_intensity <- function(forestmesh,
 }
 
 
-#' Title
+#' Create colorbar for 3D plot
 #'
-#' @param center
-#' @param length
-#' @param width
-#' @param theta
-#' @param phi
-#' @param zlim
-#' @param ncolors
-#' @param colfun
-#' @param nticks
-#' @param lasttick
-#' @param title
-#' @param cex
+#' @param center Center position of the colorbar
+#' @param length Size of color rectangles
+#' @param width Width of the colorbar
+#' @param theta Angle for visualisation
+#' @param phi Angle for visualisation
+#' @param zlim Limits of the colorbar
+#' @param ncolors Number of colors in the colorbar
+#' @param colfun Color function to generate colors
+#' @param nticks Number of ticks on the colorbar
+#' @param lasttick If TRUE, add the last tick on the colorbar
+#' @param title Title of the colorbar
+#' @param cex Character expansion for text
 #'
-#' @returns
+#' @returns A colorbar added to the current RGL 3D plot
 #' @export
-#'
-#' @examples
-add_colorbar3d <- function(center, length = 1, width = 0.05,
+add_colorbar3d <- function(center,
+                           length = 1, width = 0.05,
                            theta = 0, phi = 0,
                            zlim = c(0, 1), ncolors = 100,
                            colfun = colorRampPalette(c("blue", "red")),

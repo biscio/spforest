@@ -7,11 +7,20 @@
 \method{Ops}{spforestmesh}(e1, e2 = NULL)
 }
 \arguments{
-\item{e2}{}
+\item{e1}{An object of class \code{spforestmesh}}
+
+\item{e2}{Either a numeric or an object of class \code{spforestmesh}}
+}
+\value{
+An object of class \code{spforestmesh}
 }
 \description{
 Standard binary operations Ops
 }
 \examples{
+res <- pptomesh(X=spatstat.data::bei,
+elev= spatstat.data::bei.extra$elev)
+forest <- spforest(X = res)
+forest + forest
 unary operation
 }

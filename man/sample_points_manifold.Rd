@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_manifold.R
 \name{sample_points_manifold}
 \alias{sample_points_manifold}
-\title{Title}
+\title{Tirage des points de l'échantillon sur un mesh (intern)}
 \usage{
 sample_points_manifold(
   tricenter,
@@ -14,10 +14,37 @@ sample_points_manifold(
 )
 }
 \arguments{
-\item{faces}{description}
+\item{tricenter}{Center of each triangle of the mesh}
 
-\item{dimweight}{}
+\item{vertices}{Coordinates of each triange vertex in the mesh}
+
+\item{faces}{Indices of each triangle vertex in the mesh}
+
+\item{n}{Number of points to sample}
+
+\item{weights}{Logical, whether to use weights for sampling}
+
+\item{dimweight}{Dimension on which the weight are applied to (1 for x, 2 for y, 3 for z)}
+}
+\value{
+A matrix of sampled 3D points of size n x 3.
 }
 \description{
-Title
+Tirage des points de l'échantillon sur un mesh (intern)
+}
+\examples{
+library(Rvcg)
+data("humface")
+
+features <- features_mesh(humface)
+tricenter <- features$tricenter
+vertices <- features$vertices
+faces <- features$faces
+sample_points_manifold(tricenter,
+  vertices,
+  faces,
+  n = 100,
+  weights = TRUE,
+  dimweight = 3
+)
 }

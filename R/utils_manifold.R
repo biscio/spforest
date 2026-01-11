@@ -21,6 +21,24 @@ cross <- function(a, b) {
   )
 }
 
+#' Random barycentric coordinates in a triangle
+#'
+#' @returns A vector with three coordinates.
+#' @export
+#'
+#' @examples
+#' random_barycentric()
+random_barycentric <- function() {
+  u <- runif(1)
+  v <- runif(1)
+  if (u + v > 1) {
+    u <- 1 - u
+    v <- 1 - v
+  }
+  c(u, v, 1 - u - v)
+}
+
+
 #' Build a 3D mesh from points and elevation data
 #'
 #' @param X A point pattern (of class "ppp")
@@ -138,17 +156,6 @@ dummypponmesh <- function(mesh,
     )
   }
 
-  # Coordonnées barycentriques aléatoires dans chaque triangle
-  random_barycentric <- function() {
-    u <- runif(1)
-    v <- runif(1)
-    if (u + v > 1) {
-      u <- 1 - u
-      v <- 1 - v
-    }
-    c(u, v, 1 - u - v)
-  }
-
   sampled_points <- t(sapply(sampled_faces, function(i) {
     A <- vertices[faces[i, 1], ]
     B <- vertices[faces[i, 2], ]
@@ -251,7 +258,7 @@ features_mesh <- function(mesh) {
     colMeans(vertices[f, ])
   }))
 
-  # Calcul des aires de chaque triangle
+  # Calcul des aires de chaque triangle 
   # triangle_area <- function(A, B, C) {
   #   0.5 * norm(crossprod(matrix(B - A, ncol = 3), matrix(C - A, ncol = 3)), type = "2")
   # }

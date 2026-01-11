@@ -2,17 +2,17 @@
 #'
 #' @param a,b Vector c(x,y,z)
 #'
-#' @returns A vector with three coordinates. 
-#' The function is different from the base R function crossprod 
+#' @returns A vector with three coordinates.
+#' The function is different from the base R function crossprod
 #' which returns the scalar product between two vectors.
 #' @export
 #'
 #' @examples
-#' u = c(1, 2, 3)
-#' v = c(2, 3, 4)
-#' w = cross(u, v)
-#' t(v)%*%w 
-#' t(u)%*%w
+#' u <- c(1, 2, 3)
+#' v <- c(2, 3, 4)
+#' w <- cross(u, v)
+#' t(v) %*% w
+#' t(u) %*% w
 cross <- function(a, b) {
   c(
     a[2] * b[3] - a[3] * b[2],
@@ -38,6 +38,21 @@ random_barycentric <- function() {
   c(u, v, 1 - u - v)
 }
 
+#' Triangle area with Heron's formula
+#'
+#' @param u,v,w The coordinates of the vertices of the triangle as c(x,y,z).
+#'
+#' @returns The area of the triangle computed with Heron's formula.
+#' @export
+heron <- function(u, v, w) {
+  a1 <- sqrt(sum((u - v)^2))
+  a2 <- sqrt(sum((u - w)^2))
+  a3 <- sqrt(sum((w - v)^2))
+
+  a0 <- 0.5 * (a1 + a2 + a3)
+
+  return(sqrt(a0 * (a0 - a1) * (a0 - a2) * (a0 - a3)))
+}
 
 #' Build a 3D mesh from points and elevation data
 #'
@@ -212,17 +227,6 @@ sample_points_manifold <- function(tricenter,
     sampled_faces <- sample(1:nrow(faces), size = n, replace = TRUE)
   }
 
-  # Coordonnées barycentriques aléatoires dans chaque triangle
-  random_barycentric <- function() {
-    u <- runif(1)
-    v <- runif(1)
-    if (u + v > 1) {
-      u <- 1 - u
-      v <- 1 - v
-    }
-    c(u, v, 1 - u - v)
-  }
-
   sampled_points <- t(sapply(sampled_faces, function(i) {
     A <- vertices[faces[i, 1], ]
     B <- vertices[faces[i, 2], ]
@@ -258,12 +262,8 @@ features_mesh <- function(mesh) {
     colMeans(vertices[f, ])
   }))
 
-  # Calcul des aires de chaque triangle 
-  # triangle_area <- function(A, B, C) {
-  #   0.5 * norm(crossprod(matrix(B - A, ncol = 3), matrix(C - A, ncol = 3)), type = "2")
-  # }
   # triangle_areas <- apply(faces, 1, function(f) {
-  #   triangle_area(vertices[f[1], ], vertices[f[2], ], vertices[f[3], ])
+  #   heron(vertices[f[1], ], vertices[f[2], ], vertices[f[3], ])
   # })
   triangle_areas <- Rvcg::vcgArea(mesh, perface = TRUE)[[2]]
   return(list(
@@ -575,8 +575,6 @@ add_colorbar3d <- function(center,
                            colfun = colorRampPalette(c("blue", "red")),
                            nticks, lasttick = TRUE,
                            title = NULL, cex = 1) {
-
-
   # Vecteurs caméra (dans l’espace)
   theta <- theta * pi / 180
   phi <- phi * pi / 180

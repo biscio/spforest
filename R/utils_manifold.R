@@ -1,3 +1,26 @@
+#' Cross product for 3D vector
+#'
+#' @param a,b Vector c(x,y,z)
+#'
+#' @returns A vector with three coordinates. 
+#' The function is different from the base R function crossprod 
+#' which returns the scalar product between two vectors.
+#' @export
+#'
+#' @examples
+#' u = c(1, 2, 3)
+#' v = c(2, 3, 4)
+#' w = cross(u, v)
+#' t(v)%*%w 
+#' t(u)%*%w
+cross <- function(a, b) {
+  c(
+    a[2] * b[3] - a[3] * b[2],
+    a[3] * b[1] - a[1] * b[3],
+    a[1] * b[2] - a[2] * b[1]
+  )
+}
+
 #' Build a 3D mesh from points and elevation data
 #'
 #' @param X A point pattern (of class "ppp")
@@ -545,14 +568,7 @@ add_colorbar3d <- function(center,
                            colfun = colorRampPalette(c("blue", "red")),
                            nticks, lasttick = TRUE,
                            title = NULL, cex = 1) {
-  # Produit vectoriel 3D
-  cross <- function(a, b) {
-    c(
-      a[2] * b[3] - a[3] * b[2],
-      a[3] * b[1] - a[1] * b[3],
-      a[1] * b[2] - a[2] * b[1]
-    )
-  }
+
 
   # Vecteurs caméra (dans l’espace)
   theta <- theta * pi / 180

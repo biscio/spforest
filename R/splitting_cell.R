@@ -66,10 +66,10 @@ splitcell <- function(X,
     }
   )
 
-  # Determine level sets for all covariates
-  scr_cov <- NULL
-  scr_sub <- NULL
-  scr_sup <- NULL
+  # # Determine level sets for all covariates
+  # scr_cov <- NULL
+  # scr_sub <- NULL
+  # scr_sup <- NULL
 
   scr_parent <- score.pp(
     n0 = length(stats::na.omit(valptsused[[1]])),
@@ -77,45 +77,73 @@ splitcell <- function(X,
     score = score
   )
 
-  for (i in 1:sum(usecovariates)) {
-    Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
-    Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
+  ### Pre-compute areas for all used covariates
+  nsub_pix <- vapply(sublvl, function(s) sum(s, na.rm = TRUE), numeric(1L))
+  nsup_pix <- vapply(sublvl, function(s) sum(!s, na.rm = TRUE), numeric(1L))
+  Wsub_all <- areapixel * nsub_pix
+  Wsup_all <- areapixel * nsup_pix
 
-    # Test if they are too small and computation of the score if not
-    if (Wsub <= threshold | Wsup <= threshold) {
-      scr_cov[i] <- -Inf
-    } else {
-      n1 <- sum(valptsused[[i]] < mediancov[[i]], na.rm = T)
-      n2 <- sum(valptsused[[i]] >= mediancov[[i]], na.rm = T)
+  too_small <- (Wsub_all <= threshold) | (Wsup_all <= threshold)
 
-      # if (i == 1) {
-      #   scr_parent <- score.pp(
-      #     n0 = n1 + n2,
-      #     W0area = Wsub + Wsup,
-      #     score = score
-      #   )
-      # }
+  ### Point counts per covariate
+  n1_all <- vapply(
+    seq_along(valptsused),
+    function(i) sum(valptsused[[i]] < mediancov[[i]], na.rm = TRUE), numeric(1L)
+  )
+  n2_all <- vapply(
+    seq_along(valptsused),
+    function(i) sum(valptsused[[i]] >= mediancov[[i]], na.rm = TRUE), numeric(1L)
+  )
 
-      scr_cov[i] <- score.split(
-        n1 = n1,
-        n2 = n2,
-        W1area = Wsub,
-        W2area = Wsup,
-        score = score
-      )
+  ### Score all covariates at once (score.split / score.pp are already vectorised)
+  scr_cov <- score.split(n1_all, n2_all, Wsub_all, Wsup_all, score)
+  scr_sub <- score.pp(n1_all, Wsub_all, score)
+  scr_sup <- score.pp(n2_all, Wsup_all, score)
 
-      scr_sub[i] <- score.pp(
-        n0 = n1,
-        W0area = Wsub,
-        score = score
-      )
-      scr_sup[i] <- score.pp(
-        n0 = n2,
-        W0area = Wsup,
-        score = score
-      )
-    }
-  }
+  ### Apply threshold mask
+  scr_cov[too_small] <- -Inf
+  scr_sub[too_small] <- NA
+  scr_sup[too_small] <- NA
+
+  # for (i in 1:sum(usecovariates)) {
+  #   Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
+  #   Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
+  #
+  #   # Test if they are too small and computation of the score if not
+  #   if (Wsub <= threshold | Wsup <= threshold) {
+  #     scr_cov[i] <- -Inf
+  #   } else {
+  #     n1 <- sum(valptsused[[i]] < mediancov[[i]], na.rm = T)
+  #     n2 <- sum(valptsused[[i]] >= mediancov[[i]], na.rm = T)
+  #
+  #     # if (i == 1) {
+  #     #   scr_parent <- score.pp(
+  #     #     n0 = n1 + n2,
+  #     #     W0area = Wsub + Wsup,
+  #     #     score = score
+  #     #   )
+  #     # }
+  #
+  #     scr_cov[i] <- score.split(
+  #       n1 = n1,
+  #       n2 = n2,
+  #       W1area = Wsub,
+  #       W2area = Wsup,
+  #       score = score
+  #     )
+  #
+  #     scr_sub[i] <- score.pp(
+  #       n0 = n1,
+  #       W0area = Wsub,
+  #       score = score
+  #     )
+  #     scr_sup[i] <- score.pp(
+  #       n0 = n2,
+  #       W0area = Wsup,
+  #       score = score
+  #     )
+  #   }
+  # }
 
   ## Go out if all the score are -Inf
   if (all(is.infinite(scr_cov))) {
@@ -144,26 +172,24 @@ splitcell <- function(X,
     nsup <- sum(!subvalpts, na.rm = T)
 
 
-    valptssub <- lapply(valpts, FUN = function(j) {
-      A <- rep(NA, length(j))
-      A[which(subvalpts)] <- j[which(subvalpts)]
-      return(A)
+    idx_sub <- which(subvalpts)
+    valptssub <- lapply(valpts, function(j) {
+      j[-idx_sub] <- NA
+      j
     })
-    valptssup <- lapply(valpts, FUN = function(j) {
-      B <- j
-      B[which(subvalpts)] <- NA
-      return(B)
+    valptssup <- lapply(valpts, function(j) {
+      j[idx_sub] <- NA
+      j
     })
-
     # valptssub <- lapply(valpts, FUN = function(j) {
-    #   ifelse(subvalpts,
-    #     j, NA
-    #   )
+    #   A <- rep(NA, length(j))
+    #   A[which(subvalpts)] <- j[which(subvalpts)]
+    #   return(A)
     # })
     # valptssup <- lapply(valpts, FUN = function(j) {
-    #   ifelse(!subvalpts,
-    #     j, NA
-    #   )
+    #   B <- j
+    #   B[which(subvalpts)] <- NA
+    #   return(B)
     # })
 
     splitsup <- !splitsub

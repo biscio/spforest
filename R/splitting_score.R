@@ -22,13 +22,15 @@
 score.split <- function(n1, n2, W1area, W2area, score = "lcv") {
   stopifnot(score %in% c("lcv", "lcv2", "ent", "star", "ise", "isecv"))
 
+    val1 <- rep(0, length(n1))
+    val2 <- rep(0, length(n2))
   # Return value depending on the score considered
   ## likelihood cross validation
   ## QUESTION: quoi mettre si n1 ou n2 = 0 ??
   if (score == "lcv") {
-    val <- ifelse(n1 > 1, n1 * log((n1 - 1) / W1area), 0) +
-      ifelse(n2 > 1, n2 * log((n2 - 1) / W2area), 0)
-    return(val)
+    val1[W1area>0 & n1>1] <- n1[W1area>0 & n1>1] * log((n1[W1area>0 & n1>1] - 1) / W1area[W1area>0 & n1>1])
+    val2[W2area>0 & n2>1] <- n2[W2area>0 & n2>1] * log((n2[W2area>0 & n2>1] - 1) / W2area[W2area>0 & n2>1])
+    return(val1+val2)
   }
 
   # After some simulations it does not appear to change the result
@@ -84,8 +86,15 @@ score.split <- function(n1, n2, W1area, W2area, score = "lcv") {
 score.pp <- function(n0, W0area, score = "lcv") {
   stopifnot(score %in% c("lcv", "lcv2", "ent", "star", "ise", "isecv"))
 
+  val <- rep(0, length(n0))
   # Return value depending on the score considered
   ## likelihood cross validation
+  ## QUESTION: quoi mettre si n1 ou n2 = 0 ??
+  if (score == "lcv") {
+    val[W0area>0 & n0>1] <- n0[W0area>0 & n0>1] * log((n0[W0area>0 & n0>1] - 1) / W0area[W0area>0 & n0>1])
+    return(val)
+  }
+  
   if (score == "lcv") {
     val <- ifelse(n0 > 1, n0 * log((n0 - 1) / W0area), 0)
     return(val)

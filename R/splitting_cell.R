@@ -66,11 +66,6 @@ splitcell <- function(X,
     }
   )
 
-  # # Determine level sets for all covariates
-  # scr_cov <- NULL
-  # scr_sub <- NULL
-  # scr_sup <- NULL
-
   scr_parent <- score.pp(
     n0 = length(stats::na.omit(valptsused[[1]])),
     W0area = areapixel * sum(!is.na(vecvalused[[1]])),
@@ -105,46 +100,6 @@ splitcell <- function(X,
   scr_sub[too_small] <- NA
   scr_sup[too_small] <- NA
 
-  # for (i in 1:sum(usecovariates)) {
-  #   Wsub <- areapixel * sum(sublvl[[i]], na.rm = TRUE)
-  #   Wsup <- areapixel * sum(!sublvl[[i]], na.rm = TRUE)
-  #
-  #   # Test if they are too small and computation of the score if not
-  #   if (Wsub <= threshold | Wsup <= threshold) {
-  #     scr_cov[i] <- -Inf
-  #   } else {
-  #     n1 <- sum(valptsused[[i]] < mediancov[[i]], na.rm = T)
-  #     n2 <- sum(valptsused[[i]] >= mediancov[[i]], na.rm = T)
-  #
-  #     # if (i == 1) {
-  #     #   scr_parent <- score.pp(
-  #     #     n0 = n1 + n2,
-  #     #     W0area = Wsub + Wsup,
-  #     #     score = score
-  #     #   )
-  #     # }
-  #
-  #     scr_cov[i] <- score.split(
-  #       n1 = n1,
-  #       n2 = n2,
-  #       W1area = Wsub,
-  #       W2area = Wsup,
-  #       score = score
-  #     )
-  #
-  #     scr_sub[i] <- score.pp(
-  #       n0 = n1,
-  #       W0area = Wsub,
-  #       score = score
-  #     )
-  #     scr_sup[i] <- score.pp(
-  #       n0 = n2,
-  #       W0area = Wsup,
-  #       score = score
-  #     )
-  #   }
-  # }
-
   ## Go out if all the score are -Inf
   if (all(is.infinite(scr_cov))) {
     whynot <- c("All split scores are -Inf, cell too small")
@@ -171,7 +126,6 @@ splitcell <- function(X,
     nsub <- sum(subvalpts, na.rm = T)
     nsup <- sum(!subvalpts, na.rm = T)
 
-
     idx_sub <- which(subvalpts)
     valptssub <- lapply(valpts, function(j) {
       j[-idx_sub] <- NA
@@ -192,16 +146,25 @@ splitcell <- function(X,
     #   return(B)
     # })
 
-    splitsup <- !splitsub
-    splitsub[!splitsub] <- NA
-    splitsup[!splitsup] <- NA
-    sublevels <- lapply(vecval, FUN = function(j) {
-      return(j * splitsub)
-    })
-    suplevels <- lapply(vecval, FUN = function(j) {
-      return(j * splitsup)
-    })
-
+    # Precompute integer index vectors once — reused across all covariates
+    idx_not_sub <- which(!splitsub | is.na(splitsub))
+    idx_not_sup <- which(splitsub  | is.na(!splitsub))
+    
+    sublevels <- lapply(vecval, function(j) { j[idx_not_sub] <- NA_real_; j })
+    suplevels <- lapply(vecval, function(j) { j[idx_not_sup] <- NA_real_; j })
+    
+    ## Older code start
+    # splitsup <- !splitsub
+    # splitsub[!splitsub] <- NA
+    # splitsup[!splitsup] <- NA
+    # sublevels <- lapply(vecval, FUN = function(j) {
+    #   return(j * splitsub)
+    # })
+    # suplevels <- lapply(vecval, FUN = function(j) {
+    #   return(j * splitsup)
+    # })
+    ## Older code end 
+    
     nodeChilds <- list(
       split_var = split_var,
       split_val = split_val,

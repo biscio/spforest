@@ -203,21 +203,6 @@ tesscovtree <- function(X,
     scrdcr = NA
   )
 
-  if (spatstat.geom::area.owin(X$window) <= threshold |
-    spatstat.geom::npoints(X) <= minpts) {
-    root$status <- 0
-    output <- list(
-      tree = list(root),
-      X = X,
-      namecov = names(listcovariates),
-      im = spatstat.geom::as.im(spatstat.geom::npoints(X) / spatstat.geom::area(X$window),
-        W = X$window
-      )
-    )
-    class(output) <- "sptree"
-    return(output)
-  }
-
   # Check if there is something to do on the initial point pattern.
   if (spatstat.geom::area.owin(X$window) <= threshold |
     spatstat.geom::npoints(X) <= minpts) {

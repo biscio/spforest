@@ -336,9 +336,9 @@ tesscovforest <- function(X,
   if (parallel | is(future::plan(), "sequential")) {
     # Compute the forest's trees - check if need to parallel
     seedparallel <- TRUE
-    if (is(future::plan(), "sequential")) {
-      seedparallel <- NULL
-    }
+    # if (is(future::plan(), "sequential")) {
+    #   seedparallel <- NULL
+    # }
 
     if (verbose) {
       progressr::handlers(global = TRUE)

@@ -370,3 +370,30 @@ findparent <- function(ID, idleft, idright) {
     }
   })
 }
+
+
+#' Validate a future.seed value
+#'
+#' Checks that the seed is either `TRUE`
+#' or a valid L'Ecuyer-CMRG seed (integer vector of length 7).
+#'
+#' @param seed A seed value to validate.
+#' @return `seed`, invisibly, if valid.
+#' @keywords internal
+check_seed <- function(seed) {
+  if (isTRUE(seed)) {
+    return(invisible(seed))
+  } 
+  # TODO: Just check it is suitable for FUTURE
+  valid_lecuyer <- is.integer(seed) &&
+    length(seed) == 7L 
+  
+  if (!valid_lecuyer) {
+    stop(
+      "`future.seed` must be TRUE or a valid L'Ecuyer-CMRG seed ",
+      "(integer vector of length 7)."
+    )
+  }
+  
+  return(invisible(seed))
+}

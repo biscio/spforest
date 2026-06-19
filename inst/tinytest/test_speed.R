@@ -82,3 +82,35 @@
 # microbenchmark::microbenchmark(fold(n1=n1, W1area=W1area),
 #                                ffor(n1=n1, W1area=W1area),
 #                                fnew(n1=n1, W1area=W1area), times=1e5)
+
+
+####
+# 
+# vecval0 <- lapply(beisoilres, FUN = function(i) {
+#   c(as.matrix.im(i))
+# })
+# minpts = 50
+# 
+# microbenchmark::microbenchmark(
+#   original = tesscovtree(
+#     X = spatstat.data::bei,
+#     vecval = vecval0,
+#     areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#     dimcov = beisoilres[[1]]$dim,
+#     covrangex = beisoilres[[1]]$xrange,
+#     covrangey = beisoilres[[1]]$yrange,
+#     listcovariates = beisoilres,
+#     mtry = 1,
+#     minpts = minpts),
+#   optimised = tesscovtree_opt(
+#     X = spatstat.data::bei,
+#     vecval = vecval0,
+#     areapixel = beisoilres[[1]]$xstep * beisoilres[[1]]$ystep,
+#     dimcov = beisoilres[[1]]$dim,
+#     covrangex = beisoilres[[1]]$xrange,
+#     covrangey = beisoilres[[1]]$yrange,
+#     listcovariates = beisoilres,
+#     mtry = 1,
+#     minpts = minpts),
+#   times = 100
+# )

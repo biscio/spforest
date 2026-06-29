@@ -182,3 +182,156 @@ splitcell <- function(X,
     return(nodeChilds)
   }
 }
+
+
+
+
+
+#' Test palm split
+#'
+#' @param X 
+#' @param valpts 
+#' @param vecval 
+#' @param listcovariates 
+#' @param usecovariates 
+#' @param areapixel 
+#' @param clustmodel 
+#' @param threshold 
+#'
+#' @returns 
+#' @export
+#'
+#' @examples
+splitcellpalm <- function(X,
+                          valpts,
+                          vecval,
+                          listcovariates,
+                          usecovariates,
+                          areapixel,
+                          clustmodel = "LGCP",
+                          threshold = spatstat.geom::area(X) / 1e4) {
+  whynot <- NULL
+  vecvalused <- vecval[usecovariates == 1]
+  valptsused <- valpts[usecovariates == 1]
+  listused <- listcovariates[usecovariates == 1]
+  
+  mediancov <- lapply(vecvalused, FUN = function(j) {
+    stats::median(j, na.rm = TRUE)
+  })
+  
+  sublvl <- lapply(1:length(mediancov),
+                   FUN = function(j) {
+                     solutionset(listused[[j]] < mediancov[[j]])
+                   }
+  )
+  suplvl <- lapply(1:length(mediancov),
+                   FUN = function(j) {
+                     solutionset(listused[[j]] >= mediancov[[j]])
+                   }
+  )
+  
+  # Compute palm score
+  scr_parent <- as.numeric(logLik.kppm(
+    kppm.ppp(X, ~., clusters = clustmodel, method = "palm", data = listused)
+  ))
+  
+  
+  scr_cov <- sapply(1:length(listused), FUN = function(j) {
+    as.numeric(logLik.kppm(
+      kppm.ppp(X, as.formula(paste0("~", names(listused)[j])), clusters = clustmodel, method = "palm", data = listused)
+    ))
+  })
+  
+  scr_sup <- sapply(1:length(listused), FUN = function(j) {
+    as.numeric(logLik.kppm(
+      kppm.ppp(X[suplvl[[j]]], as.formula(paste0("~", names(listused)[j])), clusters = clustmodel, method = "palm", data = listused)
+    ))
+  })
+  scr_sub <- sapply(1:length(listused), FUN = function(j) {
+    as.numeric(logLik.kppm(
+      kppm.ppp(X[sublvl[[j]]], as.formula(paste0("~", names(listused)[j])), clusters = clustmodel, method = "palm", data = listused)
+    ))
+  })
+  
+  ### Pre-compute areas for all used covariates
+  nsub_pix <- vapply(sublvl, function(s) area.owin(s), numeric(1L))
+  nsup_pix <- vapply(suplvl, function(s) area.owin(s), numeric(1L))
+  Wsub_all <- areapixel * nsub_pix
+  Wsup_all <- areapixel * nsup_pix
+  
+  too_small <- (Wsub_all <= threshold) | (Wsup_all <= threshold)
+  
+  ### Apply threshold mask
+  scr_cov[too_small] <- -Inf
+  scr_sub[too_small] <- NA
+  scr_sup[too_small] <- NA
+  
+  ## Go out if all the score are -Inf
+  if (all(is.infinite(scr_cov))) {
+    whynot <- c("All split scores are -Inf, cell too small")
+  }
+  
+  allscr <- rep(NA, length(vecval))
+  allscr[usecovariates == 1] <- scr_cov
+  
+  id_best_scr <- sort(scr_cov,
+                      index.return = T,
+                      decreasing = T
+  )$ix[1]
+  
+  
+  if (!is.null(whynot)) {
+    return(whynot)
+  } else {
+    # split_var <- which(usecovariates == 1)[id_best_scr]
+    split_var <- which.max(allscr)
+    split_val <- mediancov[[id_best_scr]]
+    splitsub <- (vecval[[split_var]] < split_val)
+    
+    subvalpts <- (valpts[[split_var]] < split_val)
+    nsub <- sum(subvalpts, na.rm = T)
+    nsup <- sum(!subvalpts, na.rm = T)
+    
+    idx_sub <- which(subvalpts)
+    valptssub <- lapply(valpts, function(j) {
+      j[-idx_sub] <- NA
+      j
+    })
+    valptssup <- lapply(valpts, function(j) {
+      j[idx_sub] <- NA
+      j
+    })
+    
+    # Precompute integer index vectors once — reused across all covariates
+    idx_not_sub <- which(!splitsub | is.na(splitsub))
+    idx_not_sup <- which(splitsub | is.na(!splitsub))
+    
+    sublevels <- lapply(vecval, function(j) {
+      j[idx_not_sub] <- NA_real_
+      j
+    })
+    suplevels <- lapply(vecval, function(j) {
+      j[idx_not_sup] <- NA_real_
+      j
+    })
+    
+    nodeChilds <- list(
+      split_var = split_var,
+      split_val = split_val,
+      valptssub = valptssub,
+      valptssup = valptssup,
+      sublevels = sublevels,
+      nsub = nsub,
+      suplevels = suplevels,
+      nsup = nsup,
+      whystop = NULL,
+      scrsplit = max(allscr, na.rm = TRUE),
+      scrdcr = scr_sub[id_best_scr] + scr_sup[id_best_scr] - scr_parent
+    )
+    
+    return(nodeChilds)
+  }
+}
+
+
+

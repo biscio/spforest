@@ -95,13 +95,14 @@ score.pp <- function(n0, W0area, score = "lcv") {
     return(val)
   }
   
-  if (score == "lcv") {
-    val <- ifelse(n0 > 1, n0 * log((n0 - 1) / W0area), 0)
-    return(val)
-  }
-
-  if (score == "lcv2") {
-    val <- ifelse(n0 > 1, n0 * log((n0 - 1) / W0area), -Inf)
-    return(val)
-  }
+  # if (score == "lcv") {
+  #   val <- ifelse(n0 > 1, n0 * log((n0 - 1) / W0area), 0)
+  #   return(val)
+  # }
+  # 
+  # if (score == "lcv2") {
+  #   val <- ifelse(n0 > 1, n0 * log((n0 - 1) / W0area), -Inf)
+  #   return(val)
+  # }
 }
+

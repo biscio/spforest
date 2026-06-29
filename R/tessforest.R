@@ -37,8 +37,8 @@ tessforest <- function(X,
     gamma <- gamma_choice(X)
   }
 
-  
-  
+
+
   if (parallel & is(future::plan(), "sequential")) {
     stop('"parallel = T" but no parallel backend has been set with future::plan. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html. Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.')
   }
@@ -153,7 +153,19 @@ tessforest <- function(X,
 #' @param threshold A positive number.
 #' The minimum area of a region for which we allow at most one split.
 #' @param verbose If TRUE, display progress bar.
-#' @param parallel Check if future::plan has been called.
+#' @param parallel Controls parallelism and random-seed handling for generating trees.
+#'   If \code{FALSE}, trees are fitted sequentially with \code{\link[base]{lapply}},
+#'   regardless of any \code{\link[future]{plan}} that may be active.
+#'   Any other value enables parallel tree generation via
+#'   \code{\link[future.apply]{future_lapply}} and is passed directly as its
+#'   \code{future.seed} argument.
+#'   When \code{parallel != FALSE}, a parallel backend \strong{must} have been
+#'   registered beforehand with \code{\link[future]{plan}} (e.g.
+#'   \code{future::plan("multisession", workers = N)}), otherwise the function
+#'   returns an error.
+#'   See \code{\link[future.apply]{future_lapply}} and the
+#'   \href{https://future.futureverse.org/index.html}{future package documentation}
+#'   for details on supported backends and seed formats.
 #'
 #' @details
 #' This function compute a random intensity forest using the covariates given
@@ -307,15 +319,20 @@ tesscovforest <- function(X,
       pt_intree = ptintree
     ))
   }
-  
-  
+
+
   ### Start handling parallelism - HERE 26/06 TODO
-  if (parallel & is(future::plan(), "sequential")) {
-    stop('"parallel = T" but no parallel backend has been set with future::plan. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html. Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.')
+
+  if (!is_valid_future_seed(parallel)) {
+    stop('"parallel" must have the same form as the argument "future.seed" of the package "future.apply", for example an integer, a valid l\'Ecuyer seed, TRUE or FALSE.')
   }
 
-  if (parallel == FALSE & !is(future::plan(), "sequential")) {
-    message('"parallel=F" but a parallel backend with future::plan has been detected. No parallelism will be applied. Consider "parallel = T” to enable parallelism.')
+
+  if (parallel == FALSE) {
+    if (!is(future::plan(), "sequential")) {
+      message('"parallel=F" but a parallel backend with future::plan has been detected. No parallelism will be applied. Consider "parallel = T” to enable parallelism.')
+    }
+
     if (verbose) {
       progressr::handlers(global = TRUE)
       forestpgr <- function(x) {
@@ -333,15 +350,11 @@ tesscovforest <- function(X,
         FUN = plantingtree
       )
     }
-  }
-
-  if ((parallel & !is(future::plan(), "sequential")) | !parallel & is(future::plan(), "sequential")) {
-    # Compute the forest's trees - check if need to parallel
-    seedparallel <- TRUE
-    # if (is(future::plan(), "sequential")) {
-    #   seedparallel <- NULL
-    # }
-
+  } else {
+    if (is(future::plan(), "sequential")) {
+      stop('"parallel != F" but no parallel backend has been set with future::plan. To enable parallelism, we rely on the package future which allows for a fine control of the parallism backend: https://future.futureverse.org/index.html. Adding "future::plan("multisession", workers = N)" before the function, where N is the desired number of cores to use, will work in most cases.')
+    }
+    
     if (verbose) {
       progressr::handlers(global = TRUE)
       forestpgr <- function(x) {
@@ -350,19 +363,19 @@ tesscovforest <- function(X,
           output <- plantingtree(i)
           p(sprintf("x=%g", x))
           output
-        }, future.seed = seedparallel)
+        }, future.seed = parallel)
       }
       treeinforest <- forestpgr(x = 1:Ntree)
       progressr::handlers(global = FALSE)
     } else {
       treeinforest <- future.apply::future_lapply(1:Ntree,
-        FUN = plantingtree,
-        future.seed = seedparallel
+                                                  FUN = plantingtree,
+                                                  future.seed = parallel
       )
     }
   }
-  ### End handling parallelism 
-  
+  ### End handling parallelism
+
   # Computation of the image
   list_im <- lapply(treeinforest, FUN = function(i) {
     i$sptree$im

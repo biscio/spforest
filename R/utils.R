@@ -370,3 +370,45 @@ findparent <- function(ID, idleft, idright) {
     }
   })
 }
+
+
+
+#' Validate argument compatible with future.seed of future
+#'
+#' Checks whether an object is a valid value for the `future.seed` argument used by
+#' the future framework.
+#'
+#' A valid seed is one of:
+#' \itemize{
+#'   \item `NULL`
+#'   \item a single non-missing logical value
+#'   \item a single integer value
+#'   \item a length-7 integer vector representing an L'Ecuyer-CMRG seed, where
+#'   the first element satisfies `seed[1] %% 10000L == 407L`
+#' }
+#'
+#' @param seed An object to validate.
+#'
+#' @return A single logical value, `TRUE` if `seed` is a valid for future.seed,
+#'  otherwise `FALSE`.
+#' @export
+#' @examples
+#' is_valid_future_seed(NULL)
+#' is_valid_future_seed(TRUE)
+#' is_valid_future_seed(FALSE)
+#' is_valid_future_seed(c(FALSE, TRUE, TRUE))
+#' is_valid_future_seed(42L)
+#' is_valid_future_seed(c(10407L, 1L, 2L, 3L, 4L, 5L, 6L))
+#' is_valid_future_seed(c(10407L, 1L, 2L, 3L, 4L, 5L, 6L))
+#' is_valid_future_seed(c(10408L, 1L, 2L, 3L, 4L, 5L, 6L))
+#' is_valid_future_seed(c(1L, 2L))
+#' is_valid_future_seed(c(1, 2))
+is_valid_future_seed <- function(seed) {
+  if (is.null(seed)) {return(TRUE)}
+  
+  if (is.logical(seed)) {
+    return(length(seed) == 1L)
+  }
+  
+  future:::is_lecyer_cmrg_seed(seed) || (is.numeric(seed) && length(seed) == 1L && is.finite(seed)) 
+}

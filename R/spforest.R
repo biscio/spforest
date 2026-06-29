@@ -24,8 +24,19 @@
 #' in different connected components. It is only useful if the windows of
 #' observation of \code{X} is not convex.
 #' @param verbose If TRUE, display progress bar.
-#' @param parallel Check if future::plan has been called.
-#'
+#' @param parallel Controls parallelism and random-seed handling for generating trees.
+#'   If \code{FALSE}, trees are fitted sequentially with \code{\link[base]{lapply}},
+#'   regardless of any \code{\link[future]{plan}} that may be active.
+#'   Any other value enables parallel tree generation via
+#'   \code{\link[future.apply]{future_lapply}} and is passed directly as its
+#'   \code{future.seed} argument.
+#'   When \code{parallel != FALSE}, a parallel backend \strong{must} have been
+#'   registered beforehand with \code{\link[future]{plan}} (e.g.
+#'   \code{future::plan("multisession", workers = N)}), otherwise the function
+#'   returns an error.
+#'   See \code{\link[future.apply]{future_lapply}} and the
+#'   \href{https://future.futureverse.org/index.html}{future package documentation}
+#'   for details on supported backends and seed formats.
 #' @details
 #' If \code{listcovariates} is not \code{NULL},
 #' the function computes a random intensity forest using

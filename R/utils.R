@@ -21,7 +21,6 @@ smallest_pixelarea <- function(x) {
 }
 
 
-
 #' Tesselation intensityy by rule of thumb
 #'
 #' @param X The observed data point pattern,
@@ -202,13 +201,14 @@ predicttree <- function(object, newdata, ...) {
 #'   listcovariates = spatstat.data::bei.extra,
 #'   Ntree = 3,
 #'   minpts = 300,
-#'   mtry = 1
+#'   mtry = 1,
+#'   parallel = F
 #' )
 #' OOBscr(forest)
 OOBscr <- function(forest) {
   X <- forest$X # this is always the root
 
-  OOBscr <- lapply(1:length(forest$trees),
+  oobtrees <- lapply(1:length(forest$trees),
     FUN = function(i) {
       OOBval <- rep(NA, X$n)
 
@@ -244,17 +244,16 @@ OOBscr <- function(forest) {
     }
   )
 
-  logterm <- log(rowMeans(do.call(cbind, OOBscr), na.rm = TRUE))
+  logterm <- log(rowMeans(do.call(cbind, oobtrees), na.rm = TRUE))
   if (all(is.na(logterm))) {
     output <- NA
   } else {
     output <- sum(logterm, na.rm = TRUE)
   }
-  # output <- sum(log(rowMeans(do.call(cbind, OOBscr), na.rm = TRUE)), na.rm = TRUE)
+  # output <- sum(log(rowMeans(do.call(cbind, oobtrees), na.rm = TRUE)), na.rm = TRUE)
 
   return(output)
 }
-
 
 
 #' Find best OOB parameter combination
@@ -275,8 +274,8 @@ OOBscr <- function(forest) {
 #' @examples
 #' X <- spatstat.data::bei
 #' listcovariates <- spatstat.data::bei.extra
-#' params <- list(mtry = c(1, 2), minpts = c(50, 100, 200))
-#' OOBoptim(X = X, listcovariates = listcovariates, Ntree = 50, params = params)
+#' params <- list(mtry = c(1, 2), minpts = c(200, 300, 500), Ntree = 10)
+#' OOBoptim(X = X, listcovariates = listcovariates, params = params, parallel = F)
 OOBoptim <- function(X, listcovariates, params, ...) {
   if (!"mtry" %in% names(params)) {
     stop("The arguments 'params' must have an entry named 'mtry'.")
@@ -285,27 +284,29 @@ OOBoptim <- function(X, listcovariates, params, ...) {
     stop("The arguments 'params' must have an entry named 'minpts'.")
   }
   if (!"Ntree" %in% names(params)) {
-    nbtree <- 50
-  } else {
-    nbtree <- params$Ntree
+    params$Ntree <- 50
   }
+  #   nbtree <- 50
+  # } else {
+  #   nbtree <- params$Ntree
+  # }
 
   argu <- expand.grid(params)
 
-  allforest <- mapply(spforest,
-    mtry = argu$mtry,
-    minpts = argu$minpts,
-    Ntree = nbtree,
-    MoreArgs = list(
+  argu$OOB <- vapply(seq_len(nrow(argu)), function(i) {
+    forest <- spforest(
       X = X,
       listcovariates = listcovariates,
+      mtry = argu$mtry[i],
+      minpts = argu$minpts[i],
+      Ntree = argu$Ntree[i],
       ...
     )
-  )
+    return(OOBscr(forest))
+  }, numeric(1))
 
-  allOOB <- apply(allforest, 2, OOBscr)
 
-  return(cbind(argu, OOB = allOOB))
+  return(argu)
 }
 
 
@@ -372,7 +373,6 @@ findparent <- function(ID, idleft, idright) {
 }
 
 
-
 #' Validate argument compatible with future.seed of future
 #'
 #' Checks whether an object is a valid value for the `future.seed` argument used by
@@ -404,11 +404,13 @@ findparent <- function(ID, idleft, idright) {
 #' is_valid_future_seed(c(1L, 2L))
 #' is_valid_future_seed(c(1, 2))
 is_valid_future_seed <- function(seed) {
-  if (is.null(seed)) {return(TRUE)}
-  
+  if (is.null(seed)) {
+    return(TRUE)
+  }
+
   if (is.logical(seed)) {
     return(length(seed) == 1L)
   }
-  
-  future:::is_lecyer_cmrg_seed(seed) || (is.numeric(seed) && length(seed) == 1L && is.finite(seed)) 
+
+  future:::is_lecyer_cmrg_seed(seed) || (is.numeric(seed) && length(seed) == 1L && is.finite(seed))
 }

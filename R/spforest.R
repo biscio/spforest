@@ -114,8 +114,14 @@ spforest <- function(X,
       parallel = parallel
     )
   } else {
+    
+    newlistcov <- lapply(listcovariates, 
+                         FUN = function(i) {
+    imfcttoreal(Z=i, X=X)
+    })
+    
     output <- tesscovforest(X,
-      listcovariates = listcovariates,
+      listcovariates = newlistcov,
       Ntree = Ntree,
       minpts = minpts,
       mtry = mtry,

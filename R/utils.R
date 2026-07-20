@@ -414,3 +414,38 @@ is_valid_future_seed <- function(seed) {
 
   future:::is_lecyer_cmrg_seed(seed) || (is.numeric(seed) && length(seed) == 1L && is.finite(seed))
 }
+
+
+#' Convert factor image to real image
+#'
+#' Convert a factor-valued image (\code{\link{im.object}}) to a
+#' real-valued image by replacing each factor level
+#' with the corresponding intensity value computed from the point pattern X.
+#'
+#' @param Z A pixel image (\code{\link{im.object}}) of type "factor".
+#' @param X The point pattern from which to compute intensity values.
+#'
+#' @returns A real-valued pixel image. If the image is not factor-valued,
+#' meaning that Z$type is not "factor", then the same image is returned.
+#' @export
+#'
+#' @examples
+#' Z<-beisoilres[[1]]
+#' X<- bei
+#' Y<-cut(Z, quantile(Z), include.lowest = T)
+#' plot(Y)
+#' imfcttoreal(Z=Y, X=X) 
+imfcttoreal <- function(Z, X) {
+  if (Z$type == "factor") {
+    newval <- sapply(split.ppp(x = X, f = Z, include.lowest = T),
+      FUN = function(i) {
+        spatstat.geom::intensity(i)
+      }
+    )
+    Y$type <- "real"
+    Y$v <- newval[as.character(Y$v)]
+    return(Y)
+  } else {
+    return(Z)
+  }
+}

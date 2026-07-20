@@ -430,18 +430,20 @@ is_valid_future_seed <- function(seed) {
 #' @export
 #'
 #' @examples
-#' Z<-beisoilres[[1]]
-#' X<- bei
-#' Y<-cut(Z, quantile(Z), include.lowest = T)
+#' Z <- beisoilres[[1]]
+#' X <- bei
+#' Y <- cut(Z, quantile(Z), include.lowest = T)
 #' plot(Y)
-#' imfcttoreal(Z=Y, X=X) 
+#' imfcttoreal(Z = Y, X = X)
 imfcttoreal <- function(Z, X) {
   if (Z$type == "factor") {
-    newval <- sapply(split.ppp(x = X, f = Z, include.lowest = T),
+    newval <- sapply(
+      spatstat.geom::split.ppp(x = X, f = Z, include.lowest = T),
       FUN = function(i) {
         spatstat.geom::intensity(i)
       }
     )
+    Y <- Z
     Y$type <- "real"
     Y$v <- newval[as.character(Y$v)]
     return(Y)

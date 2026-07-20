@@ -446,7 +446,7 @@ imfcttoreal <- function(Z, X) {
     Y <- Z
     Y$type <- "real"
     Y$v <- newval[as.character(Y$v)]
-    return(Y)
+    return(spatstat.geom::as.im(Y))
   } else {
     return(Z)
   }

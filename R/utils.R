@@ -436,7 +436,7 @@ is_valid_future_seed <- function(seed) {
 #' plot(Y)
 #' imfcttoreal(Z = Y, X = X)
 imfcttoreal <- function(Z, X) {
-  if (Z$type == "factor") {
+  if (Z$type != "real") {
     newval <- sapply(
       spatstat.geom::split.ppp(x = X, f = Z, include.lowest = T),
       FUN = function(i) {

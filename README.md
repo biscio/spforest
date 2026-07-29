@@ -7,8 +7,12 @@ To install the package directly from Github, with the minimum version to
 run this vignette, run the following command.
 
 ``` r
-if (!requireNamespace("pak")) {install.packages("pak")}
-if (!requireNamespace("spforest")) {pak::pkg_install("biscio/spforest")}
+if (!requireNamespace("pak")) {
+  install.packages("pak")
+}
+if (!requireNamespace("spforest")) {
+  pak::pkg_install("biscio/spforest")
+}
 library(spforest)
 ```
 
@@ -91,7 +95,8 @@ RF <- spforest(
   listcovariates = simcov,
   Ntree = 100,
   mtry = 3,
-  minpts = 100
+  minpts = 100,
+  parallel = FALSE
 )
 ```
 
@@ -124,8 +129,8 @@ automatically, based on the Freedman-Diaconis rule for selecting
 histogram bin widths.
 
 ``` r
-RFnocov <- spforest(X, Ntree = 100)
-plot(RFnocov, col = cm, main="RF intensity estimation without covariates")
+RFnocov <- spforest(X, Ntree = 100, parallel = FALSE)
+plot(RFnocov, col = cm, main = "RF intensity estimation without covariates")
 ```
 
 ![](README_files/figure-commonmark/unnamed-chunk-11-1.png)
@@ -147,7 +152,7 @@ library(rgl)
 library(Rvcg)
 XX <- spforest::simppface
 shade3d(XX$mesh, col = "gray")
-points3d(XX$pp, col = "black", size = 2, add = T)
+points3d(XX$pp, col = "black", size = 2, add = TRUE)
 view3d(theta = 20, phi = 0)
 ```
 
@@ -158,10 +163,105 @@ We now estimate the intensity of points, using `Ntree=100` independent
 Poisson Voronoï tessellations generated on the manifold.
 
 ``` r
-forestmesh <- spforest(X = XX, Ntree = 100)
+forestmesh <- spforest(X = XX, Ntree = 100, parallel = FALSE)
 plot(forestmesh)
 view3d(theta = 20, phi = 0)
 ```
 
 <img src="README_files/figure-commonmark/unnamed-chunk-13-2.-rgl.png"
 style="width:70.0%" />
+
+## Random forest intensity estimation with factor valued covariable.
+
+The `spforest` function can also handle factor valued covariates. To
+that end, we assign to each region with a given factor value, the number
+of points in that region divided by the area of the region. Then we use
+this “new” continuous valued covariate in the `spforest` function in
+place of the original factor valued covariate.
+
+Let first simulate several covariates, including one factor valued
+covariate, on the unit square. We set the factor to be the letters:
+$\{a, b, c, d, e, f, g, h, i\}$ and we assign randomly one of these
+letters to each sub-square of the unit square. We also put all the
+covariate at the same resolution.
+
+``` r
+set.seed(909)
+contcovar <- spatstat.random::rGRFexpo(
+  W = square(1),
+  mu = 0,
+  var = 0.5,
+  scale = 0.2,
+  nsim = 3
+) |> solapply(exp)
+names(contcovar) <- paste0("Covariates", 1:3)
+Z <- matrix(factor(letters[sample(9)]), nrow = 3)
+
+allcov <- append(contcovar, list(Z))
+names(allcov) <- c(paste0("Covariate", 1:3), "FactorCov")
+allcov[[4]] <- as.im(allcov[[4]], W = commonGrid(contcovar[[1]], Z))
+```
+
+Here is a plot of all the covariates, including the factor valued
+covariate.
+
+``` r
+plot(as.anylist(allcov), main = "", ncols = 4)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-15-1.png)
+
+We simulate a Poisson point process with intensity depending on the
+factor value covariate and the first covariate. We normalise the
+intensity to get on average 500 points.
+
+``` r
+Znum <- as.im(
+  matrix(sample(1:20, size = 9), nrow = 3),
+  W = square(1)
+)
+Znum <- as.im(Znum, W = commonGrid(contcovar[[1]], Z))
+trend <- Znum + 3 * allcov[[1]]
+trueint <- 500 * trend / mean(trend)
+X <- spatstat.random::rpoispp(lambda = trueint)
+```
+
+We can now use `spforest` as before.
+
+``` r
+Example1_RF <- spforest(
+  X = X,
+  listcovariates = allcov,
+  Ntree = 200,
+  minpts = 50,
+  mtry = 3,
+  parallel = F
+)
+```
+
+    Warning in tesscovforest(X, listcovariates = newlistcov, Ntree = Ntree, : The im objects in listcovariates have been
+        harmonised with the function harmonise.im.
+
+Here is a plot of the true intensity, the point pattern and the
+estimated intensity.
+
+``` r
+par(mfrow = c(1, 3))
+cm_ex1 <- colourmap(
+  col = default.image.colours(),
+  range = c(0, max(range(as.im(Example1_RF))[2], range(trueint)[2]))
+)
+plot(trueint, col = cm_ex1, main = "True intensity")
+plot(X, pch = 16, cex = 1, main = "Point pattern")
+plot(Example1_RF, col = cm_ex1, main = "Estimated intensity")
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-18-1.png)
+
+Finally, we can still compute the variable importance.
+
+``` r
+vipplot(Example1_RF)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-19-1.png)

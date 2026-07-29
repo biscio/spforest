@@ -21,7 +21,8 @@ forest <- spforest(
   listcovariates = spatstat.data::bei.extra,
   Ntree = 3,
   minpts = 300,
-  mtry = 1
+  mtry = 1,
+  parallel = F
 )
 OOBscr(forest)
 }

@@ -29,6 +29,6 @@ The arguments ... are passed to the function \code{\link{spforest}}.
 \examples{
 X <- spatstat.data::bei
 listcovariates <- spatstat.data::bei.extra
-params <- list(mtry = c(1, 2), minpts = c(50, 100, 200))
-OOBoptim(X = X, listcovariates = listcovariates, Ntree = 50, params = params)
+params <- list(mtry = c(1, 2), minpts = c(200, 300, 500), Ntree = 10)
+OOBoptim(X = X, listcovariates = listcovariates, params = params, parallel = F)
 }

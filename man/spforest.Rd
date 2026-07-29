@@ -9,7 +9,7 @@ spforest(
   listcovariates = NULL,
   Ntree = 10,
   minpts = spatstat.geom::npoints(X)/10,
-  mtry = 1/3,
+  mtry = floor(0.7 * length(listcovariates)),
   randmtry = FALSE,
   p = 0,
   score = "lcv",
@@ -57,7 +57,19 @@ observation of \code{X} is not convex.}
 
 \item{verbose}{If TRUE, display progress bar.}
 
-\item{parallel}{Check if future::plan has been called.}
+\item{parallel}{Controls parallelism and random-seed handling for generating trees.
+If \code{FALSE}, trees are fitted sequentially with \code{\link[base]{lapply}},
+regardless of any \code{\link[future]{plan}} that may be active.
+Any other value enables parallel tree generation via
+\code{\link[future.apply]{future_lapply}} and is passed directly as its
+\code{future.seed} argument.
+When \code{parallel != FALSE}, a parallel backend \strong{must} have been
+registered beforehand with \code{\link[future]{plan}} (e.g.
+\code{future::plan("multisession", workers = N)}), otherwise the function
+returns an error.
+See \code{\link[future.apply]{future_lapply}} and the
+\href{https://future.futureverse.org/index.html}{future package documentation}
+for details on supported backends and seed formats.}
 }
 \value{
 An object of class \code{\link{spforest}}.

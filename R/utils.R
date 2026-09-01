@@ -53,7 +53,10 @@ gamma_choice <- function(X) {
 area_choice <- function(X) {
   gamma <- gamma_choice(X)
   
-  area0 <- spatstat.geom::dilated.areas(Window(X), r=2/sqrt(gamma))
+  area0 <- area(spatstat.geom::dilation(
+    spatstat.geom::Window(X), 
+    r=2/sqrt(gamma)
+  ))
   
   return(area0/gamma_choice(X))
 }

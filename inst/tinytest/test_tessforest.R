@@ -78,7 +78,7 @@ A <- tesscovforest(
   parallel = FALSE
 )
 B <- format(object.size(A), units = "Mb")
-expect_true(as.numeric(gsub(" Mb", "",B)) < 2.2)
+expect_true(as.numeric(gsub(" Mb", "",B)) < 2.3)
 
 
 expect_inherits(

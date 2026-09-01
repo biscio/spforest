@@ -107,6 +107,7 @@ tesstree <- function(X,
 #' covariates must be given as im object from the package spatstat.
 #' @param minpts A positive integer.
 #' The minimum number of points allowed to try to split a cell.
+#' @param minarea A positive integer.
 #' @param mtry Probability of choosing a covariate.
 #' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
 #' represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
@@ -164,7 +165,8 @@ tesstree <- function(X,
 #'   covrangey = beisoilres[[1]]$yrange,
 #'   listcovariates = beisoilres,
 #'   mtry = 1,
-#'   minpts = 500
+#'   minpts = 500,
+#'   minarea = 20
 #' )
 #' plot(mytree)
 tesscovtree <- function(X,
@@ -175,6 +177,7 @@ tesscovtree <- function(X,
                         covrangey,
                         listcovariates,
                         minpts = 500,
+                        minarea = 100,
                         mtry = 1,
                         randmtry = FALSE, 
                         score = "lcv",
@@ -193,6 +196,7 @@ tesscovtree <- function(X,
     left_daughter = NA,
     right_daughter = NA,
     nX = spatstat.geom::npoints(X),
+    areaX = spatstat.geom::area(X$window),
     split_var = NA,
     split_val = NA,
     status = 1,
@@ -245,7 +249,11 @@ tesscovtree <- function(X,
 
       if (intensity_tree[[i]]$nX <= minpts) {
         res.split <- "Not enough points to attempt to split"
-      } else {
+      } 
+      else if (intensity_tree[[i]]$areaX <= minarea) {
+        res.split <- "Cells too small to attempt to split"
+      }
+      else {
         # Split the cell, if the split is valid under the chosen parameters
         res.split <- splitcell(
           X = X,
@@ -282,6 +290,7 @@ tesscovtree <- function(X,
           nodeCov = res.split$sublevels,
           nodeValpts = res.split$valptssub,
           nX = res.split$nsub,
+          areaX = areasub,
           left_daughter = NA,
           right_daughter = NA,
           split_var = NA,
@@ -299,6 +308,7 @@ tesscovtree <- function(X,
           nodeCov = res.split$suplevels,
           nodeValpts = res.split$valptssup,
           nX = res.split$nsup,
+          areaX = areasup,
           left_daughter = NA,
           right_daughter = NA,
           split_var = NA,

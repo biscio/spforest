@@ -1,6 +1,6 @@
 Package: spforest
 Title: Spatial Random Forest
-Version: 0.0.0.939
+Version: 0.0.0.940
 Authors@R: 
     person("Christophe", "Biscio", , "christophe@math.aau.dk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2218-6825"))
@@ -9,7 +9,6 @@ License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 Depends: 
     R (>= 3.5),
     spatstat.geom (>= 3.3-2)
@@ -30,3 +29,4 @@ Suggests:
     spatstat.data,
     tinytest
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0

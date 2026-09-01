@@ -40,6 +40,24 @@ gamma_choice <- function(X) {
   return(gamma0)
 }
 
+#' Minimum Area for stopping criterion by rule of thumb
+#'
+#' @param X The observed data point pattern,
+#' as a \code{\link[spatstat.geom]{ppp.object}}.
+#'
+#' @return A number.
+#' @export
+#'
+#' @examples
+#' area_choice(spatstat.random::rpoispp(100))
+area_choice <- function(X) {
+  gamma <- gamma_choice(X)
+  
+  area0 <- spatstat.geom::dilated.areas(Window(X), r=2/sqrt(gamma))
+  
+  return(area0/gamma_choice(X))
+}
+
 
 #' Randomise input for tree
 #'

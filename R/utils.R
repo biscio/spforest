@@ -51,14 +51,18 @@ gamma_choice <- function(X) {
 #' @examples
 #' area_choice(spatstat.random::rpoispp(100))
 area_choice <- function(X) {
-  gamma <- gamma_choice(X)
-  
-  area0 <- area(spatstat.geom::dilation(
-    spatstat.geom::Window(X), 
-    r=2/sqrt(gamma)
-  ))
-  
-  return(area0/gamma_choice(X))
+  area0 <- 4 * mean(c(IQR(X$x), IQR(X$y)))^2 / npoints(X)^{
+    2 / 3
+  }
+  return(area0)
+  #   gamma <- gamma_choice(X)
+  #
+  #   area0 <- area(spatstat.geom::dilation(
+  #     spatstat.geom::Window(X),
+  #     r=2/sqrt(gamma)
+  #   ))
+  #
+  #   return(area0/gamma_choice(X))
 }
 
 

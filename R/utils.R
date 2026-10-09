@@ -306,8 +306,8 @@ OOBoptim <- function(X, listcovariates, params, ...) {
   if (!"minpts" %in% names(params)) {
     stop("The arguments 'params' must have an entry named 'minpts'.")
   }
-  if (!"minarea" %in% names(params)) {
-    stop("The arguments 'params' must have an entry named 'minarea'.")
+  if (!"minvol" %in% names(params)) {
+    stop("The arguments 'params' must have an entry named 'minvol'.")
   }
   if (!"Ntree" %in% names(params)) {
     params$Ntree <- 50
@@ -325,7 +325,7 @@ OOBoptim <- function(X, listcovariates, params, ...) {
       listcovariates = listcovariates,
       mtry = argu$mtry[i],
       minpts = argu$minpts[i],
-      minarea = argu$minarea[i],
+      minvol = argu$minvol[i],
       Ntree = argu$Ntree[i],
       ...
     )

@@ -107,7 +107,7 @@ tesstree <- function(X,
 #' covariates must be given as im object from the package spatstat.
 #' @param minpts A positive integer.
 #' The minimum number of points allowed to try to split a cell.
-#' @param minarea A positive integer.
+#' @param minvol A positive integer.
 #' @param mtry Probability of choosing a covariate.
 #' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
 #' represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
@@ -166,7 +166,7 @@ tesstree <- function(X,
 #'   listcovariates = beisoilres,
 #'   mtry = 1,
 #'   minpts = 500,
-#'   minarea = 20
+#'   minvol = 20
 #' )
 #' plot(mytree)
 tesscovtree <- function(X,
@@ -177,7 +177,7 @@ tesscovtree <- function(X,
                         covrangey,
                         listcovariates,
                         minpts = 500,
-                        minarea = -1,
+                        minvol = -1,
                         mtry = 1,
                         randmtry = FALSE, 
                         score = "lcv",
@@ -250,7 +250,7 @@ tesscovtree <- function(X,
       if (intensity_tree[[i]]$nX <= minpts) {
         res.split <- "Not enough points to attempt to split"
       } 
-      else if (intensity_tree[[i]]$areaX <= minarea) {
+      else if (intensity_tree[[i]]$areaX <= minvol) {
         res.split <- "Cells too small to attempt to split"
       }
       else {

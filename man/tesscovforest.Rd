@@ -9,7 +9,7 @@ tesscovforest(
   listcovariates = NULL,
   Ntree = 10,
   minpts = spatstat.geom::npoints(X)/10,
-  minarea = spatstat.geom::area(X)/1000,
+  minvol = spatstat.geom::area(X)/1000,
   mtry = 2,
   randmtry = FALSE,
   p = 0,
@@ -32,7 +32,7 @@ The number of trees in the random intensity forest.}
 \item{minpts}{A positive integer.
 The minimum number of points in a region to allow a split.}
 
-\item{minarea}{A positive integer.}
+\item{minvol}{A positive integer.}
 
 \item{mtry}{A number in \eqn{[0,1)}.
 Probability that a covariate is used at each a split.}

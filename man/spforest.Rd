@@ -9,7 +9,7 @@ spforest(
   listcovariates = NULL,
   Ntree = 10,
   minpts = spatstat.geom::npoints(X)/10,
-  minarea = spatstat.geom::area(X)/1000,
+  minvol = spatstat.geom::area(X)/1000,
   mtry = floor(0.7 * length(listcovariates)),
   randmtry = FALSE,
   p = 0,
@@ -32,7 +32,7 @@ spforest(
 \item{minpts}{A positive integer.
 The minimum number of points after which we try to split a cell one last time.}
 
-\item{minarea}{A positive integer}
+\item{minvol}{A positive integer}
 
 \item{mtry}{Probability of choosing a covariate.}
 

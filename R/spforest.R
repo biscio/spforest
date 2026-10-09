@@ -7,7 +7,7 @@
 #' @param Ntree Number of trees in the forest.
 #' @param minpts A positive integer.
 #' The minimum number of points after which we try to split a cell one last time.
-#' @param minarea A positive integer
+#' @param minvol A positive integer
 #' @param mtry Probability of choosing a covariate.
 #' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
 #' represents the probability to use each covariate at each split. If \code{FALSE}, \code{mtry}
@@ -68,7 +68,7 @@ spforest <- function(X,
                      listcovariates = NULL,
                      Ntree = 10,
                      minpts = spatstat.geom::npoints(X) / 10,
-                     minarea = -1,
+                     minvol = -1,
                      mtry = floor(0.7*length(listcovariates)),
                      randmtry = FALSE,
                      p = 0,
@@ -126,7 +126,7 @@ spforest <- function(X,
       listcovariates = newlistcov,
       Ntree = Ntree,
       minpts = minpts,
-      minarea = minarea,
+      minvol = minvol,
       mtry = mtry,
       randmtry = randmtry,
       p = p,

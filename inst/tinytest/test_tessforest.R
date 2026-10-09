@@ -87,7 +87,7 @@ expect_inherits(
            params = list(Ntree = 5,
                          mtry = 2, 
                          minpts = c(500,800),
-                         minarea = 50000),
+                         minvol = 50000),
            parallel = FALSE),
   class="data.frame"
 )

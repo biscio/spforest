@@ -141,7 +141,7 @@ tessforest <- function(X,
 #' The number of trees in the random intensity forest.
 #' @param minpts A positive integer.
 #' The minimum number of points in a region to allow a split.
-#' @param minarea A positive integer.
+#' @param minvol A positive integer.
 #' @param mtry A number in \eqn{[0,1)}.
 #' Probability that a covariate is used at each a split.
 #' @param randmtry Logical. If \code{TRUE}, \code{mtry} must be between 0 and 1 and
@@ -233,7 +233,7 @@ tesscovforest <- function(X,
                           listcovariates = NULL,
                           Ntree = 10,
                           minpts = spatstat.geom::npoints(X) / 10,
-                          minarea = -1,
+                          minvol = -1,
                           mtry = 2,
                           randmtry = FALSE,
                           p = 0,
@@ -301,7 +301,7 @@ tesscovforest <- function(X,
       covrangey = covrangey,
       listcovariates = listcovariates,
       minpts = minpts,
-      minarea = minarea,
+      minvol = minvol,
       mtry = mtry,
       randmtry = randmtry,
       score = score,

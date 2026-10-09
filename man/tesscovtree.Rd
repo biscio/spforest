@@ -13,7 +13,7 @@ tesscovtree(
   covrangey,
   listcovariates,
   minpts = 500,
-  minarea = 100,
+  minvol = 100,
   mtry = 1,
   randmtry = FALSE,
   score = "lcv",
@@ -44,7 +44,7 @@ covariates must be given as im object from the package spatstat.}
 \item{minpts}{A positive integer.
 The minimum number of points allowed to try to split a cell.}
 
-\item{minarea}{A positive integer.}
+\item{minvol}{A positive integer.}
 
 \item{mtry}{Probability of choosing a covariate.}
 
@@ -111,7 +111,7 @@ mytree <- tesscovtree(
   listcovariates = beisoilres,
   mtry = 1,
   minpts = 500,
-  minarea = 20
+  minvol = 20
 )
 plot(mytree)
 }

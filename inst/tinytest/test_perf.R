@@ -1,5 +1,5 @@
 Mnsin <- 1 + sin(spforest::beisoilres[[10]] / 50)
-z500sin <- 500 * Mnsin / integral(Mnsin)
+z500sin <- 500 * Mnsin / spatstat.geom::integral.im(Mnsin)
 Xpoi <- spatstat.random::rpoispp(lambda = z500sin, nsim = 1)
 
 

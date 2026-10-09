@@ -51,9 +51,7 @@ gamma_choice <- function(X) {
 #' @examples
 #' area_choice(spatstat.random::rpoispp(100))
 area_choice <- function(X) {
-  area0 <- 4 * mean(c(IQR(X$x), IQR(X$y)))^2 / npoints(X)^{
-    2 / 3
-  }
+  area0 <- 4 * mean(c(IQR(X$x), IQR(X$y)))^2 / npoints(X)^{2 / 3}
   return(area0)
   #   gamma <- gamma_choice(X)
   #
